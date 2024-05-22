@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Garden Loft App</Text>
+      <Text>Garden Loft App yo</Text>
       <StatusBar style="auto" />
     </View>
   );
