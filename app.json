@@ -2,6 +2,7 @@
   "expo": {
     "name": "app-garden-loft",
     "slug": "app-garden-loft",
+    "scheme": "app-garden-loft",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/splash.png",
@@ -23,12 +24,16 @@
       "package": "com.sallydough.appgardenloft"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
     },
     "extra": {
       "eas": {
         "projectId": "598d65e5-14db-479e-a297-3561c87ddbc5"
       }
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
