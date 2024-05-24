@@ -1,16 +1,13 @@
-// app/home.js
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Home from '../components/Home/Home';
 
-export default function HomeScreen() {
+const Entertainment = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Your Garden Loft!</Text>
-      <Home />
+      <Text>Entertainment Component</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -18,8 +15,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
 });
+
+export default Entertainment;
