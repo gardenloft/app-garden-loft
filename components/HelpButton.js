@@ -56,7 +56,7 @@ const HelpButton = () => {
           source={image}
           resizeMode={"contain"}
           style={styles.image}>
-          <Text style={styles.Welcome}>Hello {userInfo?.name}</Text>
+          <Text style={styles.Welcome}>Hello {userInfo?.userName}</Text>
         </ImageBackground>
       </View>
       <TouchableOpacity onPress={handleCallSupport} style={styles.callButton}>
