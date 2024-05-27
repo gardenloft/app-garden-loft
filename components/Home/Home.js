@@ -548,7 +548,7 @@ const Home: React.FC = () => {
         renderItem={renderItem}
         width={Math.round(viewportWidth * 0.85)}
         height={viewportHeight * 0.25}
-        loop
+        loop={true}
         onSnapToItem={handleSnapToItem}
         pagingEnabled={false}
         scrollEnabled={false}
