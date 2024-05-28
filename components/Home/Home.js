@@ -400,6 +400,7 @@ import VideoCall from "../VideoCall";
 import Activities2 from "../Activities";
 import Entertainment from "../Entertainment";
 import Lights from "../Lights";
+import GLCommunity from "../GlCommunity";
 import { getAuth, signOut } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -437,6 +438,12 @@ const data: Item[] = [
     icon: "account-question",
     // component: <HowTo />,
     prompt: "Need Help With Your Garden Loft?",
+  },
+  {
+    title: "GARDEN LOFT",
+    icon: "home-group-plus",
+    component: <GLCommunity />,
+    prompt: "Meet Garden Loft Members?",
   },
   {
     title: "LIGHTS",
