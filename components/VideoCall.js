@@ -398,7 +398,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Modal } from 'rea
 import { FontAwesome } from '@expo/vector-icons';
 import Carousel from 'react-native-reanimated-carousel';
 import { FIRESTORE_DB } from '../FirebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -449,13 +449,15 @@ const VideoCall = () => {
       <Carousel
         data={userNames}
         renderItem={renderItem}
-        width={viewportWidth * 0.7}
-        height={viewportHeight * 0.3}
-        mode="horizontal-stack"
-        modeConfig={{
-          stackInterval: 30 // Adjust this to increase/decrease the gap
-        }}
+        width={viewportWidth * 0.3}
+        style={{ width: Math.round(viewportWidth * 0.9) }}
+        // height={viewportHeight * 0.3}
+        // mode="horizontal-stack"
+        // modeConfig={{
+        //   stackInterval: 30 // Adjust this to increase/decrease the gap
+        // }}
         autoPlay={false}
+        snapEnabled
         autoPlayInterval={2000}
         scrollAnimationDuration={1000}
         onSnapToItem={handleSnapToItem}
@@ -509,7 +511,7 @@ const styles = StyleSheet.create({
     height: 290,
   },
   cardContainer: {
-    width: viewportWidth * 0.6,
+    width: viewportWidth * 0.26,
     height: viewportHeight * 0.3,
     backgroundColor: '#f09030',
     borderRadius: 20,
