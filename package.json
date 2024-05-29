@@ -26,6 +26,7 @@
     "expo-notifications": "^0.28.3",
     "expo-router": "~3.5.14",
     "expo-status-bar": "~1.12.1",
+    "expo-updates": "~0.25.14",
     "firebase": "^10.12.1",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
@@ -39,10 +40,8 @@
     "react-native-screens": "3.31.1",
     "react-native-vector-icons": "^10.1.0",
     "react-native-web": "~0.19.10",
-    "typescript": "~5.3.3",
-    "expo-updates": "~0.25.14",
-    "react-native-gesture-handler": "~2.16.1"
-    "react-native-webview": "13.8.6"
+    "react-native-webview": "13.8.6",
+    "typescript": "~5.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
