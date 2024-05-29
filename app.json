@@ -3,6 +3,12 @@
     "name": "app-garden-loft",
     "slug": "app-garden-loft",
     "scheme": "app-garden-loft",
+    "platforms": [
+      "ios", "android"
+    ],
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/splash.png",
@@ -34,6 +40,13 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "owner": "sallydough",
+    "updates": {
+      "url": "https://u.expo.dev/598d65e5-14db-479e-a297-3561c87ddbc5",
+      "requestHeaders": {
+        "expo-channel-name": "main"
+      }
+    }
   }
 }
