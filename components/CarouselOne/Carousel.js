@@ -339,10 +339,17 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  Pressable,
   TouchableOpacity,
   Alert,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
+// import VideoCall from "../VideoCall";
+// import Activities2 from "../Activities";
+// import Entertainment from "../Entertainment";
+// import Lights from "../Lights";
+// import { getAuth, signOut } from "firebase/auth";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 
 const { width: viewportWidth, height: viewportHeight } =
@@ -352,11 +359,13 @@ const data = [
   {
     title: "ACTIVITIES",
     icon: "weight-lifter",
+    // component: <Activities2 />,
     prompt: "Join an Activity?",
   },
   {
     title: "VIDEO CALL",
     icon: "phone",
+    // component: <VideoCall />,
     prompt: "Make a Video Call?",
   },
   {
@@ -367,6 +376,7 @@ const data = [
   {
     title: "ENTERTAINMENT",
     icon: "movie-open-star",
+    // component: <Entertainment />,
     prompt: "Watch Entertainment?",
   },
   {
@@ -377,6 +387,7 @@ const data = [
   {
     title: "LIGHTS",
     icon: "lightbulb",
+    // component: <Lights />,
     prompt: "Change Lights?",
   },
 ];
