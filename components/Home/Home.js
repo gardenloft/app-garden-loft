@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import {
   View,
@@ -14,7 +13,8 @@ import VideoCall from "../VideoCall";
 import Activities2 from "../Activities";
 import Entertainment from "../Entertainment";
 import Lights from "../Lights";
-import GLCommunity from "../GLCommunity";
+import HowTo from "../HowTo";
+import GLCommunity from "../GlCommunity";
 import { getAuth, signOut } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -50,7 +50,7 @@ const data: Item[] = [
   {
     title: "HOW-TO VIDEOS",
     icon: "account-question",
-    // component: <HowTo />,
+    component: <HowTo />,
     prompt: "Need Help With Your Garden Loft?",
   },
   {
@@ -167,9 +167,10 @@ const Home: React.FC = () => {
         ref={carouselRef}
         data={data}
         renderItem={renderItem}
-        width={Math.round(viewportWidth * 0.85)}
-        height={viewportHeight * 0.25}
+        width={Math.round(viewportWidth * 0.2)}
+        height={Math.round(viewportHeight * 0.9)}
         loop={true}
+        style={{ width: Math.round(viewportWidth * 0.8) }}
         onSnapToItem={handleSnapToItem}
         pagingEnabled={false}
         scrollEnabled={false}
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
     flexDirection: "column",
-    gap: 5,
+    gap: 2,
   },
   carousel2: {
     marginBottom: -40,
