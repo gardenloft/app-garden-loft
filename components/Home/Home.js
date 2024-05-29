@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import {
   View,
@@ -14,6 +13,7 @@ import VideoCall from "../VideoCall";
 import Activities2 from "../Activities";
 import Entertainment from "../Entertainment";
 import Lights from "../Lights";
+import HowTo from "../HowTo";
 import GLCommunity from "../GlCommunity";
 import { getAuth, signOut } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -50,7 +50,7 @@ const data: Item[] = [
   {
     title: "HOW-TO VIDEOS",
     icon: "account-question",
-    // component: <HowTo />,
+    component: <HowTo />,
     prompt: "Need Help With Your Garden Loft?",
   },
   {
