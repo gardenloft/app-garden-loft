@@ -1155,7 +1155,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cardContainer: {
-    width: viewportWidth * 0.3,
+    width: viewportWidth * 0.26, //changes width of carousel cards
     height: viewportHeight * 0.3,
     backgroundColor: "#f09030",
     borderRadius: 30,

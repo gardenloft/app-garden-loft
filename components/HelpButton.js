@@ -74,11 +74,13 @@ const HelpButton = () => {
 
 const styles = StyleSheet.create({
   container: {
-    width: viewportWidth * 0.95,
+    width: viewportWidth * 0.92,
     justifyContent: "space-between",
     flexDirection: "row",
-    marginTop: 15,
+    marginTop: 45,
+    marginBottom: 45,
     paddingTop: 12,
+    alignSelf: "center",
   },
   container2: {
     flex: 1,
