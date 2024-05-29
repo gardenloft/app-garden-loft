@@ -9,8 +9,8 @@ const App = () => (
   <GestureHandlerRootView style={{ flex: 1,  backgroundColor: "#FCF8E3" }}>
     <SafeAreaProvider>
       <HelpButton />
-      {/* <Home /> */}
-      <Carousel />
+      <Home />
+      {/* <Carousel /> */}
     </SafeAreaProvider>
   </GestureHandlerRootView>
 );
