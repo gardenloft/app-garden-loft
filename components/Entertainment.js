@@ -3,7 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
+  Pressable,
   Dimensions,
   Modal,
   ScrollView,
@@ -77,7 +77,7 @@ const Entertainment = () => {
   };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity
+    <Pressable
       key={item.id}
       style={[
         styles.cardContainer,
@@ -89,7 +89,7 @@ const Entertainment = () => {
       onPress={() => openSeasonModal(item)}>
       <MaterialCommunityIcons name="television-play" size={94} color="white" />
       <Text style={styles.cardText}>{item.name}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   return (
@@ -109,16 +109,16 @@ const Entertainment = () => {
             snapEnabled
             onSnapToItem={(index) => setActiveIndex(index)}
           />
-          <TouchableOpacity
+          <Pressable
             style={styles.arrowLeft}
             onPress={() => scrollViewRef.current?.snapToPrev()}>
             <FontAwesome name="angle-left" size={100} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity
+          </Pressable>
+          <Pressable
             style={styles.arrowRight}
             onPress={() => scrollViewRef.current?.snapToNext()}>
             <FontAwesome name="angle-right" size={100} color="black" />
-          </TouchableOpacity>
+          </Pressable>
         </>
       )}
 
@@ -130,19 +130,19 @@ const Entertainment = () => {
         <View style={styles.modalView}>
           <ScrollView style={{ width: "100%" }}>
             {selectedSeasonVideos.map((season, index) => (
-              <TouchableOpacity
+              <Pressable
                 key={index}
                 style={styles.seasonButton}
                 onPress={() => openVideoModal(season.videoId)}>
                 <Text style={styles.seasonButtonText}>{season.name}</Text>
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </ScrollView>
-          <TouchableOpacity
+          <Pressable
             style={styles.closeButton}
             onPress={() => setIsSeasonModalVisible(false)}>
             <FontAwesome name="close" size={24} color="black" />
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </Modal>
 
@@ -153,15 +153,15 @@ const Entertainment = () => {
         onRequestClose={() => setIsVideoModalVisible(false)}>
         <View style={styles.modalView}>
           <WebView
-            style={{ width: viewportWidth * 0.8, height: viewportHeight * 0.4 }}
+            style={{ width: viewportWidth * 0.8, height: viewportHeight * 0.8 }}
             javaScriptEnabled={true}
             source={{ uri: `https://www.youtube.com/embed/${selectedVideoId}` }}
           />
-          <TouchableOpacity
+          <Pressable
             style={styles.closeButton}
             onPress={() => setIsVideoModalVisible(false)}>
             <FontAwesome name="close" size={24} color="black" />
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </Modal>
     </View>
