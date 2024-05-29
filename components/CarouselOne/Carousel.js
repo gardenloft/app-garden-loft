@@ -345,8 +345,8 @@ import {
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 // import VideoCall from "../VideoCall";
-// import Activities2 from "../Activities";
-// import Entertainment from "../Entertainment";
+import Activities2 from "../Activities";
+import Entertainment from "../Entertainment";
 // import Lights from "../Lights";
 // import { getAuth, signOut } from "firebase/auth";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -359,7 +359,7 @@ const data = [
   {
     title: "ACTIVITIES",
     icon: "weight-lifter",
-    // component: <Activities2 />,
+    component: <Activities2 />,
     prompt: "Join an Activity?",
   },
   {
@@ -376,7 +376,7 @@ const data = [
   {
     title: "ENTERTAINMENT",
     icon: "movie-open-star",
-    // component: <Entertainment />,
+    component: <Entertainment />,
     prompt: "Watch Entertainment?",
   },
   {
@@ -447,7 +447,7 @@ const Home = () => {
       <Carousel
         ref={carouselRef}
         width={Math.round(viewportHeight * 0.28)}
-        height={Math.round(viewportHeight * 0.3)}
+        height={Math.round(viewportHeight * 0.25)}
         autoPlay={false}
         data={data}
         renderItem={renderItem}
@@ -486,8 +486,8 @@ const styles = StyleSheet.create({
   },
   prompt: {
     fontSize: 30,
-    marginBottom: 500,
-    marginTop: 10,
+    // marginBottom: 370,
+    // marginTop: 10,
     color: "rgb(45, 62, 95)",
   },
   item: {
