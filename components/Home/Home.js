@@ -14,7 +14,7 @@ import Activities2 from "../Activities";
 import Entertainment from "../Entertainment";
 import Lights from "../Lights";
 import HowTo from "../HowTo";
-import GLCommunity from "../GlCommunity";
+import GLClub from "../GLClub";
 import { getAuth, signOut } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -56,7 +56,7 @@ const data: Item[] = [
   {
     title: "GARDEN LOFT",
     icon: "home-group-plus",
-    component: <GLCommunity />,
+    component: <GLClub />,
     prompt: "Meet Garden Loft Members?",
   },
   {
