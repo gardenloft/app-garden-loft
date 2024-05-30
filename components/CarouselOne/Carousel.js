@@ -99,9 +99,6 @@
 
 // export default CustomCarousel;
 
-
-
-
 // // components/Carousel.js
 // import React, { useState, useRef } from "react";
 // import {
@@ -345,9 +342,11 @@ import {
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 // import VideoCall from "../VideoCall";
-import Activities2 from "../Activities";
+
 import Entertainment from "../Entertainment";
-// import Lights from "../Lights";
+import Activities from "../Activities";
+import HowTo from "../HowTo";
+import Lights from "../Lights";
 // import { getAuth, signOut } from "firebase/auth";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
@@ -359,7 +358,7 @@ const data = [
   {
     title: "ACTIVITIES",
     icon: "weight-lifter",
-    component: <Activities2 />,
+    component: <Activities />,
     prompt: "Join an Activity?",
   },
   {
@@ -382,12 +381,13 @@ const data = [
   {
     title: "HOW-TO VIDEOS",
     icon: "account-question",
+    component: <HowTo />,
     prompt: "Need Help With Your Garden Loft?",
   },
   {
     title: "LIGHTS",
     icon: "lightbulb",
-    // component: <Lights />,
+    component: <Lights />,
     prompt: "Change Lights?",
   },
 ];
@@ -414,8 +414,7 @@ const Home = () => {
         style={[
           styles.item,
           { backgroundColor: index === activeIndex ? "#f3b718" : "#909090" },
-        ]}
-      >
+        ]}>
         <MaterialCommunityIcons
           style={[
             styles.icon,
@@ -428,8 +427,7 @@ const Home = () => {
           style={[
             styles.title,
             { color: index === activeIndex ? "black" : "#f3b718" },
-          ]}
-        >
+          ]}>
           {item.title}
         </Text>
       </View>
@@ -440,8 +438,7 @@ const Home = () => {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.arrowLeft}
-        onPress={() => carouselRef.current.prev()}
-      >
+        onPress={() => carouselRef.current.prev()}>
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
       <Carousel
@@ -458,8 +455,7 @@ const Home = () => {
       />
       <TouchableOpacity
         style={styles.arrowRight}
-        onPress={() => carouselRef.current.next()}
-      >
+        onPress={() => carouselRef.current.next()}>
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
       <Text style={styles.prompt}>{data[activeIndex].prompt}</Text>
@@ -480,7 +476,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   carousel: {
-    width: Math.round(viewportWidth * 0.90),
+    width: Math.round(viewportWidth * 0.9),
     marginTop: 10,
     marginLeft: 90,
   },
