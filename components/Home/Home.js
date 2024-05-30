@@ -14,7 +14,7 @@ import Activities2 from "../Activities";
 import Entertainment from "../Entertainment";
 import Lights from "../Lights";
 import HowTo from "../HowTo";
-import GLCommunity from "../GlCommunity";
+import GLCommunity from "../../components/GlCommunity";
 import { getAuth, signOut } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
