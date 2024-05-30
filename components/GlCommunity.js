@@ -26,38 +26,7 @@ const defaultImage = {
 };
 
 const GLCommunity = () => {
-  const [contacts, setContacts] = useState([
-    {
-      id: 1,
-      name: "Elizabeth",
-      meetingId: "1o31-vt61-zxdw",
-      imageUrl: defaultImage.elizabeth,
-    },
-    {
-      id: 2,
-      name: "Shari",
-      meetingId: "2o9t-84vd-l56t",
-      imageUrl: defaultImage.shari,
-    },
-    {
-      id: 3,
-      name: "Pat",
-      meetingId: "35qc-oixz-zvdd",
-      imageUrl: defaultImage.pat,
-    },
-    {
-      id: 4,
-      name: "John",
-      meetingId: "3s2v-9h43-d1ap",
-      imageUrl: defaultImage.john,
-    },
-    {
-      id: 5,
-      name: "Matthew",
-      meetingId: "42ck-ivw3-71ya",
-      imageUrl: defaultImage.matthew,
-    },
-  ]);
+  const [contacts, setContacts] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollViewRef = useRef(null);
 
@@ -66,18 +35,32 @@ const GLCommunity = () => {
 
   useEffect(() => {
     if (user) {
-      checkContactsInDatabase(user.uid);
+      fetchUserNames();
     }
   }, [user]);
 
-  const checkContactsInDatabase = async (uid) => {
+  const fetchUserNames = async () => {
+    const querySnapshot = await getDocs(collection(FIRESTORE_DB, 'users'));
+    const fetchedContacts = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      name: doc.data().userName,
+      meetingId: doc.data().meetingId || '',
+      imageUrl: defaultImage[doc.data().userName.toLowerCase()] || defaultImage.john,
+    }));
+    setContacts(fetchedContacts);
+    if (user) {
+      checkContactsInDatabase(user.uid, fetchedContacts);
+    }
+  };
+
+  const checkContactsInDatabase = async (uid, fetchedContacts) => {
     const contactsQuery = query(
       collection(FIRESTORE_DB, `users/${uid}/contacts`)
     );
     const querySnapshot = await getDocs(contactsQuery);
     const dbContacts = querySnapshot.docs.map((doc) => doc.data().name);
 
-    const updatedContacts = contacts.map((contact) => ({
+    const updatedContacts = fetchedContacts.map((contact) => ({
       ...contact,
       isAdded: dbContacts.includes(contact.name),
     }));
@@ -103,7 +86,7 @@ const GLCommunity = () => {
         imageUrl: contact.imageUrl,
       });
       Alert.alert("Contact added successfully");
-      checkContactsInDatabase(user.uid);
+      fetchUserNames(); // Refresh the contacts list
     } catch (error) {
       console.error("Error adding contact: ", error);
       Alert.alert("Error adding contact.");
@@ -117,7 +100,7 @@ const GLCommunity = () => {
         styles.cardContainer,
         {
           backgroundColor:
-            item.id === contacts[activeIndex].id ? "#f3b718" : "#f09030",
+            item.id === contacts[activeIndex]?.id ? "#f3b718" : "#f09030",
         },
       ]}
       onPress={() => handleAddContact(item)}>
@@ -213,3 +196,7 @@ const styles = StyleSheet.create({
 });
 
 export default GLCommunity;
+
+
+
+
