@@ -25,7 +25,7 @@ const defaultImage = {
   matthew: require("../assets/images/portrait5.jpg"),
 };
 
-const GLCommunity = () => {
+const GLClub= () => {
   const [contacts, setContacts] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollViewRef = useRef(null);
@@ -195,4 +195,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GLCommunity;
+export default GLClub;
