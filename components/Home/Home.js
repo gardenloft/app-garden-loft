@@ -10,7 +10,7 @@ import {
 import Carousel from "react-native-reanimated-carousel";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import VideoCall from "../VideoCall";
-import Activities2 from "../Activities";
+import Activities from "../Activities";
 import Entertainment from "../Entertainment";
 import Lights from "../Lights";
 import HowTo from "../HowTo";
@@ -32,7 +32,7 @@ const data: Item[] = [
   {
     title: "ACTIVITIES",
     icon: "weight-lifter",
-    component: <Activities2 />,
+    component: <Activities />,
     prompt: "Join an Activity?",
   },
   {
