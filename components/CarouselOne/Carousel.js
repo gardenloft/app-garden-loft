@@ -1,128 +1,24 @@
 // // components/Carousel.js
-// import React, { useRef, useState } from 'react';
-// import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-// import Carousel from 'react-native-reanimated-carousel';
-// import Icon from 'react-native-vector-icons/FontAwesome';
-// import CarouselCard from './CarouselCard';
-// import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
-
-// const { width: viewportWidth } = Dimensions.get('window');
-// const carouselWidth = viewportWidth * 0.90;
-// const cardWidth = carouselWidth / 5;
-
-// const data = [
-//   {
-//     title: "ACTIVITIES",
-//     icon: "child",
-//     // component: <Activities2 />,
-//     prompt: "Join an Activity?",
-//   },
-//   { icon: 'phone', title: 'VIDEO CALL' },
-//   { icon: 'users', title: 'GARDEN LOFT' },
-//   { icon: 'television', title: 'ENTERTAINMENT' },
-//   { icon: 'youtube-play', title: 'HOW-TO VIDEOS' },
-//   { icon: 'sun-o', title: 'LIGHTS' },
-//   { icon: 'angellist', title: 'LOG OUT' },
-// ]
-
-// const CustomCarousel = () => {
-//   const carouselRef = useRef(null);
-//   const [currentIndex, setCurrentIndex] = useState(0);
-
-//   const handlePrev = () => {
-//     carouselRef.current.prev();
-//   };
-
-//   const handleNext = () => {
-//     carouselRef.current.next();
-//   };
-
-//   const getCardStyle = (index) => {
-//     const scale = index === currentIndex ? 2 : 1;
-//     return {
-//       width: cardWidth * scale,
-//       height: cardWidth * scale,
-//     };
-//   };
-
-//   return (
-//     <View style={styles.carouselContainer}>
-//       <TouchableOpacity style={styles.arrow} onPress={handlePrev}>
-//         <Icon name="angle-left" size={80} color="#000" />
-//       </TouchableOpacity>
-//       <Carousel
-//         ref={carouselRef}
-//         width={carouselWidth}
-//         height={cardWidth}
-//         autoPlay={false}
-//         inactiveSlideScale={0.8}
-//         inactiveSlideOpacity={0.7}
-//         pagingEnabled={false}
-//         snapEnabled={false}
-//         loop={true}
-//         data={data}
-//         onScrollIndexChanged={setCurrentIndex}
-//         renderItem={({ item, index }) => (
-//           <View style={getCardStyle(index)}>
-//           <CarouselCard iconName={item.icon} label={item.title} cardWidth={cardWidth}/>
-//           </View>
-//         )}
-//         style={styles.carousel}
-//         mode="horizontal-stack"
-//         modeConfig={{
-//           snapDirection: 'left',
-//           stackInterval: cardWidth,
-//         }}
-//       />
-//       <TouchableOpacity style={styles.arrow} onPress={handleNext}>
-//         <Icon name="angle-right" size={80} color="#000" />
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   carouselContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     width: '100%',
-//     marginTop: 120,
-//   },
-//   arrow: {
-//     padding: 10,
-//   },
-//   carousel: {
-//     width: carouselWidth,
-//   },
-// });
-
-// export default CustomCarousel;
-
-
-
-
-// // components/Carousel.js
 // import React, { useState, useRef } from "react";
 // import {
 //   View,
 //   Text,
 //   StyleSheet,
 //   Dimensions,
+//   Pressable,
 //   TouchableOpacity,
 //   Alert,
 // } from "react-native";
 // import Carousel from "react-native-reanimated-carousel";
+// import VideoCall from "../VideoCall";
+// import Activities2 from "../Activities";
+// import Entertainment from "../Entertainment";
+// import Lights from "../Lights";
+// import HowTo from "../HowTo";
+// import GLClub from "../GLClub";
+// // import { getAuth, signOut } from "firebase/auth";
+// // import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
-// // import { getAuth, signOut } from 'firebase/auth';
-// // import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// // import VideoCall from '../CarouselTwo/VideoCall';
-// // import Activities2 from '../CarouselTwo/Activities2';
-// // import Lights from '../CarouselTwo/Lights';
-// // import Entertainment from '../CarouselTwo/Entertainment';
-// // import HowTo from '../CarouselTwo/HowTo';
-// // import GLCommunity from '../CarouselTwo/GLCommunity';
 
 // const { width: viewportWidth, height: viewportHeight } =
 //   Dimensions.get("window");
@@ -131,71 +27,43 @@
 //   {
 //     title: "ACTIVITIES",
 //     icon: "weight-lifter",
-//     // component: <Activities2 />,
+//     component: <Activities2 />,
 //     prompt: "Join an Activity?",
 //   },
 //   {
 //     title: "VIDEO CALL",
 //     icon: "phone",
-//     // component: <VideoCall />,
+//     component: <VideoCall />,
 //     prompt: "Make a Video Call?",
 //   },
 //   {
 //     title: "GARDEN LOFT",
 //     icon: "home-group-plus",
-//     // component: <GLCommunity />,
+//     component: <GLClub />,
 //     prompt: "Meet Garden Loft Members?",
 //   },
 //   {
 //     title: "ENTERTAINMENT",
 //     icon: "movie-open-star",
-//     // component: <Entertainment />,
+//     component: <Entertainment />,
 //     prompt: "Watch Entertainment?",
 //   },
 //   {
 //     title: "HOW-TO VIDEOS",
+//     component: <HowTo />,
 //     icon: "account-question",
-//     // component: <HowTo />,
 //     prompt: "Need Help With Your Garden Loft?",
 //   },
 //   {
 //     title: "LIGHTS",
 //     icon: "lightbulb",
-//     // component: <Lights />,
+//     component: <Lights />,
 //     prompt: "Change Lights?",
 //   },
-//   // {
-//   //   title: 'LOGOUT',
-//   //   icon: 'logout',
-//   //   prompt: 'Want to log out of Garden Loft app?',
-//   //   action: async () => {
-//   //     Alert.alert(
-//   //       'Logout',
-//   //       'Are you sure you want to log out?',
-//   //       [
-//   //         { text: 'Cancel', onPress: () => console.log('Logout cancelled'), style: 'cancel' },
-//   //         {
-//   //           text: 'Yes',
-//   //           onPress: async () => {
-//   //             const auth = getAuth();
-//   //             try {
-//   //               await signOut(auth);
-//   //               await AsyncStorage.removeItem('rememberedUser');
-//   //               console.log('User signed out!');
-//   //             } catch (error) {
-//   //               console.error('Logout failed:', error);
-//   //             }
-//   //           }
-//   //         }
-//   //       ],
-//   //       { cancelable: false }
-//   //     );
-//   //   },
-//   // },
 // ];
 
 // const Home = () => {
-//   const [activeIndex, setActiveIndex] = useState(0);
+//   const [activeIndex, setActiveIndex] = useState(2); // Set initial active index to the yellow card (index 2)
 //   const carouselRef = useRef(null);
 
 //   const handleSnapToItem = (index) => {
@@ -255,12 +123,14 @@
 //         renderItem={renderItem}
 //         loop={true}
 //         onSnapToItem={handleSnapToItem}
-//         // mode="parallax"
-//         // modeConfig={{
-//         //   parallaxScrollingScale: 0.9,
-//         //   parallaxScrollingOffset: 0.1,
-//         // }}
 //         style={styles.carousel}
+//         getCurrentIndex={2}
+//         mode="parallax"
+//         modeConfig={{
+//             // parallaxScrollingScale: 1,
+//             parallaxScrollingOffset: -20,
+//             // parallaxAdjacentItemScale: 0.85,
+//         }}
 //       />
 //       <TouchableOpacity
 //         style={styles.arrowRight}
@@ -286,13 +156,15 @@
 //     marginTop: 10,
 //   },
 //   carousel: {
-//    width: Math.round(viewportWidth * 0.9),
+//     width: Math.round(viewportWidth * 0.90),
 //     marginTop: 10,
+//     marginLeft: 90,
+
 //   },
 //   prompt: {
 //     fontSize: 30,
-//     marginBottom: 500,
-//     marginTop: 10,
+//     // marginBottom: 370,
+//     // marginTop: 10,
 //     color: "rgb(45, 62, 95)",
 //   },
 //   item: {
@@ -339,17 +211,15 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  Pressable,
   TouchableOpacity,
-  Alert,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-// import VideoCall from "../VideoCall";
+import VideoCall from "../VideoCall";
 import Activities2 from "../Activities";
 import Entertainment from "../Entertainment";
-// import Lights from "../Lights";
-// import { getAuth, signOut } from "firebase/auth";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
+import Lights from "../Lights";
+import HowTo from "../HowTo";
+import GLClub from "../GLClub";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 
 const { width: viewportWidth, height: viewportHeight } =
@@ -365,12 +235,13 @@ const data = [
   {
     title: "VIDEO CALL",
     icon: "phone",
-    // component: <VideoCall />,
+    component: <VideoCall />,
     prompt: "Make a Video Call?",
   },
   {
     title: "GARDEN LOFT",
     icon: "home-group-plus",
+    component: <GLClub />,
     prompt: "Meet Garden Loft Members?",
   },
   {
@@ -381,19 +252,20 @@ const data = [
   },
   {
     title: "HOW-TO VIDEOS",
+    component: <HowTo />,
     icon: "account-question",
     prompt: "Need Help With Your Garden Loft?",
   },
   {
     title: "LIGHTS",
     icon: "lightbulb",
-    // component: <Lights />,
+    component: <Lights />,
     prompt: "Change Lights?",
   },
 ];
 
 const Home = () => {
-  const [activeIndex, setActiveIndex] = useState(3); // Set initial active index to the yellow card (index 2)
+  const [activeIndex, setActiveIndex] = useState(2); // Set initial active index to the yellow card (index 2)
   const carouselRef = useRef(null);
 
   const handleSnapToItem = (index) => {
@@ -401,15 +273,16 @@ const Home = () => {
   };
 
   const handleCardPress = (item, index) => {
-    if (item.action) {
-      item.action();
-    } else {
-      carouselRef.current.scrollTo({ index });
-    }
+    carouselRef.current.scrollTo({ index });
   };
 
+  const handleCardPressSnap = (item, index) => {
+    handleCardPress(item, index);
+    handleSnapToItem(index);
+  }
+
   const renderItem = ({ item, index }) => (
-    <TouchableOpacity onPress={() => handleCardPress(item, index)}>
+    <TouchableOpacity onPress={() => handleCardPressSnap(item, index)}>
       <View
         style={[
           styles.item,
@@ -436,29 +309,47 @@ const Home = () => {
     </TouchableOpacity>
   );
 
+  const handlePrev = () => {
+    const newIndex = (activeIndex - 1 + data.length) % data.length;
+    carouselRef.current.scrollTo({ index: newIndex, animated: true  });
+    setActiveIndex(newIndex);
+  };
+
+  const handleNext = () => {
+    const newIndex = (activeIndex + 1) % data.length;
+    carouselRef.current.scrollTo({ index: newIndex, animated: true  });
+    setActiveIndex(newIndex);
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.arrowLeft}
-        onPress={() => carouselRef.current.prev()}
+        onPress={handlePrev}
       >
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
       <Carousel
         ref={carouselRef}
-        width={Math.round(viewportHeight * 0.28)}
-        height={Math.round(viewportHeight * 0.25)}
+        width={Math.round(viewportWidth / 5)} // Display 5 cards
+        height={Math.round(viewportHeight * 0.3)}
         autoPlay={false}
         data={data}
         renderItem={renderItem}
         loop={true}
         onSnapToItem={handleSnapToItem}
         style={styles.carousel}
-        defaultIndex={3} // Ensure the yellow card is centered initially
+        // defaultIndex={2} // Ensure the yellow card is centered initially
+        mode="parallax"
+        modeConfig={{
+            parallaxScrollingScale: 1,
+            parallaxScrollingOffset: 20,
+            parallaxAdjacentItemScale: 0.85,
+        }}
       />
       <TouchableOpacity
         style={styles.arrowRight}
-        onPress={() => carouselRef.current.next()}
+        onPress={handleNext}
       >
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
@@ -480,22 +371,22 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   carousel: {
-    width: Math.round(viewportWidth * 0.90),
+    width: Math.round(viewportWidth * 0.8),
     marginTop: 10,
-    marginLeft: 90,
+
   },
   prompt: {
     fontSize: 30,
-    // marginBottom: 370,
-    // marginTop: 10,
     color: "rgb(45, 62, 95)",
+    marginBottom: 50,
   },
   item: {
-    width: viewportWidth * 0.17,
-    height: viewportHeight * 0.25,
+    width: Math.round(viewportWidth * 0.18), // Width for 5 items
+    height: Math.round(viewportHeight * 0.25),
+    marginLeft: 350,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 60,
+    borderRadius: 30,
     flexDirection: "column",
     paddingHorizontal: 10,
     shadowColor: "#000",
@@ -513,16 +404,17 @@ const styles = StyleSheet.create({
   arrowLeft: {
     position: "absolute",
     top: "12%",
-    left: 30,
+    left: 10,
     transform: [{ translateY: -10 }],
   },
   arrowRight: {
     position: "absolute",
     top: "12%",
-    right: 30,
+    right: 35,
     transform: [{ translateY: -10 }],
   },
   icon: {},
 });
 
 export default Home;
+
