@@ -10,7 +10,7 @@
       "policy": "sdkVersion"
     },
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "landscape",
     "icon": "./assets/splash.png",
     "userInterfaceStyle": "light",
     "splash": {
