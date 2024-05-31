@@ -34,6 +34,7 @@ const HowTo = () => {
         const videosData = [];
         docSnapshot.forEach((doc) => {
           const data = doc.data();
+          console.log("Fetched Video Data: ", data);
           videosData.push({
             id: doc.id,
             name: data.name,
@@ -56,6 +57,7 @@ const HowTo = () => {
   }, []);
 
   const openVideoModal = (videoId) => {
+    console.log("Opening Video Modal with Video ID: ", videoId);
     setSelectedVideoId(videoId);
     setIsVideoModalVisible(true);
   };
@@ -70,6 +72,7 @@ const HowTo = () => {
       key={item.id}
       style={[
         styles.cardContainer,
+
         { backgroundColor: index === activeIndex ? "#f3b718" : "#f09030",
         transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}]
          },
@@ -118,7 +121,7 @@ const HowTo = () => {
         onSnapToItem={(index) => setActiveIndex(index)}
         pagingEnabled={false}
         snapEnabled={false}
-        
+
       />
       <Pressable
         style={styles.arrowLeft}
@@ -137,8 +140,8 @@ const HowTo = () => {
         onRequestClose={closeVideoModal}>
         <View style={styles.modalView}>
           <WebView
-            style={{ height: "100%", width: "100%" }}
-            javaScriptEnabled={true}
+            style={{ width: "100%" }}
+            javaScriptEnabled
             source={{ uri: `https://www.youtube.com/embed/${selectedVideoId}` }}
           />
           <Pressable style={styles.closeButton} onPress={closeVideoModal}>
@@ -175,8 +178,8 @@ const styles = StyleSheet.create({
   },
   loading: {
     flex: 1,
-    alignItems: "flex-start",
-    fontSize: 44,
+    alignItems: "center",
+    justifyContent: "center",
   },
   arrowLeft: {
     position: "absolute",
@@ -193,13 +196,13 @@ const styles = StyleSheet.create({
     transform: [{ translateY: -50 }],
   },
   modalView: {
-    margin: 5,
+    margin: 10,
     height: viewportHeight * 0.7,
     marginTop: 50,
     backgroundColor: "white",
     borderRadius: 20,
-    padding: 1,
-    paddingTop: 90,
+    padding: 3,
+    paddingTop: 20,
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -215,8 +218,8 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    left: 600,
     top: 30,
+    right: 30,
     backgroundColor: "lightblue",
     padding: 13,
     borderRadius: 5,
