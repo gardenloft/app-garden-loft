@@ -66,7 +66,7 @@ const data = [
 ];
 
 const Home = () => {
-  const [activeIndex, setActiveIndex] = useState(2); // Set initial active index to the yellow card (index 2)
+  const [activeIndex, setActiveIndex] = useState(0); // Set initial active index to the yellow card (index 2)
   const carouselRef = useRef(null);
 
   const handleSnapToItem = (index) => {
@@ -87,7 +87,10 @@ const Home = () => {
       <View
         style={[
           styles.item,
-          { backgroundColor: index === activeIndex ? "#f3b718" : "#909090" },
+          { backgroundColor: index === activeIndex ? "#f3b718" : "#909090",
+          transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}]
+           }
+          
         ]}
       >
         <MaterialCommunityIcons
@@ -141,11 +144,11 @@ const Home = () => {
         onSnapToItem={handleSnapToItem}
         style={styles.carousel}
         // defaultIndex={2} // Ensure the yellow card is centered initially
-        mode="parallax"
+        // mode="parallax"
         modeConfig={{
-            parallaxScrollingScale: 1,
-            parallaxScrollingOffset: 20,
-            parallaxAdjacentItemScale: 0.85,
+            // parallaxScrollingScale: 1,
+            // parallaxScrollingOffset: 20,
+            // parallaxAdjacentItemScale: 0.85,
         }}
       />
       <TouchableOpacity
@@ -174,6 +177,7 @@ const styles = StyleSheet.create({
   carousel: {
     width: Math.round(viewportWidth * 0.8),
     marginTop: 10,
+    
 
   },
   prompt: {
@@ -195,7 +199,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.22,
     shadowRadius: 9.22,
     elevation: 12,
-    marginHorizontal: 5,
+    marginHorizontal: 25,
   },
   title: {
     fontSize: 19,
