@@ -1162,7 +1162,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 5,
-    marginLeft: 340,
+    marginLeft: 365,
     flexDirection: "column",
     gap: 10,
     shadowColor: "#000",
