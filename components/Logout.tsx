@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, Modal, Alert } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Modal, Alert, Dimensions } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { getAuth, signOut } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const { width: viewportWidth, height: viewportHeight } =
+  Dimensions.get("window");
 
 const Logout: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -22,7 +25,7 @@ const Logout: React.FC = () => {
     <View style={styles.container}>
       <Pressable onPress={() => setIsModalVisible(true)}>
         <View style={styles.logoutButton}>
-          <FontAwesome name="sign-out" size={30} color="#f3b718" />
+          <FontAwesome name="sign-out" size={80} color="#f3b718" />
           <Text style={styles.buttonText}>Logout</Text>
         </View>
       </Pressable>
@@ -61,19 +64,24 @@ const Logout: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 80,
   },
   logoutButton: {
     flexDirection: 'row',
+    width: viewportWidth * 0.3, //changes width of carousel cards
+    height: viewportHeight * 0.25,
     alignItems: 'center',
+    textAlign: "center",
     backgroundColor: '#909090',
-    padding: 10,
-    borderRadius: 5,
+    padding: 30,
+    borderRadius: 20,
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: 68,
+    fontFamily: "Arial",
     color: '#f3b718',
     marginLeft: 10,
   },

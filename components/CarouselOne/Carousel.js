@@ -15,6 +15,7 @@ import Lights from "../Lights";
 import HowTo from "../HowTo";
 import GLClub from "../GLClub";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
+import Logout from "../Logout";
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
@@ -55,6 +56,12 @@ const data = [
     icon: "lightbulb",
     component: <Lights />,
     prompt: "Change Lights?",
+  },
+  {
+    title: "LOG OUT",
+    icon: "logout",
+    component: <Logout />,
+    prompt: "Log Out of Garden Loft App?",
   },
 ];
 
