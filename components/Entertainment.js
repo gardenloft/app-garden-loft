@@ -37,6 +37,8 @@ const Entertainment = () => {
   const [error, setError] = useState("");
   const [favorites, setFavorites] = useState([]);
   const [isFavoritesModalVisible, setIsFavoritesModalVisible] = useState(false);
+  const [isNoFavoritesModalVisible, setIsNoFavoritesModalVisible] =
+    useState(false);
 
   const scrollViewRef = useRef(null);
   const auth = getAuth();
@@ -159,7 +161,7 @@ const Entertainment = () => {
     if (favorites.length > 0) {
       setIsFavoritesModalVisible(true);
     } else {
-      setError("No favorites available.");
+      setIsNoFavoritesModalVisible(true);
     }
   };
 
@@ -309,6 +311,21 @@ const Entertainment = () => {
           <Pressable
             style={styles.closeButton}
             onPress={() => setIsFavoritesModalVisible(false)}>
+            <FontAwesome name="close" size={24} color="black" />
+          </Pressable>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isNoFavoritesModalVisible}
+        onRequestClose={() => setIsNoFavoritesModalVisible(false)}>
+        <View style={styles.modalView}>
+          <Text style={styles.errorText}>No favorites available.</Text>
+          <Pressable
+            style={styles.closeButton}
+            onPress={() => setIsNoFavoritesModalVisible(false)}>
             <FontAwesome name="close" size={24} color="black" />
           </Pressable>
         </View>
