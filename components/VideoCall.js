@@ -46,7 +46,9 @@ const VideoCall = () => {
   const renderItem = ({ item, index }) => (
     <TouchableOpacity
       key={item.id}
-      style={[styles.cardContainer, { backgroundColor: index === activeIndex ? '#f3b718' : '#f09030' }]}
+      style={[styles.cardContainer, { backgroundColor: index === activeIndex ? '#f3b718' : '#f09030',
+      transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}],
+       }]}
       onPress={() => startVideoCall(item.meetingId)} // Pass the meetingId here
     >
       <Text style={styles.cardText}>{item.name}</Text>
@@ -69,13 +71,9 @@ const VideoCall = () => {
       <Carousel
         data={userNames}
         renderItem={renderItem}
-        width={viewportWidth * 0.3}
+        width={Math.round(viewportWidth * 0.3)}
+        height={Math.round(viewportWidth * 0.3)}
         style={{ width: Math.round(viewportWidth * 0.9) }}
-        // height={viewportHeight * 0.3}
-        // mode="horizontal-stack"
-        // modeConfig={{
-        //   stackInterval: 30 // Adjust this to increase/decrease the gap
-        // }}
         autoPlay={false}
         snapEnabled
         autoPlayInterval={2000}
@@ -86,10 +84,10 @@ const VideoCall = () => {
       <Text style={styles.prompt}>{userNames[activeIndex]?.prompt}</Text>
 
       <TouchableOpacity style={styles.arrowLeft} onPress={() => handleArrowPress('left')}>
-        <FontAwesome name="angle-left" size={64} color="rgb(45, 62, 95)" />
+        <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
       <TouchableOpacity style={styles.arrowRight} onPress={() => handleArrowPress('right')}>
-        <FontAwesome name="angle-right" size={64} color="rgb(45, 62, 95)" />
+        <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
 
       {/* Modal for Video Call */}
@@ -121,15 +119,16 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     alignItems: 'center',
-    height: 290,
+    height: 320,
   },
   cardContainer: {
-    width: viewportWidth * 0.26,
+    width: viewportWidth * 0.30,
     height: viewportHeight * 0.3,
     backgroundColor: '#f09030',
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: 355,
     marginHorizontal: 10, // Add margin to create gap between cards
     shadowOffset: {
       width: 6,

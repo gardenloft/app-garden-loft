@@ -41,6 +41,9 @@ const Entertainment = () => {
     useState(false);
 
   const scrollViewRef = useRef(null);
+
+  const carouselRef = useRef(null);
+
   const auth = getAuth();
   const user = auth.currentUser;
 
@@ -145,6 +148,7 @@ const Entertainment = () => {
     updateWatchedVideos(videoId, videoName);
   };
 
+
   const handleSurpriseMe = () => {
     if (categories.length > 0) {
       const randomCategory =
@@ -205,6 +209,8 @@ const Entertainment = () => {
             {
               backgroundColor:
                 item.id === categories[activeIndex]?.id ? "#f3b718" : "#f09030",
+               transform:
+            item.id === categories[activeIndex]?.id ? [{scale: 1}] : [{scale: 0.8}]
             },
           ]}
           onPress={() => openSeasonModal(item)}>
@@ -219,6 +225,17 @@ const Entertainment = () => {
     }
   };
 
+  const handleArrowPress = (direction) => {
+    let newIndex = activeIndex;
+    if (direction === "left") {
+      newIndex = (activeIndex - 1 + categories.length) % categories.length;
+    } else if (direction === "right") {
+      newIndex = (activeIndex + 1) % categories.length;
+    }
+    carouselRef.current.scrollTo({ index: newIndex, animated: true });
+    setActiveIndex(newIndex);
+  };
+
   return (
     <View style={styles.container}>
       {isLoading ? (
@@ -228,22 +245,24 @@ const Entertainment = () => {
       ) : (
         <>
           <Carousel
-            loop
+           ref={carouselRef}
+            loop={true}
             data={categories}
             renderItem={renderItem}
             width={Math.round(viewportWidth * 0.3)}
+            height={Math.round(viewportWidth * 0.3)}
             style={{ width: Math.round(viewportWidth * 0.9) }}
-            snapEnabled
+            snapEnabled={false}
             onSnapToItem={(index) => setActiveIndex(index)}
           />
           <Pressable
             style={styles.arrowLeft}
-            onPress={() => scrollViewRef.current?.snapToPrev()}>
+             onPress={() => handleArrowPress("left")}>
             <FontAwesome name="angle-left" size={100} color="black" />
           </Pressable>
           <Pressable
             style={styles.arrowRight}
-            onPress={() => scrollViewRef.current?.snapToNext()}>
+            onPress={() => handleArrowPress("right")}>
             <FontAwesome name="angle-right" size={100} color="black" />
           </Pressable>
         </>
@@ -341,13 +360,15 @@ const styles = StyleSheet.create({
     height: 290,
   },
   cardContainer: {
-    width: viewportWidth * 0.26,
+    width: viewportWidth * 0.30, //changes width of carousel cards
     height: viewportHeight * 0.3,
     backgroundColor: "#f09030",
     borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 5,
+    marginLeft: 355,
+    padding: 10,
   },
   cardText: {
     fontSize: 36,
