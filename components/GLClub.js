@@ -116,16 +116,7 @@ const GLClub= () => {
     </Pressable>
   );
 
-  const handleArrowPress = (direction) => {
-    let newIndex = activeIndex;
-    if (direction === "left") {
-      newIndex = (activeIndex - 1 + contacts.length) % contacts.length;
-    } else if (direction === "right") {
-      newIndex = (activeIndex + 1) % contacts.length;
-    }
-    scrollViewRef.current.scrollTo({ index: newIndex, animated: true });
-    setActiveIndex(newIndex);
-  };
+
 
   return (
     <View style={styles.container}>
@@ -141,12 +132,16 @@ const GLClub= () => {
       />
       <Pressable
         style={styles.arrowLeft}
-        onPress={() => handleArrowPress("left")}>
+        onPress={() => {
+          scrollViewRef.current?.scrollTo({ count: -1, animated: true });}}
+        >
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </Pressable>
       <Pressable
         style={styles.arrowRight}
-        onPress={() => handleArrowPress("right")}>
+        onPress={() => {
+          scrollViewRef.current?.scrollTo({ count: 1, animated: true });}}
+        >
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </Pressable>
     </View>

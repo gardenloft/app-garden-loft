@@ -113,23 +113,15 @@ const Home = () => {
     </TouchableOpacity>
   );
 
-  const handlePrev = () => {
-    const newIndex = (activeIndex - 1 + data.length) % data.length;
-    carouselRef.current.scrollTo({ index: newIndex, animated: true  });
-    setActiveIndex(newIndex);
-  };
-
-  const handleNext = () => {
-    const newIndex = (activeIndex + 1) % data.length;
-    carouselRef.current.scrollTo({ index: newIndex, animated: true  });
-    setActiveIndex(newIndex);
-  };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.arrowLeft}
-        onPress={handlePrev}
+        // onPress={handlePrev}
+        onPress={() => {
+          carouselRef.current?.scrollTo({ count: -1, animated: true });
+        }}
       >
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
@@ -143,6 +135,7 @@ const Home = () => {
         loop={true}
         onSnapToItem={handleSnapToItem}
         style={styles.carousel}
+        // autoFillData={true}
         // defaultIndex={2} // Ensure the yellow card is centered initially
         // mode="parallax"
         modeConfig={{
@@ -153,7 +146,10 @@ const Home = () => {
       />
       <TouchableOpacity
         style={styles.arrowRight}
-        onPress={handleNext}
+        // onPress={handleNext}
+        onPress={() => {
+          carouselRef.current?.scrollTo({ count: 1, animated: true });
+        }}
       >
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
@@ -177,8 +173,6 @@ const styles = StyleSheet.create({
   carousel: {
     width: Math.round(viewportWidth * 0.8),
     marginTop: 10,
-    
-
   },
   prompt: {
     fontSize: 30,
@@ -186,8 +180,10 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   item: {
+  
     width: Math.round(viewportWidth * 0.18), // Width for 5 items
     height: Math.round(viewportHeight * 0.25),
+    gap: 10,
     marginLeft: 350,
     justifyContent: "center",
     alignItems: "center",

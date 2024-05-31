@@ -1111,12 +1111,17 @@ const Activities = () => {
           />
           <Pressable
             style={styles.arrowLeft}
-            onPress={() => handleArrowPress("left")}>
+            onPress={() => {
+              carouselRef.current?.scrollTo({ count: -1, animated: true });}}
+            >
             <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
           </Pressable>
           <Pressable
             style={styles.arrowRight}
-            onPress={() => handleArrowPress("right")}>
+            onPress={() => {
+              carouselRef.current?.scrollTo({ count: 1, animated: true });}}
+            
+            >
             <FontAwesome
               name="angle-right"
               size={100}
