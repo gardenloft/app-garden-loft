@@ -177,7 +177,10 @@ const Entertainment = () => {
           style={[
             styles.cardContainer,
             {
-              backgroundColor: "#f3b718",
+              backgroundColor:
+              item.id === categories[activeIndex]?.id ? "#f3b718" : "#f09030",
+             transform:
+          item.id === categories[activeIndex]?.id ? [{scale: 1}] : [{scale: 0.8}]
             },
           ]}
           onPress={handleSurpriseMe}>
@@ -192,7 +195,10 @@ const Entertainment = () => {
           style={[
             styles.cardContainer,
             {
-              backgroundColor: "#f3b718",
+              backgroundColor:
+              item.id === categories[activeIndex]?.id ? "#f3b718" : "#f09030",
+             transform:
+          item.id === categories[activeIndex]?.id ? [{scale: 1}] : [{scale: 0.8}]
             },
           ]}
           onPress={handleFavorites}>
