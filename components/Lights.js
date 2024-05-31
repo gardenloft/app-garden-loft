@@ -63,8 +63,8 @@ const Lights: React.FC = () => {
         styles.cardContainer,
         {
           backgroundColor: index === activeIndex ? "#f3b718" : "#f09030",
-          width: viewportWidth * 0.18, // Adjusted width
-          height: viewportHeight * 0.25,
+          transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}],
+          
         },
       ]}
       onPress={() => toggleLight(item.id)}>
@@ -77,21 +77,33 @@ const Lights: React.FC = () => {
     </Pressable>
   );
 
+  const handleArrowPress = (direction) => {
+    let newIndex = activeIndex;
+    if (direction === "left") {
+      newIndex = (activeIndex - 1 + contacts.length) % contacts.length;
+    } else if (direction === "right") {
+      newIndex = (activeIndex + 1) % contacts.length;
+    }
+    carouselRef.current.scrollTo({ index: newIndex, animated: true });
+    setActiveIndex(newIndex);
+  };
+
   return (
     <View style={styles.container}>
       <Carousel
         ref={carouselRef}
         data={contacts}
         renderItem={renderItem}
-        width={Math.round(viewportWidth * 0.9)}
-        height={viewportHeight * 0.3}
+        width={Math.round(viewportWidth * 0.3)}
+        height={viewportHeight * 0.3} //width of carousel card
+        style={{ width: Math.round(viewportWidth * 0.9) }} //width of the carousel
         loop={true}
         onSnapToItem={(index) => setActiveIndex(index)}
-        mode="parallax"
-        modeConfig={{
-          parallaxScrollingScale: 0.9,
-          parallaxScrollingOffset: 50,
-        }}
+        // mode="parallax"
+        // modeConfig={{
+        //   parallaxScrollingScale: 0.9,
+        //   parallaxScrollingOffset: 50,
+        // }}
         pagingEnabled={true}
       />
       {/* Prompt */}
@@ -100,13 +112,13 @@ const Lights: React.FC = () => {
       </Text>
       <Pressable
         style={styles.arrowLeft}
-        onPress={() => carouselRef.current.prev()}>
-        <FontAwesome name="angle-left" size={50} color="rgb(45, 62, 95)" />
+        onPress={() => handleArrowPress("left")}>
+        <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </Pressable>
       <Pressable
         style={styles.arrowRight}
-        onPress={() => carouselRef.current.next()}>
-        <FontAwesome name="angle-right" size={50} color="rgb(45, 62, 95)" />
+        onPress={() => handleArrowPress("right")}>
+        <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </Pressable>
     </View>
   );
@@ -115,7 +127,7 @@ const Lights: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     position: "relative",
-    height: 290,
+    height: 320,
     alignItems: "center",
   },
   cardContainer: {
@@ -125,6 +137,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 30,
     marginHorizontal: 5,
+    marginLeft: 355,
     flexDirection: "column",
     gap: 25,
     shadowOffset: {
@@ -142,7 +155,7 @@ const styles = StyleSheet.create({
   },
   prompt: {
     fontSize: 20,
-    marginBottom: 15,
+    marginBottom: 35,
   },
   arrowLeft: {
     position: "absolute",

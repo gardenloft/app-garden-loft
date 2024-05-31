@@ -1034,7 +1034,9 @@ const Activities = () => {
       key={index}
       style={[
         styles.cardContainer,
-        { backgroundColor: index === activeIndex + 3 ? "#f3b718" : "#f09030" },
+        { backgroundColor: index === activeIndex ? "#f3b718" : "#f09030",
+        transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}],
+         },
       ]}
       onPress={() => navigateToZoomLink(item)}>
       <Text style={styles.cardText}>{item.item}</Text>
@@ -1074,7 +1076,7 @@ const Activities = () => {
     });
   };
 
-  const handleArrowPress = (direction: "left" | "right") => {
+  const handleArrowPress = (direction) => {
     let newIndex = activeIndex;
     if (direction === "left") {
       newIndex = (activeIndex - 1 + events.length) % events.length;
@@ -1098,16 +1100,14 @@ const Activities = () => {
             data={events}
             layout={"default"}
             renderItem={renderItem}
-            width={Math.round(viewportWidth * 0.85)}
-            height={viewportHeight * 0.25}
-            onSnapToItem={handleSnapToItem}
+            width={Math.round(viewportWidth * 0.3)}
+            height={Math.round(viewportHeight * 0.3)}
+            style={{ width: Math.round(viewportWidth * 0.9) }}
             itemWidth={Math.round(viewportWidth * 0.3)}
             loop={true}
             useScrollView={true}
             activeSlideAlignment="center"
-            inactiveSlideScale={0.8}
-            inactiveSlideOpacity={1}
-            // onSnapToItem={(index) => handleSnapToItem(index)}
+            onSnapToItem={(index) => handleSnapToItem(index)}
           />
           <Pressable
             style={styles.arrowLeft}
@@ -1151,17 +1151,18 @@ const Activities = () => {
 const styles = StyleSheet.create({
   container: {
     position: "relative",
-    height: 290,
+    height: 320,
     alignItems: "center",
   },
   cardContainer: {
-    width: viewportWidth * 0.26, //changes width of carousel cards
+    width: viewportWidth * 0.3, //changes width of carousel cards
     height: viewportHeight * 0.3,
     backgroundColor: "#f09030",
     borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 5,
+    marginLeft: 340,
     flexDirection: "column",
     gap: 10,
     shadowColor: "#000",

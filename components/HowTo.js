@@ -72,9 +72,10 @@ const HowTo = () => {
       key={item.id}
       style={[
         styles.cardContainer,
-        {
-          backgroundColor: index === activeIndex ? "#f3b718" : "#f09030",
-        },
+
+        { backgroundColor: index === activeIndex ? "#f3b718" : "#f09030",
+        transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}]
+         },
       ]}
       onPress={() => openVideoModal(item.videoId)}>
       <MaterialCommunityIcons name="television-play" size={94} color="white" />
@@ -114,10 +115,13 @@ const HowTo = () => {
         data={videos}
         renderItem={renderItem}
         width={Math.round(viewportWidth * 0.3)}
-        height={Math.round(viewportHeight * 0.3)}
-        loop
+        height={Math.round(viewportWidth * 0.3)}
+        loop={true}
         style={{ width: Math.round(viewportWidth * 0.9) }}
         onSnapToItem={(index) => setActiveIndex(index)}
+        pagingEnabled={false}
+        snapEnabled={false}
+
       />
       <Pressable
         style={styles.arrowLeft}
@@ -153,21 +157,24 @@ const styles = StyleSheet.create({
   container: {
     position: "relative",
     alignItems: "center",
-    height: 290,
+    height: 320, // changes height placement of carousel
   },
   cardContainer: {
-    width: viewportWidth * 0.3,
+    width: viewportWidth * 0.3, //changes width of carousel cards
     height: viewportHeight * 0.3,
     backgroundColor: "#f09030",
     borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 5,
+    marginHorizontal: 5, // Add margin to create gap between cards
+    marginLeft: 355,
+    padding: 10,
   },
   cardText: {
     fontSize: 36,
     color: "#393939",
     fontWeight: "700",
+    textAlign: "center"
   },
   loading: {
     flex: 1,

@@ -101,6 +101,7 @@ const GLClub= () => {
         {
           backgroundColor:
             item.id === contacts[activeIndex]?.id ? "#f3b718" : "#f09030",
+            transform: item.id === contacts[activeIndex]?.id ? [{scale: 1}] : [{scale: 0.8}],
         },
       ]}
       onPress={() => handleAddContact(item)}>
@@ -132,8 +133,9 @@ const GLClub= () => {
         ref={scrollViewRef}
         data={contacts}
         renderItem={renderItem}
-        width={Math.round(viewportWidth * 0.6)}
-        height={viewportHeight * 0.4}
+        width={Math.round(viewportWidth * 0.3)}
+        height={Math.round(viewportWidth * 0.3)}
+        style={{ width: Math.round(viewportWidth * 0.9) }}
         loop
         onSnapToItem={(index) => setActiveIndex(index)}
       />
@@ -155,7 +157,7 @@ const styles = StyleSheet.create({
   container: {
     position: "relative",
     alignItems: "center",
-    height: 290,
+    height: 320,
   },
   cardContainer: {
     width: viewportWidth * 0.3,
@@ -164,6 +166,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 30,
     marginHorizontal: 5,
+    marginLeft: 355,
   },
   cardText: {
     fontSize: 36,
