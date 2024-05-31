@@ -55,17 +55,6 @@ const VideoCall = () => {
     </TouchableOpacity>
   );
 
-  const handleArrowPress = (direction) => {
-    let newIndex = activeIndex;
-    if (direction === 'left') {
-      newIndex = (activeIndex - 1 + userNames.length) % userNames.length;
-    } else if (direction === 'right') {
-      newIndex = (activeIndex + 1) % userNames.length;
-    }
-    scrollViewRef.current.scrollTo({ index: newIndex, animated: true });
-    setActiveIndex(newIndex);
-  };
-
   return (
     <View style={styles.container}>
       <Carousel
@@ -83,10 +72,16 @@ const VideoCall = () => {
       />
       <Text style={styles.prompt}>{userNames[activeIndex]?.prompt}</Text>
 
-      <TouchableOpacity style={styles.arrowLeft} onPress={() => handleArrowPress('left')}>
+      <TouchableOpacity style={styles.arrowLeft} 
+      onPress={() => {
+        scrollViewRef.current?.scrollTo({ count: -1, animated: true });}}
+      >
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.arrowRight} onPress={() => handleArrowPress('right')}>
+      <TouchableOpacity style={styles.arrowRight} 
+      onPress={() => {
+        scrollViewRef.current?.scrollTo({ count: 1, animated: true });}}
+      >
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
 

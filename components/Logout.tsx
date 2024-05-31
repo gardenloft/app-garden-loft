@@ -25,7 +25,7 @@ const Logout: React.FC = () => {
     <View style={styles.container}>
       <Pressable onPress={() => setIsModalVisible(true)}>
         <View style={styles.logoutButton}>
-          <FontAwesome name="sign-out" size={80} color="#f3b718" />
+          <FontAwesome name="sign-out" size={80} color="black" />
           <Text style={styles.buttonText}>Logout</Text>
         </View>
       </Pressable>
@@ -75,14 +75,14 @@ const styles = StyleSheet.create({
     height: viewportHeight * 0.25,
     alignItems: 'center',
     textAlign: "center",
-    backgroundColor: '#909090',
+    backgroundColor: "#f3b718",
     padding: 30,
     borderRadius: 20,
   },
   buttonText: {
     fontSize: 68,
     fontFamily: "Arial",
-    color: '#f3b718',
+    color: 'black',
     marginLeft: 10,
   },
   modalContainer: {
