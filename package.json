@@ -1,7 +1,7 @@
 {
   "name": "app-garden-loft",
   "version": "1.0.0",
-  "main": "expo/AppEntry",
+  "main": "App.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
