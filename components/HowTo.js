@@ -83,16 +83,6 @@ const HowTo = () => {
     </Pressable>
   );
 
-  const handleArrowPress = (direction) => {
-    let newIndex = activeIndex;
-    if (direction === "left") {
-      newIndex = (activeIndex - 1 + videos.length) % videos.length;
-    } else if (direction === "right") {
-      newIndex = (activeIndex + 1) % videos.length;
-    }
-    carouselRef.current.scrollTo({ index: newIndex, animated: true });
-    setActiveIndex(newIndex);
-  };
 
   if (isLoading) {
     return (
@@ -125,12 +115,14 @@ const HowTo = () => {
       />
       <Pressable
         style={styles.arrowLeft}
-        onPress={() => handleArrowPress("left")}>
+        onPress={() => {
+          carouselRef.current?.scrollTo({ count: -1, animated: true });}}>
         <FontAwesome name="angle-left" size={100} color="black" />
       </Pressable>
       <Pressable
         style={styles.arrowRight}
-        onPress={() => handleArrowPress("right")}>
+        onPress={() => {
+          carouselRef.current?.scrollTo({ count: 1, animated: true });}}>
         <FontAwesome name="angle-right" size={100} color="black" />
       </Pressable>
       <Modal
