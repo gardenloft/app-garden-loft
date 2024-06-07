@@ -278,7 +278,7 @@ import {
   Text,
   TextInput,
   View,
-  FlatList,
+  FlatList, Dimensions
 } from 'react-native';
 import {
   MeetingProvider,
@@ -289,6 +289,8 @@ import {
 } from '@videosdk.live/react-native-sdk';
 import {createMeeting, token} from './api';
 
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+
 function JoinScreen(props) {
   const [meetingVal, setMeetingVal] = useState('');
   return (
@@ -298,6 +300,8 @@ function JoinScreen(props) {
         backgroundColor: '#F6F6FF',
         justifyContent: 'center',
         paddingHorizontal: 60,
+        width: viewportWidth * 0.8,
+      
       }}>
       <TouchableOpacity
         onPress={() => {
@@ -359,6 +363,8 @@ const Button = ({onPress, buttonText, backgroundColor}) => {
         alignItems: 'center',
         padding: 16,
         borderRadius: 8,
+        marginBottom: 40, //can delete after 
+        
       }}>
       <Text style={{color: 'white', fontSize: 16}}>{buttonText}</Text>
     </TouchableOpacity>
@@ -372,6 +378,8 @@ function ControlsContainer({join, leave, toggleWebcam, toggleMic}) {
         padding: 24,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        width: viewportWidth * 0.8,
+        height: viewportHeight * 0.2
       }}>
       <Button
         onPress={() => {
