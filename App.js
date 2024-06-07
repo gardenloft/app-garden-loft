@@ -3,12 +3,14 @@ import { View, StyleSheet, Text } from 'react-native';
 // import Login from '../app-garden-loft/components/Login/Login';
 import CarouselOne from  '../app-garden-loft/components/CarouselOne/Carousel'
 import Home from './components/Home/Home';
+import HelpButton from './components/HelpButton';
 // import { register } from "@videosdk.live/react-native-sdk";
 // register();
 export default function App() {
   return (
     <View style={styles.container}>
       {/* <Login /> */}
+      <HelpButton />
      <Home />
 
     </View>
