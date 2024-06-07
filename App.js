@@ -63,17 +63,17 @@ const styles = StyleSheet.create({
 // WARNING: code below mixes videoSDK registry & expo-router/entry.js
 // if  entry.js updates with new code, please modify this file to work accordingly
 
-import { register } from "@videosdk.live/react-native-sdk";
-// `@expo/metro-runtime` MUST be the first import to ensure Fast Refresh works
-// on web.
-import "@expo/metro-runtime";
+// import { register } from "@videosdk.live/react-native-sdk";
+// // `@expo/metro-runtime` MUST be the first import to ensure Fast Refresh works
+// // on web.
+// import "@expo/metro-runtime";
 
-// import { App } from "expo-router/build/qualified-entry";
-import { renderRootComponent } from "expo-router/build/renderRootComponent";
+// // import { App } from "expo-router/build/qualified-entry";
+// import { renderRootComponent } from "expo-router/build/renderRootComponent";
 
-// Register VideoSDK services before app component registration
-register();
+// // Register VideoSDK services before app component registration
+// register();
 
-// This file should only import and register the root. No components or exports
-// should be added here.
-renderRootComponent(App);
+// // This file should only import and register the root. No components or exports
+// // should be added here.
+// renderRootComponent(App);
