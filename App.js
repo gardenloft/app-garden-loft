@@ -1,31 +1,56 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image } from 'react-native';
-
+import React from 'react';
+import { View, StyleSheet, Text } from 'react-native';
+// import Login from '../app-garden-loft/components/Login/Login';
+import CarouselOne from  '../app-garden-loft/components/CarouselOne/Carousel'
+import Home from './components/Home/Home';
+// import { register } from "@videosdk.live/react-native-sdk";
+// register();
 export default function App() {
   return (
-    <>
     <View style={styles.container}>
-    <Text style={{color: "darkgrey", fontSize: 50, fontFamily: "Courier" }}>Welcome To</Text>
-    <Text style={{color: "orange", fontSize: 50, fontFamily: "Courier" }}>Garden Loft</Text>
-    <StatusBar style="auto" />
-  </View>
-  </>
+      {/* <Login /> */}
+     <Home />
+
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FCF8E3',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center'
   },
-  image: {
-    width: 400,
-    height: 200,
-    marginBottom: 50,
-  }
 });
+
+// import { StatusBar } from 'expo-status-bar';
+// import { StyleSheet, Text, View, Image } from 'react-native';
+
+// export default function App() {
+//   return (
+//     <>
+//     <View style={styles.container}>
+//     <Text style={{color: "darkgrey", fontSize: 50, fontFamily: "Courier" }}>Welcome To</Text>
+//     <Text style={{color: "orange", fontSize: 50, fontFamily: "Courier" }}>Garden Loft</Text>
+//     <StatusBar style="auto" />
+//   </View>
+//   </>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#FCF8E3',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//   },
+//   image: {
+//     width: 400,
+//     height: 200,
+//     marginBottom: 50,
+//   }
+// });
 // import { register } from "@videosdk.live/react-native-sdk";
 // import { registerRootComponent } from "expo";
 
