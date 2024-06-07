@@ -5,6 +5,7 @@ import Carousel from 'react-native-reanimated-carousel';
 import { FIRESTORE_DB } from '../FirebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import VideoSDK from './VideoSDK';
 
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
@@ -57,6 +58,7 @@ const VideoCall = () => {
 
   return (
     <View style={styles.container}>
+      {/* <VideoSDK /> */}
       <Carousel
         data={userNames}
         renderItem={renderItem}
@@ -103,6 +105,7 @@ const VideoCall = () => {
             <Text style={styles.closeText}>Back To Garden Loft App</Text>
           </TouchableOpacity>
           {/* Implement your video call UI here */}
+          {/* <VideoSDK /> */}
           {/* <VideoCallComponent meetingId={youtubeId} /> */}
         </View>
       </Modal>
