@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 30,
     marginHorizontal: 5,
-    marginLeft: 355,
+    // marginLeft: 355, //edits the centering of the carousel
     flexDirection: "column",
     gap: 25,
     shadowOffset: {
