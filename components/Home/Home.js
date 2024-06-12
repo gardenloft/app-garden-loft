@@ -232,6 +232,7 @@ import GLClub from "../GLClub";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import Logout from "../Logout";
 import VideoSDK from "../VideoSDK";
+import HelpButton from "../HelpButton";
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
@@ -383,6 +384,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     flexDirection: "column",
     width: "100%",
+    backgroundColor: "#FCF8E3"
   },
   carousel2: {
     marginTop: 10,
