@@ -105,7 +105,7 @@ const VideoCall = () => {
             <Text style={styles.closeText}>Back To Garden Loft App</Text>
           </TouchableOpacity>
           {/* Implement your video call UI here */}
-          {/* <VideoSDK /> */}
+          <VideoSDK />
           {/* <VideoCallComponent meetingId={youtubeId} /> */}
         </View>
       </Modal>
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 355,
+    // marginLeft: 355,
     marginHorizontal: 10, // Add margin to create gap between cards
     shadowOffset: {
       width: 6,
