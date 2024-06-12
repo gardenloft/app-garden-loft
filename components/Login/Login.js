@@ -34,24 +34,24 @@ const Login = () => {
   const auth = FIREBASE_AUTH;
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const checkRememberedUser = async () => {
-      const rememberedUser = await AsyncStorage.getItem("rememberedUser");
-      if (rememberedUser) {
-        setLoading(true);
-        try {
-          const user = JSON.parse(rememberedUser);
-          await signInWithEmailAndPassword(auth, user.email, user.password);
-          navigation.navigate("home");
-        } catch (error) {
-          console.log("Auto sign in failed:", error);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-    checkRememberedUser();
-  }, []);
+  // useEffect(() => {
+  //   const checkRememberedUser = async () => {
+  //     const rememberedUser = await AsyncStorage.getItem("rememberedUser");
+  //     if (rememberedUser) {
+  //       setLoading(true);
+  //       try {
+  //         const user = JSON.parse(rememberedUser);
+  //         await signInWithEmailAndPassword(auth, user.email, user.password);
+  //         navigation.navigate("home");
+  //       } catch (error) {
+  //         console.log("Auto sign in failed:", error);
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     }
+  //   };
+  //   checkRememberedUser();
+  // }, []);
 
   const signIn = async () => {
     setLoading(true);
