@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 5,
-    marginLeft: 355,
+    // marginLeft: 355, //edits the centering of the carousel
     padding: 10,
   },
   cardText: {
