@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 30,
     marginHorizontal: 5,
-    marginLeft: 355,
+    // marginLeft: 355,
   },
   cardText: {
     fontSize: 36,

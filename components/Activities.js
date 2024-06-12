@@ -1167,7 +1167,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 5,
-    marginLeft: 365,
+    // marginLeft: 365,  //edits the centering of the carousel
     flexDirection: "column",
     gap: 10,
     shadowColor: "#000",
