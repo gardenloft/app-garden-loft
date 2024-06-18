@@ -20,6 +20,11 @@ import { collection, addDoc, getDocs, doc, getDoc, setDoc, onSnapshot } from "fi
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import { getAuth } from "firebase/auth";
 
+// ui incoming call imports
+import RNCallKeep from 'react-native-callkeep';
+import BackgroundTimer from 'react-native-background-timer';
+import uuid from 'react-native-uuid';
+
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
 // ICE servers configuration
@@ -32,15 +37,36 @@ const servers = {
   iceCandidatePoolSize: 10,
 };
 
+// CallKeep setup
+RNCallKeep.setup({
+  ios: {
+    appName: 'app-garden-loft',
+  },
+  android: {
+    alertTitle: 'Permissions required',
+    alertDescription: 'This application needs to access your phone accounts',
+    cancelButton: 'Cancel',
+    okButton: 'OK',
+  },
+});
+
+const getNewUuid = () => uuid.v4().toLowerCase();
+
+
+
+
+
+
+
 function JoinScreen(props) {
   const [meetingVal, setMeetingVal] = useState('');
   const [meetingId, setMeetingId] = useState('');
 
-  const handleCreateMeeting = async () => {
-    const newMeetingId = await createMeeting({ token });
-    setMeetingId(newMeetingId);
-    props.getMeetingId(newMeetingId);
-  }
+  // const handleCreateMeeting = async () => {
+  //   const newMeetingId = await createMeeting({ token });
+  //   setMeetingId(newMeetingId);
+  //   props.getMeetingId(newMeetingId);
+  // }
 
   return (
     <SafeAreaView
@@ -51,13 +77,13 @@ function JoinScreen(props) {
         paddingHorizontal: 10 * 10,
         width: viewportWidth * 0.88,
       }}>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={handleCreateMeeting}
         style={{ backgroundColor: '#f3b718', padding: 12, borderRadius: 6 }}>
         <Text style={{ color: 'black', alignSelf: 'center', fontSize: 38 }}>
           Call Carina?
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
   
       <TouchableOpacity
         onPress={() => {
@@ -258,6 +284,114 @@ export default function VideoSDK() {
   const [remoteStream, setRemoteStream] = useState(null);
   const [pc, setPc] = useState(new RTCPeerConnection(servers));
 
+  //video ui incoming
+  const [calls, setCalls] = useState({});
+
+  useEffect(() => {
+    RNCallKeep.addEventListener('answerCall', answerCall);
+    RNCallKeep.addEventListener('endCall', endCall);
+
+    return () => {
+      RNCallKeep.removeEventListener('answerCall', answerCall);
+      // RNCallKeep.removeEventListener('endCall', endCall);r
+    };
+  }, []);
+
+  const log = (text) => {
+    console.info(text);
+  };
+
+
+  const addCall = (callUUID, number) => {
+    setCalls({ ...calls, [callUUID]: number });
+  };
+
+  const removeCall = (callUUID) => {
+    const { [callUUID]: _, ...updated } = calls;
+    setCalls(updated);
+  };
+
+  const displayIncomingCall = (number) => {
+    const callUUID = getNewUuid();
+    addCall(callUUID, number);
+    log(`[displayIncomingCall] ${callUUID}, number: ${number}`);
+    RNCallKeep.displayIncomingCall(callUUID, number, number, 'number', false);
+  };
+
+  const handleCreateMeeting = async () => {
+    // const newMeetingId = await createMeeting({ token });
+    const newMeetingId = "2eir-4xus-3ygn";
+    setMeetingId(newMeetingId);
+    await setDoc(doc(FIRESTORE_DB, 'calls', newMeetingId), { caller: 'John', callee: 'Matt', meetingId: newMeetingId });
+    displayIncomingCall(newMeetingId);
+  };
+
+
+  const answerCall = async ({ callUUID }) => {
+    // const meetingId = calls[callUUID];
+  
+    // setMeetingId(meetingId);
+  
+
+      //  const newMeetingId = await createMeeting({ token });
+      const meetingIDVSDK = "2eir-4xus-3ygn";
+      //  const newMeetingId = "2eir-4xus-3ygn"
+       console.log("newMeetingId", meetingIDVSDK);  
+       log(`[answerCall] ${callUUID}, meetingId: ${meetingIDVSDK}`);
+    RNCallKeep.startCall(callUUID, meetingIDVSDK, meetingIDVSDK);
+       setMeetingId(meetingIDVSDK);  // Update the meeting ID in state
+         setAutoJoin(true);
+    RNCallKeep.setCurrentCallActive(callUUID);
+ 
+     const callsSnapshot = await getDocs(collection(FIRESTORE_DB, "calls"));
+     for (const callDoc of callsSnapshot.docs) {
+       const callData = callDoc.data();
+       if (callData.offer && !callData.answer) {
+         const offerDescription = new RTCSessionDescription(callData.offer);
+         await pc.setRemoteDescription(offerDescription);
+ 
+         const answerDescription = await pc.createAnswer();
+         await pc.setLocalDescription(answerDescription);
+ 
+         const answer = {
+           type: answerDescription.type,
+           sdp: answerDescription.sdp,
+           meetingIDVSDK: "2eir-4xus-3ygn"
+         };
+ 
+         await setDoc(callDoc.ref, { answer }, { merge: true });
+ 
+         const offerCandidates = collection(callDoc.ref, "offerCandidates");
+         onSnapshot(offerCandidates, snapshot => {
+           snapshot.docChanges().forEach(change => {
+             if (change.type === "added") {
+               const candidate = new RTCIceCandidate(change.doc.data());
+               pc.addIceCandidate(candidate);
+             }
+           });
+         });
+ 
+         setMeetingId(`${callDoc.id}_answer_${callDoc.meetingIDVSDK}`);
+         setAutoJoin(true);
+         break;
+       }
+     }
+  };
+
+
+  const endCall = ({ callUUID }) => {
+    log(`[endCall] ${callUUID}`);
+    removeCall(callUUID);
+  };
+
+  const getMeetingId = id => {
+    setMeetingId(id);
+    setAutoJoin(true);
+  };
+
+
+
+
   useEffect(() => {
     if (localStream) {
       localStream.getTracks().forEach(track => {
@@ -280,10 +414,10 @@ export default function VideoSDK() {
     }
   }, [localStream, pc]);
 
-  const getMeetingId = id => {
-    setMeetingId(id);
-    setAutoJoin(true);
-  };
+  // const getMeetingId = id => {
+  //   setMeetingId(id);
+  //   setAutoJoin(true);
+  // };
 
 
   const callUser = async (caller, callee) => {
@@ -348,7 +482,7 @@ export default function VideoSDK() {
     return callDoc.id;
   };
 
-  const answerCall = async () => {
+  const answerCall2 = async () => {
 
      //  const newMeetingId = await createMeeting({ token });
      const meetingIDVSDK = "2eir-4xus-3ygn";
@@ -406,6 +540,13 @@ export default function VideoSDK() {
     </SafeAreaView>
   ) : (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F6FF' }}>
+         <TouchableOpacity
+        onPress={handleCreateMeeting}
+        style={{ backgroundColor: '#f3b718', padding: 12, borderRadius: 6 }}>
+        <Text style={{ color: 'black', alignSelf: 'center', fontSize: 38 }}>
+          Call Carina?
+        </Text>
+      </TouchableOpacity>
       <TouchableOpacity
         onPress={startLocalStream}
         style={{ backgroundColor: '#f3b718', padding: 12, borderRadius: 6 }}>
