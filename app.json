@@ -47,6 +47,24 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone"
         }
+      ],
+      [
+        "@config-plugins/react-native-callkeep",
+        {
+          "ios": {
+            "appName": "app-garden-loft",
+            "supportsVideo": true,
+            "maximumCallGroups": "5",
+            "maximumCallsPerCallGroup": "5"
+          },
+          "android": {
+            "alertTitle": "Permissions required",
+            "alertDescription": "This application needs to access your phone accounts",
+            "cancelButton": "Cancel",
+            "okButton": "OK",
+            "additionalPermissions": []
+          }
+        }
       ]
       
     ],
