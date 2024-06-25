@@ -20,12 +20,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sallydough.appgardenloft"
+      "bundleIdentifier": "com.sallydough.appgardenloft",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+       
       },
       "package": "com.sallydough.appgardenloft"
     },
@@ -41,6 +43,7 @@
     "plugins": [
       "expo-router",
       "@videosdk.live/expo-config-plugin",
+      "@react-native-firebase/app",
       [
         "@config-plugins/react-native-webrtc",
         {
