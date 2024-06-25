@@ -6,6 +6,8 @@ import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 //Required import to use Firebase Authentication
 import { getFirestore } from "firebase/firestore";
+//required for Firebase Messaging
+// import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -36,3 +38,6 @@ isSupported().then((supported) => {
     console.warn("Firebase Analytics is not supported in this environment.");
   }
 });
+
+// Initialize Firebase Messaging
+// export const MESSAGING = getMessaging(app);
