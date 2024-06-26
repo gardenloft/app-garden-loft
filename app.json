@@ -21,14 +21,15 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.sallydough.appgardenloft",
-      "googleServicesFile": "./GoogleService-Info (3).plist"
+      "googleServicesFile": "./GoogleService-Info (4).plist"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sallydough.appgardenloft"
+      "package": "com.sallydough.appgardenloft",
+      "googleServicesFile": "./google-services (5).json"
     },
     "web": {
       "favicon": "./assets/favicon.png",
