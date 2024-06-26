@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:561295329634:android:f7e9dd39f1dfbd9250443b",
+        "mobilesdk_app_id": "1:561295329634:android:73f932c401a0834450443b",
         "android_client_info": {
-          "package_name": "app_garden.loft"
+          "package_name": "com.sallydough.appgardenloft"
         }
       },
       "oauth_client": [],
