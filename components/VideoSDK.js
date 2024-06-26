@@ -675,7 +675,7 @@
 //Sally's working firestore connection
 //////////////////////
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   SafeAreaView,
   TouchableOpacity,
@@ -699,7 +699,9 @@ import { FIRESTORE_DB } from '../FirebaseConfig';
 import { collection, getDocs, doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
+import * as Device from 'expo-device';
 import { getAuth, onAuthStateChanged  } from 'firebase/auth';
+// import RNCallKeep from 'react-native-callkeep';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -910,6 +912,30 @@ export default function VideoSDK() {
   const [meetingId, setMeetingId] = useState(null);
   const auth = getAuth();
   const user = auth.currentUser;
+  
+  const [expoPushToken, setExpoPushToken] = useState(undefined);
+  const [notification, setNotification] = useState(undefined);
+
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  // useEffect(() => {
+  //   registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+  //   notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+  //     setNotification(notification);
+  //   });
+
+  //   responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+  //     console.log(response);
+  //   });
+
+  //   return () => {
+  //     Notifications.removeNotificationSubscription(notificationListener.current);
+  //     Notifications.removeNotificationSubscription(responseListener.current);
+  //   };
+  // }, []);
+
 
   const getMeetingId = async id => {
     const meetingId = id == null ? await createMeeting({ token }) : id;
@@ -935,7 +961,7 @@ export default function VideoSDK() {
     await setDoc(doc(FIRESTORE_DB, 'users', user.uid, 'contacts', callee), { calleeId: meetingId }, { merge: true });
 
     // Send notification to the callee
-    const calleeDocSnapshot = await getDoc(doc(FIRESTORE_DB, 'users', user.uid, 'contacts', callee));
+    const calleeDocSnapshot = await getDoc(doc(FIRESTORE_DB, 'users', user.uid));
     const calleePushToken = calleeDocSnapshot.data().pushToken;
     console.log(calleePushToken);
 
@@ -965,6 +991,8 @@ export default function VideoSDK() {
       registerForPushNotificationsAsync().then(token => {
         if (token) {
           setDoc(doc(FIRESTORE_DB, 'users', user.uid), { pushToken: token }, { merge: true });
+          // setExpoPushToken(token);
+          // setDoc(doc(FIRESTORE_DB, 'users', user.uid, 'contacts', callee), { pushToken: token }, { merge: true });
         }
       });
 
@@ -979,7 +1007,7 @@ export default function VideoSDK() {
     let token;
 
 
-    if (Constants.isDevice) {
+    if (Device.isDevice) {
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
       if (existingStatus !== 'granted') {
@@ -990,12 +1018,16 @@ export default function VideoSDK() {
         alert('Failed to get push token for push notification!');
         return;
       }
-      token = (await Notifications.getExpoPushTokenAsync()).data;
+   
+      // token = (await Notifications.getExpoPushTokenAsync()).data;
+      token = await Notifications.getExpoPushTokenAsync({
+        projectId: Constants.expoConfig?.extra?.eas?.projectId
+      });
+      console.log(token);
     } else {
       alert('Must use physical device for Push Notifications');
     }
-
-    if (Platform.OS === 'android') {
+   if (Platform.OS === 'android') {
       Notifications.setNotificationChannelAsync('default', {
         name: 'default',
         importance: Notifications.AndroidImportance.MAX,
@@ -1003,9 +1035,37 @@ export default function VideoSDK() {
         lightColor: '#FF231F7C',
       });
     }
-
     return token;
+
+    
   }
+
+  // useEffect(() => {
+  //   if (user) {
+  //     registerForPushNotificationsAsync().then(token => {
+  //       if (token) {
+  //         setDoc(doc(FIRESTORE_DB, 'users', user.uid), { pushToken: token }, { merge: true });
+  //         setExpoPushToken(token);
+  //       }
+  //     });
+
+  //     notificationListener.current =
+  //     Notifications.addNotificationReceivedListener((notification) => {
+  //       setNotification(notification);
+  //     });
+
+
+  //     Notifications.addNotificationResponseReceivedListener(response => {
+  //       const { meetingId } = response.notification.request.content.data;
+  //       setMeetingId(meetingId);
+  //     });
+  //     return () => {
+  //       Notifications.removeNotificationSubscription(notificationListener.current);
+  //       Notifications.removeNotificationSubscription(responseListener.current);
+  //     };
+      
+  //   }
+  // }, [user]);
 
   return meetingId ? (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F6FF' }}>
@@ -1023,6 +1083,10 @@ export default function VideoSDK() {
   ) : (
     <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <JoinScreen getMeetingId={getMeetingId} />
+      <Text>
+    {expoPushToken}
+    {notification}
+</Text>
       <TouchableOpacity
         onPress={callUser}
         style={{ backgroundColor: '#1178F8', padding: 20, borderRadius: 10, marginTop: 20 }}>
@@ -1033,6 +1097,13 @@ export default function VideoSDK() {
     </SafeAreaView>
   );
 }
+
+
+
+/////
+//end of working recent
+/////
+
 
 
 // import React, { useState, useEffect } from 'react';

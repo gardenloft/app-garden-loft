@@ -43,7 +43,7 @@
     "plugins": [
       "expo-router",
       "@videosdk.live/expo-config-plugin",
-      "@react-native-firebase/app",
+  
       [
         "@config-plugins/react-native-webrtc",
         {
