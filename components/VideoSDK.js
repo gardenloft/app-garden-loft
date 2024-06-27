@@ -675,6 +675,452 @@
 //Sally's working firestore connection
 //////////////////////
 
+// import React, { useState, useEffect, useRef } from 'react';
+// import {
+//   SafeAreaView,
+//   TouchableOpacity,
+//   Text,
+//   TextInput,
+//   View,
+//   FlatList,
+//   Dimensions,
+//   Platform,
+//   Alert,
+// } from 'react-native';
+// import {
+//   MeetingProvider,
+//   useMeeting,
+//   useParticipant,
+//   MediaStream,
+//   RTCView,
+// } from '@videosdk.live/react-native-sdk';
+// import { createMeeting, token } from './api';
+// import { FIRESTORE_DB } from '../FirebaseConfig';
+// import { collection, getDocs, doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+// import * as Notifications from 'expo-notifications';
+// import Constants from 'expo-constants';
+// import * as Device from 'expo-device';
+// import { getAuth, onAuthStateChanged  } from 'firebase/auth';
+// // import RNCallKeep from 'react-native-callkeep';
+
+// const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+
+// Notifications.setNotificationHandler({
+//   handleNotification: async () => ({
+//     shouldShowAlert: true,
+//     shouldPlaySound: true,
+//     shouldSetBadge: false,
+//   }),
+// });
+
+// function JoinScreen(props) {
+//   const [meetingVal, setMeetingVal] = useState('');
+//   return (
+//     <SafeAreaView
+//       style={{
+//         flex: 1,
+//         backgroundColor: '#F6F6FF',
+//         justifyContent: 'center',
+//         paddingHorizontal: 60,
+//         width: viewportWidth * 0.8,
+//       }}>
+//         <Text>Hello</Text>
+//       {/* <TouchableOpacity
+//         onPress={() => {
+//           props.getMeetingId();
+//         }}
+//         style={{ backgroundColor: '#1178F8', padding: 20, borderRadius: 10 }}>
+//         <Text style={{ color: 'white', alignSelf: 'center', fontSize: 22 }}>
+//           Create Meeting
+//         </Text>
+//       </TouchableOpacity>
+
+//       <Text
+//         style={{
+//           alignSelf: 'center',
+//           fontSize: 26,
+//           marginVertical: 20,
+//           fontStyle: 'italic',
+//           color: 'grey',
+//         }}>
+//         ---------- OR ----------
+//       </Text>
+//       <TextInput
+//         value={meetingVal}
+//         onChangeText={setMeetingVal}
+//         placeholder={'XXXX-XXXX-XXXX'}
+//         style={{
+//           padding: 16,
+//           borderWidth: 1,
+//           borderRadius: 10,
+//           fontSize: 18,
+//           fontStyle: 'italic',
+//         }}
+//       />
+//       <TouchableOpacity
+//         style={{
+//           backgroundColor: '#1178F8',
+//           padding: 20,
+//           marginTop: 20,
+//           borderRadius: 10,
+//         }}
+//         onPress={() => {
+//           props.getMeetingId(meetingVal);
+//         }}>
+//         <Text style={{ color: 'white', alignSelf: 'center', fontSize: 22 }}>
+//           Join Meeting
+//         </Text>
+//       </TouchableOpacity> */}
+//     </SafeAreaView>
+//   );
+// }
+
+// const Button = ({ onPress, buttonText, backgroundColor }) => {
+//   return (
+//     <TouchableOpacity
+//       onPress={onPress}
+//       style={{
+//         backgroundColor: backgroundColor,
+//         justifyContent: 'center',
+//         alignItems: 'center',
+//         padding: 16,
+//         borderRadius: 8,
+//         marginBottom: 40,
+//       }}>
+//       <Text style={{ color: 'white', fontSize: 16 }}>{buttonText}</Text>
+//     </TouchableOpacity>
+//   );
+// };
+
+// function ControlsContainer({ join, leave, toggleWebcam, toggleMic }) {
+//   return (
+//     <View
+//       style={{
+//         padding: 24,
+//         flexDirection: 'row',
+//         justifyContent: 'space-between',
+//         width: viewportWidth * 0.8,
+//         height: viewportHeight * 0.2,
+//       }}>
+//       <Button
+//         onPress={() => {
+//           join();
+//         }}
+//         buttonText={'Join'}
+//         backgroundColor={'#1178F8'}
+//       />
+//       <Button
+//         onPress={() => {
+//           toggleWebcam();
+//         }}
+//         buttonText={'Toggle Webcam'}
+//         backgroundColor={'#1178F8'}
+//       />
+//       <Button
+//         onPress={() => {
+//           toggleMic();
+//         }}
+//         buttonText={'Toggle Mic'}
+//         backgroundColor={'#1178F8'}
+//       />
+//       <Button
+//         onPress={() => {
+//           leave();
+//         }}
+//         buttonText={'Leave'}
+//         backgroundColor={'#FF0000'}
+//       />
+//     </View>
+//   );
+// }
+
+// function ParticipantView({ participantId }) {
+//   const { webcamStream, webcamOn } = useParticipant(participantId);
+
+//   if (webcamOn && webcamStream) {
+//     return (
+//       <RTCView
+//         streamURL={new MediaStream([webcamStream.track]).toURL()}
+//         objectFit={'cover'}
+//         style={{
+//           height: 400,
+//           marginVertical: 16,
+//           marginHorizontal: 16,
+//         }}
+//       />
+//     );
+//   } else {
+//     return (
+//       <View
+//         style={{
+//           height: 400,
+//           marginVertical: 16,
+//           marginHorizontal: 16,
+//           backgroundColor: '#cccccc',
+//           justifyContent: 'center',
+//           alignItems: 'center',
+//         }}>
+//         <Text style={{ fontSize: 18 }}>Webcam is off</Text>
+//       </View>
+//     );
+//   }
+// }
+
+// function ParticipantList({ participants }) {
+//   return participants.length > 0 ? (
+//     <FlatList
+//       data={participants}
+//       renderItem={({ item }) => {
+//         return <ParticipantView participantId={item} />;
+//       }}
+//     />
+//   ) : (
+//     <View
+//       style={{
+//         flex: 1,
+//         backgroundColor: '#F6F6FF',
+//         justifyContent: 'center',
+//         alignItems: 'center',
+//       }}>
+//       <Text style={{ fontSize: 24 }}>Press Join button to enter meeting.</Text>
+//     </View>
+//   );
+// }
+
+// function MeetingView() {
+//   const { join, leave, toggleWebcam, toggleMic, meetingId, participants } =
+//     useMeeting({});
+//   const participantsArrId = [...participants.keys()];
+
+//   return (
+//     <View style={{ flex: 1 }}>
+//       {meetingId ? (
+//         <Text style={{ fontSize: 22, padding: 16 }}>Meeting Id: {meetingId}</Text>
+//       ) : null}
+//       <ParticipantList participants={participantsArrId} />
+//       <ControlsContainer
+//         join={join}
+//         leave={leave}
+//         toggleWebcam={toggleWebcam}
+//         toggleMic={toggleMic}
+//       />
+//     </View>
+//   );
+// }
+
+// export default function VideoSDK() {
+//   const [meetingId, setMeetingId] = useState(null);
+//   const auth = getAuth();
+//   const user = auth.currentUser;
+  
+//   const [expoPushToken, setExpoPushToken] = useState(undefined);
+//   const [notification, setNotification] = useState(undefined);
+
+//   const notificationListener = useRef();
+//   const responseListener = useRef();
+
+//   // useEffect(() => {
+//   //   registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+//   //   notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+//   //     setNotification(notification);
+//   //   });
+
+//   //   responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+//   //     console.log(response);
+//   //   });
+
+//   //   return () => {
+//   //     Notifications.removeNotificationSubscription(notificationListener.current);
+//   //     Notifications.removeNotificationSubscription(responseListener.current);
+//   //   };
+//   // }, []);
+
+
+//   const getMeetingId = async id => {
+//     const meetingId = id == null ? await createMeeting({ token }) : id;
+//     setMeetingId(meetingId);
+//   };
+
+//   const callUser = async () => {
+//     const meetingId = await createMeeting({ token });
+
+//     // Get caller information
+//     const callerDoc = await getDoc(doc(FIRESTORE_DB, 'users', user.uid));
+//     const caller = callerDoc.data().userName;
+
+//     // Get callee information from contacts
+//     // const contactsSnapshot = await getDocs(collection(FIRESTORE_DB, 'users', user.uid, 'contacts'));
+
+//     // Get callee information from contacts
+//     const contactsSnapshot = await getDocs(collection(FIRESTORE_DB, 'users', user.uid, 'contacts'));
+//     const calleeDoc = contactsSnapshot.docs[0]; // Assuming you want to call the first contact for simplicity
+//     console.log(calleeDoc.id)
+//     const callee = calleeDoc.id
+
+//     const calleeRef = doc(FIRESTORE_DB, "users", user.uid);
+//       const calleeSnap = await getDoc(calleeRef);
+//       if (calleeSnap.exists()) {
+//         const calleeData = calleeSnap.data();
+//         console.log("Callee data:", calleeData);
+//         const calleeUserName = calleeData.userName;
+//         if (!calleeUserName) {
+//           throw new Error(
+//             "User name is undefined or missing in Firestore document"
+//           );
+//         }
+//         console.log("User name:", userName);
+
+//     // Update Firestore with callerId and calleeId
+//     await setDoc(doc(FIRESTORE_DB, 'users', user.uid), { callerId: meetingId }, { merge: true });
+//     await setDoc(doc(FIRESTORE_DB, 'users', user.uid, 'contacts', callee), { calleeId: meetingId }, { merge: true });
+
+//     // Send notification to the callee
+//     const calleeDocSnapshot = await getDoc(doc(FIRESTORE_DB, 'users', user.uid));
+//     const calleePushToken = calleeDocSnapshot.data().pushToken;
+//     console.log(calleePushToken);
+
+//     const sendPushNotification = async (calleePushToken, caller) =>{
+//     const message = {
+//       to: calleePushToken,
+//       sound: 'default',
+//       title: 'Incoming Call',
+//       body: `${caller} is calling you`,
+//       data: { meetingId: meetingId },
+//     };
+//   }
+//     await fetch('https://exp.host/--/api/v2/push/send', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         Accept: 'application/json',
+//       },
+//       body: JSON.stringify(message),
+//     });
+
+//     // Join the meeting
+//     setMeetingId(meetingId);
+//   };
+
+//   useEffect(() => {
+//     if (user) {
+//       registerForPushNotificationsAsync().then(token => {
+//         if (token) {
+//           setDoc(doc(FIRESTORE_DB, 'users', user.uid), { pushToken: token }, { merge: true });
+//           // setExpoPushToken(token);
+//           // setDoc(doc(FIRESTORE_DB, 'users', user.uid, 'contacts', callee), { pushToken: token }, { merge: true });
+//         }
+//       });
+
+//       Notifications.addNotificationResponseReceivedListener(response => {
+//         const { meetingId } = response.notification.request.content.data;
+//         setMeetingId(meetingId);
+//       });
+//     }
+//   }, [user]);
+
+//   async function registerForPushNotificationsAsync() {
+//     let token;
+
+
+//     if (Device.isDevice) {
+//       const { status: existingStatus } = await Notifications.getPermissionsAsync();
+//       let finalStatus = existingStatus;
+//       if (existingStatus !== 'granted') {
+//         const { status } = await Notifications.requestPermissionsAsync();
+//         finalStatus = status;
+//       }
+//       if (finalStatus !== 'granted') {
+//         alert('Failed to get push token for push notification!');
+//         return;
+//       }
+   
+//       // token = (await Notifications.getExpoPushTokenAsync()).data;
+//       token = await Notifications.getExpoPushTokenAsync({
+//         projectId: Constants.expoConfig?.extra?.eas?.projectId
+//       });
+//       console.log(token);
+//     } else {
+//       alert('Must use physical device for Push Notifications');
+//     }
+//    if (Platform.OS === 'android') {
+//       Notifications.setNotificationChannelAsync('default', {
+//         name: 'default',
+//         importance: Notifications.AndroidImportance.MAX,
+//         vibrationPattern: [0, 250, 250, 250],
+//         lightColor: '#FF231F7C',
+//       });
+//     }
+//     return token;
+
+    
+//   }
+
+//   // useEffect(() => {
+//   //   if (user) {
+//   //     registerForPushNotificationsAsync().then(token => {
+//   //       if (token) {
+//   //         setDoc(doc(FIRESTORE_DB, 'users', user.uid), { pushToken: token }, { merge: true });
+//   //         setExpoPushToken(token);
+//   //       }
+//   //     });
+
+//   //     notificationListener.current =
+//   //     Notifications.addNotificationReceivedListener((notification) => {
+//   //       setNotification(notification);
+//   //     });
+
+
+//   //     Notifications.addNotificationResponseReceivedListener(response => {
+//   //       const { meetingId } = response.notification.request.content.data;
+//   //       setMeetingId(meetingId);
+//   //     });
+//   //     return () => {
+//   //       Notifications.removeNotificationSubscription(notificationListener.current);
+//   //       Notifications.removeNotificationSubscription(responseListener.current);
+//   //     };
+      
+//   //   }
+//   // }, [user]);
+
+//   return meetingId ? (
+//     <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F6FF' }}>
+//       <MeetingProvider
+//         config={{
+//           meetingId,
+//           micEnabled: false,
+//           webcamEnabled: true,
+//           name: 'Test User',
+//         }}
+//         token={token}>
+//         <MeetingView />
+//       </MeetingProvider>
+//     </SafeAreaView>
+//   ) : (
+//     <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+//       <JoinScreen getMeetingId={getMeetingId} />
+//       <Text>
+//     {expoPushToken}
+//     {notification}
+// </Text>
+//       <TouchableOpacity
+//         onPress={callUser}
+//         style={{ backgroundColor: '#1178F8', padding: 20, borderRadius: 10, marginTop: 20 }}>
+//         <Text style={{ color: 'white', alignSelf: 'center', fontSize: 22 }}>
+//           Call Contact
+//         </Text>
+//       </TouchableOpacity>
+//     </SafeAreaView>
+//   );
+// }
+
+
+
+/////
+//end of working recent
+/////
+
+
 import React, { useState, useEffect, useRef } from 'react';
 import {
   SafeAreaView,
@@ -696,12 +1142,12 @@ import {
 } from '@videosdk.live/react-native-sdk';
 import { createMeeting, token } from './api';
 import { FIRESTORE_DB } from '../FirebaseConfig';
-import { collection, getDocs, doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, setDoc } from "firebase/firestore";
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
-import { getAuth, onAuthStateChanged  } from 'firebase/auth';
-// import RNCallKeep from 'react-native-callkeep';
+import { getAuth } from 'firebase/auth';
+import RNCallKeep from 'react-native-callkeep';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -912,59 +1358,109 @@ export default function VideoSDK() {
   const [meetingId, setMeetingId] = useState(null);
   const auth = getAuth();
   const user = auth.currentUser;
-  
+
   const [expoPushToken, setExpoPushToken] = useState(undefined);
   const [notification, setNotification] = useState(undefined);
 
   const notificationListener = useRef();
   const responseListener = useRef();
 
-  // useEffect(() => {
-  //   registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+  const callKeepOptions = {
+    ios: {
+      appName: 'YourAppName',
+    },
+    android: {
+      alertTitle: 'Permissions required',
+      alertDescription: 'This application needs to access your phone accounts',
+      cancelButton: 'Cancel',
+      okButton: 'Ok',
+    },
+  };
 
-  //   notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-  //     setNotification(notification);
-  //   });
+  RNCallKeep.setup(callKeepOptions);
 
-  //   responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-  //     console.log(response);
-  //   });
+  useEffect(() => {
+    if (user) {
+      registerForPushNotificationsAsync().then(token => {
+        if (token) {
+          setDoc(doc(FIRESTORE_DB, 'users', user.uid), { pushToken: token }, { merge: true });
+        }
+      });
 
-  //   return () => {
-  //     Notifications.removeNotificationSubscription(notificationListener.current);
-  //     Notifications.removeNotificationSubscription(responseListener.current);
-  //   };
-  // }, []);
+      Notifications.addNotificationResponseReceivedListener(response => {
+        const { meetingId } = response.notification.request.content.data;
+        setMeetingId(meetingId);
+      });
 
+      return () => {
+        Notifications.removeNotificationSubscription(notificationListener.current);
+        Notifications.removeNotificationSubscription(responseListener.current);
+      };
+    }
+  }, [user]);
+
+  async function registerForPushNotificationsAsync() {
+    let token;
+
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+
+      token = (await Notifications.getExpoPushTokenAsync({
+        projectId: Constants.expoConfig?.extra?.eas?.projectId
+      })).data;
+      console.log(token);
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+    return token;
+  }
 
   const getMeetingId = async id => {
     const meetingId = id == null ? await createMeeting({ token }) : id;
     setMeetingId(meetingId);
   };
 
-  const callUser = async () => {
+  const callUser = async (calleeUid) => {
     const meetingId = await createMeeting({ token });
 
     // Get caller information
     const callerDoc = await getDoc(doc(FIRESTORE_DB, 'users', user.uid));
     const caller = callerDoc.data().userName;
 
-    // Get callee information from contacts
-    const contactsSnapshot = await getDocs(collection(FIRESTORE_DB, 'users', user.uid, 'contacts'));
-   
-    const calleeDoc = contactsSnapshot.docs[0]; // Assuming you want to call the first contact for simplicity
-    console.log(calleeDoc.id)
-    const callee = calleeDoc.id
+    // Get callee information from the database
+    const calleeDoc = await getDoc(doc(FIRESTORE_DB, 'users', calleeUid));
+    if (!calleeDoc.exists()) {
+      Alert.alert('Callee not found');
+      return;
+    }
+    const calleeData = calleeDoc.data();
+    console.log(calleeData);
+    const calleePushToken = calleeData.pushToken.data;
+    console.log(calleePushToken)
+    const calleeUserName = calleeData.userName;
 
     // Update Firestore with callerId and calleeId
     await setDoc(doc(FIRESTORE_DB, 'users', user.uid), { callerId: meetingId }, { merge: true });
-    await setDoc(doc(FIRESTORE_DB, 'users', user.uid, 'contacts', callee), { calleeId: meetingId }, { merge: true });
+    await setDoc(doc(FIRESTORE_DB, 'users', calleeUid), { calleeId: meetingId }, { merge: true });
 
     // Send notification to the callee
-    const calleeDocSnapshot = await getDoc(doc(FIRESTORE_DB, 'users', user.uid));
-    const calleePushToken = calleeDocSnapshot.data().pushToken;
-    console.log(calleePushToken);
-
     const message = {
       to: calleePushToken,
       sound: 'default',
@@ -982,6 +1478,9 @@ export default function VideoSDK() {
       body: JSON.stringify(message),
     });
 
+    // Use RNCallKeep to display incoming call on callee's device
+    RNCallKeep.displayIncomingCall(calleeUid, caller, 'Incoming Call', 'generic', false);
+
     // Join the meeting
     setMeetingId(meetingId);
   };
@@ -991,8 +1490,6 @@ export default function VideoSDK() {
       registerForPushNotificationsAsync().then(token => {
         if (token) {
           setDoc(doc(FIRESTORE_DB, 'users', user.uid), { pushToken: token }, { merge: true });
-          // setExpoPushToken(token);
-          // setDoc(doc(FIRESTORE_DB, 'users', user.uid, 'contacts', callee), { pushToken: token }, { merge: true });
         }
       });
 
@@ -1006,7 +1503,6 @@ export default function VideoSDK() {
   async function registerForPushNotificationsAsync() {
     let token;
 
-
     if (Device.isDevice) {
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
@@ -1018,16 +1514,15 @@ export default function VideoSDK() {
         alert('Failed to get push token for push notification!');
         return;
       }
-   
-      // token = (await Notifications.getExpoPushTokenAsync()).data;
-      token = await Notifications.getExpoPushTokenAsync({
+
+      token = (await Notifications.getExpoPushTokenAsync({
         projectId: Constants.expoConfig?.extra?.eas?.projectId
-      });
+      })).data;
       console.log(token);
     } else {
       alert('Must use physical device for Push Notifications');
     }
-   if (Platform.OS === 'android') {
+    if (Platform.OS === 'android') {
       Notifications.setNotificationChannelAsync('default', {
         name: 'default',
         importance: Notifications.AndroidImportance.MAX,
@@ -1036,36 +1531,7 @@ export default function VideoSDK() {
       });
     }
     return token;
-
-    
   }
-
-  // useEffect(() => {
-  //   if (user) {
-  //     registerForPushNotificationsAsync().then(token => {
-  //       if (token) {
-  //         setDoc(doc(FIRESTORE_DB, 'users', user.uid), { pushToken: token }, { merge: true });
-  //         setExpoPushToken(token);
-  //       }
-  //     });
-
-  //     notificationListener.current =
-  //     Notifications.addNotificationReceivedListener((notification) => {
-  //       setNotification(notification);
-  //     });
-
-
-  //     Notifications.addNotificationResponseReceivedListener(response => {
-  //       const { meetingId } = response.notification.request.content.data;
-  //       setMeetingId(meetingId);
-  //     });
-  //     return () => {
-  //       Notifications.removeNotificationSubscription(notificationListener.current);
-  //       Notifications.removeNotificationSubscription(responseListener.current);
-  //     };
-      
-  //   }
-  // }, [user]);
 
   return meetingId ? (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F6FF' }}>
@@ -1088,23 +1554,15 @@ export default function VideoSDK() {
     {notification}
 </Text>
       <TouchableOpacity
-        onPress={callUser}
+        onPress={() => callUser('Tx58jAQuDqeJvEqDXbWwlw7NTFb2')} // Replace 'CalleeUid' with the actual callee's UID
         style={{ backgroundColor: '#1178F8', padding: 20, borderRadius: 10, marginTop: 20 }}>
         <Text style={{ color: 'white', alignSelf: 'center', fontSize: 22 }}>
-          Call Contact
+          Call Matthew
         </Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
 }
-
-
-
-/////
-//end of working recent
-/////
-
-
 
 // import React, { useState, useEffect } from 'react';
 // import {
