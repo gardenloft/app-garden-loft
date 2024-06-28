@@ -1723,7 +1723,7 @@ function ParticipantView({ participantId }) {
         streamURL={new MediaStream([webcamStream.track]).toURL()}
         objectFit={'cover'}
         style={{
-          height: 400,
+          height: 200,
           marginVertical: 16,
           marginHorizontal: 16,
         }}
@@ -1838,6 +1838,7 @@ export default function VideoSDK() {
         if (response.actionIdentifier === 'ACCEPT_CALL') {
           setMeetingId(meetingId);
           setAutoJoin(true);
+          console.log ('i am setting callee meeting id with,', meetingId)
           Linking.openURL(`app-garden-loft://VideoSDK?meetingId=${meetingId}`);
         } else if (response.actionIdentifier === 'DECLINE_CALL') {
           // Handle decline action if needed
@@ -1855,18 +1856,18 @@ export default function VideoSDK() {
     }
   }, [user]);
 
-  useEffect(() => {
-    if (params.meetingId) {
-      setMeetingId(params.meetingId);
-      setAutoJoin(true);
-    }
-  }, [params]);
+  // useEffect(() => {
+  //   if (params.meetingId) {
+  //     setMeetingId(params.meetingId);
+  //     setAutoJoin(true);
+  //   }
+  // }, [params]);
 
-  useEffect(() => {
-    if (autoJoin && meetingId) {
-      joinMeeting(meetingId);
-    }
-  }, [autoJoin, meetingId]);
+  // useEffect(() => {
+  //   if (autoJoin && meetingId) {
+  //     joinMeeting(meetingId);
+  //   }
+  // }, [autoJoin, meetingId]);
 
   async function registerForPushNotificationsAsync() {
     let token;
@@ -1921,6 +1922,10 @@ export default function VideoSDK() {
     }
     const calleeData = calleeDoc.data();
     const calleePushToken = calleeData.pushToken;
+
+        // Update Firestore with callerId and calleeId
+    await setDoc(doc(FIRESTORE_DB, 'users', user.uid), { callerId: meetingId }, { merge: true });
+    await setDoc(doc(FIRESTORE_DB, 'users', calleeUid), { calleeId: meetingId }, { merge: true });
 
     const message = {
       to: calleePushToken,
