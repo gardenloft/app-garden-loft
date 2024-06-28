@@ -231,7 +231,7 @@ import HowTo from "../HowTo";
 import GLClub from "../GLClub";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import Logout from "../Logout";
-import VideoSDK from "../VideoSDK";
+import VideoSDK from "../../app/VideoSDK";
 import HelpButton from "../HelpButton";
 
 const { width: viewportWidth, height: viewportHeight } =
