@@ -5,7 +5,7 @@ import Carousel from 'react-native-reanimated-carousel';
 import { FIRESTORE_DB } from '../FirebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import VideoSDK from './VideoSDK';
+import VideoSDK from '../app/VideoSDK';
 
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
@@ -58,7 +58,6 @@ const VideoCall = () => {
 
   return (
     <View style={styles.container}>
-      {/* <VideoSDK /> */}
       <Carousel
         data={userNames}
         renderItem={renderItem}
