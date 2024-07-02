@@ -38,7 +38,7 @@ Notifications.setNotificationHandler({
 });
 
 function JoinScreen(props) {
-  const [meetingVal, setMeetingVal] = useState('');
+  const router = useRouter();
   return (
     <SafeAreaView
       style={{
@@ -49,6 +49,20 @@ function JoinScreen(props) {
         width: viewportWidth * 0.8,
       }}>
         <Text>Hello</Text>
+        <TouchableOpacity
+        onPress={() => {
+          router.push('/home'); // Replace '/home' with the actual path to your home screen
+        }}
+        style={{
+          backgroundColor: '#1178F8',
+          padding: 20,
+          borderRadius: 10,
+          marginTop: 20,
+        }}>
+        <Text style={{ color: 'white', alignSelf: 'center', fontSize: 22 }}>
+          Back to the App
+        </Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -307,46 +321,46 @@ export default function VideoSDK() {
     setMeetingId(meetingId);
   };
 
-  const callUser = async (calleeUid) => {
-    const meetingId = await createMeeting({ token });
-    setMeetingId(meetingId);
-    setAutoJoin(true);
+  // const callUser = async (calleeUid) => {
+  //   const meetingId = await createMeeting({ token });
+  //   setMeetingId(meetingId);
+  //   setAutoJoin(true);
 
-    const callerDoc = await getDoc(doc(FIRESTORE_DB, 'users', user.uid));
-    const caller = callerDoc.data().userName;
+  //   const callerDoc = await getDoc(doc(FIRESTORE_DB, 'users', user.uid));
+  //   const caller = callerDoc.data().userName;
 
-    const calleeDoc = await getDoc(doc(FIRESTORE_DB, 'users', calleeUid));
-    if (!calleeDoc.exists()) {
-      Alert.alert('Callee not found');
-      return;
-    }
-    const calleeData = calleeDoc.data();
-    const calleePushToken = calleeData.pushToken;
+  //   const calleeDoc = await getDoc(doc(FIRESTORE_DB, 'users', calleeUid));
+  //   if (!calleeDoc.exists()) {
+  //     Alert.alert('Callee not found');
+  //     return;
+  //   }
+  //   const calleeData = calleeDoc.data();
+  //   const calleePushToken = calleeData.pushToken;
 
-        // Update Firestore with callerId and calleeId
-    await setDoc(doc(FIRESTORE_DB, 'users', user.uid), { callerId: meetingId }, { merge: true });
-    await setDoc(doc(FIRESTORE_DB, 'users', calleeUid), { calleeId: meetingId }, { merge: true });
+  //       // Update Firestore with callerId and calleeId
+  //   await setDoc(doc(FIRESTORE_DB, 'users', user.uid), { callerId: meetingId }, { merge: true });
+  //   await setDoc(doc(FIRESTORE_DB, 'users', calleeUid), { calleeId: meetingId }, { merge: true });
 
-    const message = {
-      to: calleePushToken,
-      sound: 'default',
-      title: 'Incoming Call',
-      body: `${caller} is calling you`,
-      data: { meetingId },
-      categoryId: 'incoming_call',
-    };
+  //   const message = {
+  //     to: calleePushToken,
+  //     sound: 'default',
+  //     title: 'Incoming Call',
+  //     body: `${caller} is calling you`,
+  //     data: { meetingId },
+  //     categoryId: 'incoming_call',
+  //   };
 
-    await fetch('https://exp.host/--/api/v2/push/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(message),
-    });
+  //   await fetch('https://exp.host/--/api/v2/push/send', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       Accept: 'application/json',
+  //     },
+  //     body: JSON.stringify(message),
+  //   });
 
-    joinMeeting(meetingId); // Automatically join the meeting after calling the user
-  };
+  //   joinMeeting(meetingId); // Automatically join the meeting after calling the user
+  // };
 
   const joinMeeting = async (meetingId) => {
     console.log('Joining meeting with ID:', meetingId);

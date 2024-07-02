@@ -21,6 +21,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "expo-router/build/useNavigation";
 import { FontAwesome } from "@expo/vector-icons";
 
+
+
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
 
