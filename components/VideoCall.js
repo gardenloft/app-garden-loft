@@ -5,7 +5,8 @@ import Carousel from 'react-native-reanimated-carousel';
 import { FIRESTORE_DB } from '../FirebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import VideoSDK from '../app/VideoSDK';
+// import VideoSDK from '../app/VideoSDK';
+import VideoSDK2 from '../app/VideoSDK2';
 
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
@@ -104,7 +105,7 @@ const VideoCall = () => {
             <Text style={styles.closeText}>Back To Garden Loft App</Text>
           </TouchableOpacity>
           {/* Implement your video call UI here */}
-          <VideoSDK />
+          <VideoSDK2 />
           {/* <VideoCallComponent meetingId={youtubeId} /> */}
         </View>
       </Modal>
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   cardText: {
-    fontSize: 24,
+    fontSize: 30,
     color: '#393939',
     fontWeight: '700',
   },

@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   cardText: {
-    fontSize: 36,
+    fontSize: 30,
     color: "#393939",
     fontWeight: "700",
   },
