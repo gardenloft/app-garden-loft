@@ -31,13 +31,13 @@ export const FIREBASE_AUTH = getAuth(app);
 //Needed for Firestore database
 export const FIRESTORE_DB = getFirestore(app);
 
-isSupported().then((supported) => {
-  if (supported) {
-    const analytics = getAnalytics(app);
-  } else {
-    console.warn("Firebase Analytics is not supported in this environment.");
-  }
-});
+// isSupported().then((supported) => {
+//   if (supported) {
+//     const analytics = getAnalytics(app);
+//   } else {
+//     console.warn("Firebase Analytics is not supported in this environment.");
+//   }
+// });
 
 // Initialize Firebase Messaging
 // export const MESSAGING = getMessaging(app);

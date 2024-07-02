@@ -14,6 +14,7 @@ import Entertainment from "../Entertainment";
 import Lights from "../Lights";
 import HowTo from "../HowTo";
 import GLClub from "../GLClub";
+// import VideoSDK from  '../../app/VideoSDK'
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import Logout from "../Logout";
 
@@ -31,6 +32,7 @@ const data = [
     title: "VIDEO CALL",
     icon: "phone",
     component: <VideoCall />,
+    // component: <VideoSDK />,
     prompt: "Make a Video Call?",
   },
   {

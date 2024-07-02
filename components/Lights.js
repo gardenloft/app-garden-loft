@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   cardText: {
-    fontSize: 20,
+    fontSize: 25,
     color: "#393939",
     fontWeight: "700",
   },
