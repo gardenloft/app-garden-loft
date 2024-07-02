@@ -203,58 +203,7 @@ export default function VideoSDK() {
   console.log(params);
   const auth = getAuth();
   const user = auth.currentUser;
-  // const router = useRouter();
 
-  // const notificationListener = useRef(null);
-  // const responseListener = useRef(null);
-
-  // useEffect(() => {
-  //   if (user) {
-  //     registerForPushNotificationsAsync().then(token => {
-  //       if (token) {
-  //         setDoc(doc(FIRESTORE_DB, 'users', user.uid), { pushToken: token }, { merge: true });
-  //       }
-  //     });
-
-  //     Notifications.setNotificationCategoryAsync('incoming_call', [
-  //       {
-  //         identifier: 'ACCEPT_CALL',
-  //         buttonTitle: 'Accept',
-  //         options: {
-  //           opensAppToForeground: true,
-  //         },
-  //       },
-  //       {
-  //         identifier: 'DECLINE_CALL',
-  //         buttonTitle: 'Decline',
-  //         options: {
-  //           opensAppToForeground: false,
-  //         },
-  //       },
-  //     ]);
-
-  //     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-  //       const { meetingId } = response.notification.request.content.data;
-  //       if (response.actionIdentifier === 'ACCEPT_CALL') {
-  //         setMeetingId(meetingId);
-  //         setAutoJoin(true);
-  //         console.log ('i am setting callee meeting id with,', meetingId)
-  //         Linking.openURL(`app-garden-loft://VideoSDK?meetingId=${meetingId}`);
-  //       } else if (response.actionIdentifier === 'DECLINE_CALL') {
-  //         // Handle decline action if needed
-  //       }
-  //     });
-
-  //     return () => {
-  //       if (notificationListener.current) {
-  //         Notifications.removeNotificationSubscription(notificationListener.current);
-  //       }
-  //       if (responseListener.current) {
-  //         Notifications.removeNotificationSubscription(responseListener.current);
-  //       }
-  //     };
-  //   }
-  // }, [user]);
 
   useEffect(() => {
     if (params.meetingId) {
@@ -262,45 +211,6 @@ export default function VideoSDK() {
       // setAutoJoin(true);
     }
   }, [params]);
-
-  // useEffect(() => {
-  //   if (autoJoin && meetingId) {
-  //     joinMeeting(meetingId);
-  //   }
-  // }, [autoJoin, meetingId]);
-
-  // async function registerForPushNotificationsAsync() {
-  //   let token;
-
-  //   if (Device.isDevice) {
-  //     const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  //     let finalStatus = existingStatus;
-  //     if (existingStatus !== 'granted') {
-  //       const { status } = await Notifications.requestPermissionsAsync();
-  //       finalStatus = status;
-  //     }
-  //     if (finalStatus !== 'granted') {
-  //       alert('Failed to get push token for push notification!');
-  //       return;
-  //     }
-
-  //     token = (await Notifications.getExpoPushTokenAsync({
-  //       projectId: Constants.expoConfig?.extra?.eas?.projectId
-  //     })).data;
-  //     console.log(token);
-  //   } else {
-  //     alert('Must use physical device for Push Notifications');
-  //   }
-  //   if (Platform.OS === 'android') {
-  //     Notifications.setNotificationChannelAsync('default', {
-  //       name: 'default',
-  //       importance: Notifications.AndroidImportance.MAX,
-  //       vibrationPattern: [0, 250, 250, 250],
-  //       lightColor: '#FF231F7C',
-  //     });
-  //   }
-  //   return token;
-  // }
 
   const getMeetingId = async id => {
     const meetingId = id == null ? await createMeeting({ token }) : id;
