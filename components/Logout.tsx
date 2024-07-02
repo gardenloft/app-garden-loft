@@ -80,10 +80,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   buttonText: {
-    fontSize: 68,
+    fontSize: 38,
     fontFamily: "Arial",
     color: 'black',
-    marginLeft: 10,
+    marginLeft: 25,
   },
   modalContainer: {
     flex: 1,

@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   cardText: {
-    fontSize: 36,
+    fontSize: 25,
     color: "#393939",
     fontWeight: "700",
     textAlign: "center"

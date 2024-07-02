@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     // marginLeft: 355,
   },
   cardText: {
-    fontSize: 36,
+    fontSize: 30,
     color: "black",
     fontWeight: "700",
   },
