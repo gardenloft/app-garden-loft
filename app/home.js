@@ -7,7 +7,7 @@ import Carousel from "../components/CarouselOne/Carousel";
 
 
 const App = () => (
-  
+
   <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#FCF8E3" }}>
     <SafeAreaProvider>
       <HelpButton />
@@ -17,3 +17,4 @@ const App = () => (
 );
 
 export default App;
+
