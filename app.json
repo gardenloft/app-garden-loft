@@ -4,7 +4,9 @@
     "slug": "app-garden-loft",
     "scheme": "app-garden-loft",
     "platforms": [
-      "ios", "android", "web"
+      "ios",
+      "android",
+      "web"
     ],
     "runtimeVersion": {
       "policy": "sdkVersion"
@@ -21,62 +23,82 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.sallydough.appgardenloft",
-      "googleServicesFile": "./GoogleService-Info (4).plist"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.sallydough.appgardenloft",
-      "googleServicesFile": "./google-services (5).json"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "googleServicesFile": "./GoogleService-Info (4).plist",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true,
+          "NSExceptionDomains": {
+            "youtube.com": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSIncludesSubdomains": true,
+              "NSExceptionRequiresForwardSecrecy": false
+            },
+            "ytimg.com": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSIncludesSubdomains": true,
+              "NSExceptionRequiresForwardSecrecy": false
+            }
+          }
+        }
+      }
     },
     "extra": {
       "eas": {
         "projectId": "598d65e5-14db-479e-a297-3561c87ddbc5"
       }
+    }
+  },
+  "android": {
+    "adaptiveIcon": {
+      "foregroundImage": "./assets/adaptive-icon.png",
+      "backgroundColor": "#ffffff"
     },
-    "plugins": [
-      "expo-router",
-      "@videosdk.live/expo-config-plugin",
-  
-      [
-        "@config-plugins/react-native-webrtc",
-        {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone"
-        }
-      ],
-      [
-        "@config-plugins/react-native-callkeep",
-        {
-          "ios": {
-            "appName": "app-garden-loft",
-            "supportsVideo": true,
-            "maximumCallGroups": "5",
-            "maximumCallsPerCallGroup": "5"
-          },
-          "android": {
-            "alertTitle": "Permissions required",
-            "alertDescription": "This application needs to access your phone accounts",
-            "cancelButton": "Cancel",
-            "okButton": "OK",
-            "additionalPermissions": []
-          }
-        }
-      ]
-      
-    ],
-    "owner": "sallydough",
-    "updates": {
-      "url": "https://u.expo.dev/598d65e5-14db-479e-a297-3561c87ddbc5",
-      "requestHeaders": {
-        "expo-channel-name": "main"
+    "package": "com.sallydough.appgardenloft",
+    "googleServicesFile": "./google-services (5).json"
+  },
+  "web": {
+    "favicon": "./assets/favicon.png",
+    "bundler": "metro"
+  },
+  "extra": {
+    "eas": {
+      "projectId": "598d65e5-14db-479e-a297-3561c87ddbc5"
+    }
+  },
+  "plugins": [
+    "expo-router",
+    "@videosdk.live/expo-config-plugin",
+    [
+      "@config-plugins/react-native-webrtc",
+      {
+        "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+        "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone"
       }
+    ],
+    [
+      "@config-plugins/react-native-callkeep",
+      {
+        "ios": {
+          "appName": "app-garden-loft",
+          "supportsVideo": true,
+          "maximumCallGroups": "5",
+          "maximumCallsPerCallGroup": "5"
+        },
+        "android": {
+          "alertTitle": "Permissions required",
+          "alertDescription": "This application needs to access your phone accounts",
+          "cancelButton": "Cancel",
+          "okButton": "OK",
+          "additionalPermissions": []
+        }
+      }
+    ]
+  ],
+  "owner": "sallydough",
+  "updates": {
+    "url": "https://u.expo.dev/598d65e5-14db-479e-a297-3561c87ddbc5",
+    "requestHeaders": {
+      "expo-channel-name": "main"
     }
   }
 }
