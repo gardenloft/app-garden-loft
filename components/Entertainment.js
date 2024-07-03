@@ -299,8 +299,11 @@ const Entertainment = () => {
         onRequestClose={() => setIsVideoModalVisible(false)}>
         <View style={styles.modalView}>
           <WebView
-            style={{ width: viewportWidth * 0.8, height: viewportHeight * 0.8 }}
+            style={{ width: viewportWidth * 0.8, height: viewportHeight * 0.8 , flex:1 }}
             javaScriptEnabled={true}
+            allowsInlineMediaPlayback={true}
+            mediaPlaybackRequiresUserAction={false}
+            useWebKit={true} 
             source={{ uri: `https://www.youtube.com/embed/${selectedVideoId}` }}
           />
           <Pressable
