@@ -388,7 +388,7 @@ const handleBack = () => {
         justifyContent: 'space-between',
         // justifyContent: "center", // Centers vertically
       // alignItems: "center",
-        width: viewportWidth * 0.8,
+        width: viewportWidth * 0.9,
         height: viewportHeight * 0.2,
       }}>
 
@@ -421,19 +421,20 @@ const handleBack = () => {
       <IconButton
         onPress={() => {
           leave();
+          handleBack();
         }}
         iconName="phone-hangup"
         buttonText="Leave"
         backgroundColor="red"
       />
-       <IconButton
+       {/* <IconButton
         onPress={() => {
           handleBack();
         }}
         iconName="arrow-left"
         buttonText="Back"
         backgroundColor="orange"
-      />
+      /> */}
 
     </View>
   );
@@ -535,7 +536,7 @@ export default function VideoSDK() {
   useEffect(() => {
     if (params.meetingId) {
       setMeetingId(params.meetingId);
-      setAutoJoin(true);
+      // setAutoJoin(true);
     }
   }, [params]);
 
@@ -592,7 +593,7 @@ export default function VideoSDK() {
   useEffect(() => {
     if (params.calleeUid) {
       callUser(params.calleeUid);
-      setAutoJoin(true); 
+      // setAutoJoin(true); 
     }
   }, [params.calleeUid]);
 
