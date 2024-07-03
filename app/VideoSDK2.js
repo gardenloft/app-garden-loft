@@ -319,6 +319,8 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import * as Notifications from 'expo-notifications';
 import { getAuth } from 'firebase/auth';
 import { useLocalSearchParams } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {useRouter} from 'expo-router'
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -346,37 +348,88 @@ function JoinScreen(props) {
   );
 }
 
-const Button = ({ onPress, buttonText, backgroundColor }) => {
+const IconButton = ({ onPress, iconName, buttonText, backgroundColor }) => {
+  
   return (
     <TouchableOpacity
       onPress={onPress}
       style={{
         backgroundColor: backgroundColor,
+        flexDirection:"row",
+        gap: 2,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 16,
         borderRadius: 8,
         marginBottom: 40,
       }}>
+         <MaterialCommunityIcons name={iconName} size={24} color="white" />
       <Text style={{ color: 'white', fontSize: 16 }}>{buttonText}</Text>
     </TouchableOpacity>
   );
 };
 
-function ControlsContainer({ join, leave, toggleWebcam, toggleMic }) {
+
+function ControlsContainer({ join, leave, toggleWebcam, toggleMic,  back }) {
+  const router = useRouter();
+
+const handleBack = () => {
+  router.back();
+};
+
   return (
     <View
       style={{
         padding: 24,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        // justifyContent: "center", // Centers vertically
+      // alignItems: "center",
         width: viewportWidth * 0.8,
         height: viewportHeight * 0.2,
       }}>
-      <Button onPress={join} buttonText="Join" backgroundColor="#1178F8" />
-      <Button onPress={toggleWebcam} buttonText="Toggle Webcam" backgroundColor="#1178F8" />
-      <Button onPress={toggleMic} buttonText="Toggle Mic" backgroundColor="#1178F8" />
-      <Button onPress={leave} buttonText="Leave" backgroundColor="#FF0000" />
+      <IconButton
+        onPress={() => {
+          join();
+        }}
+          iconName={"video"}
+        buttonText={'Join'}
+        backgroundColor={'#FF9900'}
+      />
+      <IconButton
+        onPress={() => {
+          toggleWebcam();
+        }}
+        iconName="camera"
+        buttonText="Toggle Webcam"
+        backgroundColor="orange"
+      />
+      <IconButton
+        onPress={() => {
+          toggleMic();
+        }}
+        iconName="microphone"
+        buttonText="Toggle Mic"
+        backgroundColor="orange"
+      
+       
+      />
+      <IconButton
+        onPress={() => {
+          leave();
+        }}
+        iconName="phone-hangup"
+        buttonText="Leave"
+        backgroundColor="red"
+      />
+       <IconButton
+        onPress={() => {
+          handleBack();
+        }}
+        iconName="arrow-left"
+        buttonText="Back"
+        backgroundColor="orange"
+      />
     </View>
   );
 }
@@ -444,14 +497,23 @@ function MeetingView({ autoJoin, setAutoJoin }) {
     }
   }, [autoJoin, join, toggleWebcam, setAutoJoin]);
 
+  const router = useRouter();
+
+const handleBack = () => {
+  router.back();
+};
+
+
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, width: viewportWidth * 0.9, height: viewportHeight * 0.5, alignContent: 'center', backgroundColor:"white", borderRadius: 40, }}>
       {meetingId ? <Text style={{ fontSize: 22, padding: 16 }}>Meeting Id: {meetingId}</Text> : null}
       <ParticipantList participants={participantsArrId} />
-      <ControlsContainer join={join} leave={leave} toggleWebcam={toggleWebcam} toggleMic={toggleMic} />
+      <ControlsContainer join={join} leave={leave} toggleWebcam={toggleWebcam} toggleMic={toggleMic} back={handleBack}/>
     </View>
   );
 }
+
+
 
 export default function VideoSDK() {
   const [meetingId, setMeetingId] = useState(null);
@@ -523,7 +585,8 @@ export default function VideoSDK() {
   }, [params.calleeUid]);
 
   return meetingId ? (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F6F6FF' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#FCF8E3',justifyContent: "center", // Centers vertically
+      alignItems: "center", }}>
       <MeetingProvider
         config={{
           meetingId,
