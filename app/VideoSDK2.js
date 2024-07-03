@@ -891,7 +891,7 @@ export default function VideoSDK() {
 //       <JoinScreen getMeetingId={getMeetingId} />
 //     </SafeAreaView>
 //   );
-}
+// }
 
 
 
