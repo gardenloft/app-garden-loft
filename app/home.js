@@ -4,7 +4,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import HelpButton from "../components/HelpButton";
 import Carousel from "../components/CarouselOne/Carousel";
 //used for deep linking video call
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, StyleSheet, Text, Platform, Alert } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import * as Linking from 'expo-linking';
@@ -14,12 +14,18 @@ import { getAuth } from 'firebase/auth';
 import { FIRESTORE_DB } from '../FirebaseConfig';
 import { doc, setDoc } from 'firebase/firestore';
 import * as Device from 'expo-device';
+import CallAlertModal from '../components/CallAlertModal';
 
 export default function App() {
   const auth = getAuth();
   const user = auth.currentUser;
   const notificationListener = useRef(null);
   const responseListener = useRef(null);
+  //modal alert
+  const [modalVisible, setModalVisible] = useState(false);
+  const [callerName, setCallerName] = useState('');
+  const [meetingId, setMeetingId] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (user) {
@@ -42,10 +48,17 @@ export default function App() {
         },
       ]);
 
+      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+        const { caller, meetingId } = notification.request.content.data;
+        setCallerName(caller);
+        setMeetingId(meetingId);
+        setModalVisible(true);
+      });
+
       responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-        const { meetingId } = response.notification.request.content.data;
+        const { meetingId, caller } = response.notification.request.content.data;
         if (response.actionIdentifier === 'ACCEPT_CALL') {
-          Linking.openURL(`app-garden-loft://VideoSDK2?meetingId=${meetingId}`);
+          Linking.openURL(`app-garden-loft://VideoSDK2?meetingId=${meetingId}?caller=${caller}`);
         } else if (response.actionIdentifier === 'DECLINE_CALL') {
           // Handle decline action if needed
         }
@@ -61,6 +74,18 @@ export default function App() {
       };
     }
   }, [user]);
+
+  const joinMeeting = async () => {
+    setModalVisible(false);
+    router.push({
+      pathname: '/VideoSDK2',
+      params: { meetingId }
+    });
+  };
+
+  const handleDecline = () => {
+    setModalVisible(false);
+  };
 
   async function registerForPushNotificationsAsync() {
     let token;
@@ -102,6 +127,12 @@ export default function App() {
       <HelpButton />
       <Carousel />
     </SafeAreaProvider>
+    <CallAlertModal
+        visible={modalVisible}
+        callerId={callerName}
+        onAccept={joinMeeting}
+        onDecline={handleDecline}
+      />
   </GestureHandlerRootView>
   )
 }
