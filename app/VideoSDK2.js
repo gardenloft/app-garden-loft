@@ -296,6 +296,339 @@
 //   );
 // }
 
+
+///////////////////////////
+// WORKING CODE with leave/back button
+//////////////////////////
+
+// import React, { useState, useEffect } from 'react';
+// import {
+//   SafeAreaView,
+//   TouchableOpacity,
+//   Text,
+//   View,
+//   FlatList,
+//   Dimensions,
+//   Alert,
+// } from 'react-native';
+// import {
+//   MeetingProvider,
+//   useMeeting,
+//   useParticipant,
+//   MediaStream,
+//   RTCView,
+// } from '@videosdk.live/react-native-sdk';
+// import { createMeeting, token } from '../components/api';
+// import { FIRESTORE_DB } from '../FirebaseConfig';
+// import { doc, getDoc, setDoc } from "firebase/firestore";
+// import * as Notifications from 'expo-notifications';
+// import { getAuth } from 'firebase/auth';
+// import { useLocalSearchParams } from 'expo-router';
+// import { MaterialCommunityIcons } from '@expo/vector-icons';
+// import {useRouter} from 'expo-router'
+
+
+// const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+
+// Notifications.setNotificationHandler({
+//   handleNotification: async () => ({
+//     shouldShowAlert: true,
+//     shouldPlaySound: true,
+//     shouldSetBadge: false,
+//   }),
+// });
+
+// function JoinScreen(props) {
+//   const [meetingVal, setMeetingVal] = useState('');
+//   return (
+//     <SafeAreaView
+//       style={{
+//         flex: 1,
+//         backgroundColor: '#F6F6FF',
+//         justifyContent: 'center',
+//         paddingHorizontal: 60,
+//         width: viewportWidth * 0.8,
+//       }}>
+     
+//     </SafeAreaView>
+//   );
+// }
+
+// const IconButton = ({ onPress, iconName, buttonText, backgroundColor }) => {
+  
+//   return (
+//     <TouchableOpacity
+//       onPress={onPress}
+//       style={{
+//         backgroundColor: backgroundColor,
+//         flexDirection:"row",
+//         gap: 2,
+//         justifyContent: 'center',
+//         alignItems: 'center',
+//         padding: 16,
+//         borderRadius: 8,
+//         marginBottom: 40,
+//       }}>
+//          <MaterialCommunityIcons name={iconName} size={24} color="white" />
+//       <Text style={{ color: 'white', fontSize: 16 }}>{buttonText}</Text>
+//     </TouchableOpacity>
+//   );
+// };
+
+
+
+// function ControlsContainer({ join, leave, toggleWebcam, toggleMic,  back }) {
+//   const router = useRouter();
+
+// const handleBack = () => {
+//   router.back();
+// };
+
+
+//   return (
+//     <View
+//       style={{
+//         padding: 24,
+//         flexDirection: 'row',
+//         justifyContent: 'space-between',
+//         // justifyContent: "center", // Centers vertically
+//       // alignItems: "center",
+//         width: viewportWidth * 0.9,
+//         height: viewportHeight * 0.2,
+//       }}>
+
+//       <IconButton
+//         onPress={() => {
+//           join();
+//         }}
+//           iconName={"video"}
+//         buttonText={'Join'}
+//         backgroundColor={'#FF9900'}
+//       />
+//       <IconButton
+//         onPress={() => {
+//           toggleWebcam();
+//         }}
+//         iconName="camera"
+//         buttonText="Toggle Webcam"
+//         backgroundColor="orange"
+//       />
+//       <IconButton
+//         onPress={() => {
+//           toggleMic();
+//         }}
+//         iconName="microphone"
+//         buttonText="Toggle Mic"
+//         backgroundColor="orange"
+      
+       
+//       />
+//       <IconButton
+//         onPress={() => {
+//           leave();
+//           handleBack();
+//         }}
+//         iconName="phone-hangup"
+//         buttonText="Leave"
+//         backgroundColor="red"
+//       />
+//        {/* <IconButton
+//         onPress={() => {
+//           handleBack();
+//         }}
+//         iconName="arrow-left"
+//         buttonText="Back"
+//         backgroundColor="orange"
+//       /> */}
+
+//     </View>
+//   );
+// }
+
+// function ParticipantView({ participantId }) {
+//   const { webcamStream, webcamOn } = useParticipant(participantId);
+
+//   if (webcamOn && webcamStream) {
+//     return (
+//       <RTCView
+//         streamURL={new MediaStream([webcamStream.track]).toURL()}
+//         objectFit="cover"
+//         style={{
+//           height: 200,
+//           marginVertical: 16,
+//           marginHorizontal: 16,
+//         }}
+//       />
+//     );
+//   } else {
+//     return (
+//       <View
+//         style={{
+//           height: 400,
+//           marginVertical: 16,
+//           marginHorizontal: 16,
+//           backgroundColor: '#cccccc',
+//           justifyContent: 'center',
+//           alignItems: 'center',
+//         }}>
+//         <Text style={{ fontSize: 18 }}>Webcam is off</Text>
+//       </View>
+//     );
+//   }
+// }
+
+// function ParticipantList({ participants }) {
+//   return participants.length > 0 ? (
+//     <FlatList
+//       data={participants}
+//       renderItem={({ item }) => <ParticipantView participantId={item} />}
+//     />
+//   ) : (
+//     <View
+//       style={{
+//         flex: 1,
+//         backgroundColor: '#F6F6FF',
+//         justifyContent: 'center',
+//         alignItems: 'center',
+//       }}>
+//       <Text style={{ fontSize: 24 }}>Press Join button to enter meeting.</Text>
+//     </View>
+//   );
+// }
+
+// function MeetingView({ autoJoin, setAutoJoin }) {
+//   const { join, leave, toggleWebcam, toggleMic, meetingId, participants } = useMeeting({});
+//   const participantsArrId = [...participants.keys()];
+
+  
+ 
+
+//   useEffect(() => {
+//     if (autoJoin) {
+//       join();
+//       toggleWebcam();
+//       setAutoJoin(false);
+//     }
+//   }, [autoJoin, join, toggleWebcam, setAutoJoin]);
+
+
+
+// const handleBack = () => {
+//   router.back();
+// };
+
+
+//   return (
+//     <View style={{ flex: 1, width: viewportWidth * 0.9, height: viewportHeight * 0.5, alignContent: 'center', backgroundColor:"white", borderRadius: 40, }}>
+//       {meetingId ? <Text style={{ fontSize: 22, padding: 16 }}>Meeting Id: {meetingId}</Text> : null}
+//       <ParticipantList participants={participantsArrId} />
+
+//       <ControlsContainer join={join} leave={leave} toggleWebcam={toggleWebcam} toggleMic={toggleMic} back={handleBack}/>
+
+//     </View>
+//   );
+// }
+
+
+
+// export default function VideoSDK() {
+//   const [meetingId, setMeetingId] = useState(null);
+//   const [autoJoin, setAutoJoin] = useState(false);
+//   const params = useLocalSearchParams();
+//   const auth = getAuth();
+//   const user = auth.currentUser;
+
+//   useEffect(() => {
+//     if (params.meetingId) {
+//       setMeetingId(params.meetingId);
+//       // setAutoJoin(true);
+//     }
+//   }, [params]);
+
+//   const getMeetingId = async id => {
+//     const newMeetingId = id == null ? await createMeeting({ token }) : id;
+//     setMeetingId(newMeetingId);
+//   };
+
+//   const callUser = async (calleeUid) => {
+//     const newMeetingId = await createMeeting({ token });
+//     setMeetingId(newMeetingId);
+//     setAutoJoin(true);
+   
+
+//     const callerDoc = await getDoc(doc(FIRESTORE_DB, 'users', user.uid));
+//     const caller = callerDoc.data().userName;
+
+//     const calleeDoc = await getDoc(doc(FIRESTORE_DB, 'users', calleeUid));
+//     if (!calleeDoc.exists()) {
+//       Alert.alert('Callee not found');
+//       return;
+//     }
+//     const calleeData = calleeDoc.data();
+//     const calleePushToken = calleeData.pushToken;
+
+//     await setDoc(doc(FIRESTORE_DB, 'users', user.uid), { callerId: newMeetingId }, { merge: true });
+//     await setDoc(doc(FIRESTORE_DB, 'users', calleeUid), { calleeId: newMeetingId }, { merge: true });
+
+//     const message = {
+//       to: calleePushToken,
+//       sound: 'default',
+//       title: 'Incoming Call',
+//       body: `${caller} is calling you`,
+//       data: { meetingId: newMeetingId },
+//       categoryId: 'incoming_call',
+//     };
+
+//     await fetch('https://exp.host/--/api/v2/push/send', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         Accept: 'application/json',
+//       },
+//       body: JSON.stringify(message),
+//     });
+
+//     joinMeeting(newMeetingId);
+//   };
+
+//   const joinMeeting = async meetingId => {
+//     console.log('Joining meeting with ID:', meetingId);
+//   };
+
+//   useEffect(() => {
+//     if (params.calleeUid) {
+//       callUser(params.calleeUid);
+//       // setAutoJoin(true); 
+//     }
+//   }, [params.calleeUid]);
+
+
+//   return meetingId ? (
+//     <SafeAreaView style={{ flex: 1, backgroundColor: '#FCF8E3',justifyContent: "center", // Centers vertically
+//       alignItems: "center", }}>
+//       <MeetingProvider
+//         config={{
+//           meetingId,
+//           micEnabled: false,
+//           webcamEnabled: true,
+//           name: user.displayName || 'Test User',
+//         }}
+//         token={token}>
+//         <MeetingView autoJoin={autoJoin} setAutoJoin={setAutoJoin} />
+//       </MeetingProvider>
+//     </SafeAreaView>
+//   ) : (
+//     <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+//       <JoinScreen getMeetingId={getMeetingId}  />
+//     </SafeAreaView>
+//   );
+// }
+
+///////////////////////////
+// WORKING CODE with leave/back button ABOVE
+//////////////////////////
+
+
 import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
@@ -305,6 +638,9 @@ import {
   FlatList,
   Dimensions,
   Alert,
+  TextInput,
+  Modal,
+  Button
 } from 'react-native';
 import {
   MeetingProvider,
@@ -315,13 +651,12 @@ import {
 } from '@videosdk.live/react-native-sdk';
 import { createMeeting, token } from '../components/api';
 import { FIRESTORE_DB } from '../FirebaseConfig';
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, getDocs } from "firebase/firestore";
 import * as Notifications from 'expo-notifications';
 import { getAuth } from 'firebase/auth';
 import { useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {useRouter} from 'expo-router'
-
+import { useRouter } from 'expo-router';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -344,19 +679,18 @@ function JoinScreen(props) {
         paddingHorizontal: 60,
         width: viewportWidth * 0.8,
       }}>
-     
+      {/* Your join screen content here */}
     </SafeAreaView>
   );
 }
 
 const IconButton = ({ onPress, iconName, buttonText, backgroundColor }) => {
-  
   return (
     <TouchableOpacity
       onPress={onPress}
       style={{
         backgroundColor: backgroundColor,
-        flexDirection:"row",
+        flexDirection: "row",
         gap: 2,
         justifyContent: 'center',
         alignItems: 'center',
@@ -364,21 +698,18 @@ const IconButton = ({ onPress, iconName, buttonText, backgroundColor }) => {
         borderRadius: 8,
         marginBottom: 40,
       }}>
-         <MaterialCommunityIcons name={iconName} size={24} color="white" />
+      <MaterialCommunityIcons name={iconName} size={24} color="white" />
       <Text style={{ color: 'white', fontSize: 16 }}>{buttonText}</Text>
     </TouchableOpacity>
   );
 };
 
-
-
-function ControlsContainer({ join, leave, toggleWebcam, toggleMic,  back }) {
+function ControlsContainer({ join, leave, toggleWebcam, toggleMic, addPeople }) {
   const router = useRouter();
 
-const handleBack = () => {
-  router.back();
-};
-
+  const handleBack = () => {
+    router.back();
+  };
 
   return (
     <View
@@ -386,17 +717,16 @@ const handleBack = () => {
         padding: 24,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        // justifyContent: "center", // Centers vertically
-      // alignItems: "center",
+        position: 'absolute',
+        bottom: 20,
         width: viewportWidth * 0.9,
-        height: viewportHeight * 0.2,
       }}>
 
       <IconButton
         onPress={() => {
           join();
         }}
-          iconName={"video"}
+        iconName={"video"}
         buttonText={'Join'}
         backgroundColor={'#FF9900'}
       />
@@ -415,8 +745,6 @@ const handleBack = () => {
         iconName="microphone"
         buttonText="Toggle Mic"
         backgroundColor="orange"
-      
-       
       />
       <IconButton
         onPress={() => {
@@ -427,15 +755,12 @@ const handleBack = () => {
         buttonText="Leave"
         backgroundColor="red"
       />
-       {/* <IconButton
-        onPress={() => {
-          handleBack();
-        }}
-        iconName="arrow-left"
-        buttonText="Back"
-        backgroundColor="orange"
-      /> */}
-
+      <IconButton
+        onPress={addPeople}
+        iconName="account-plus"
+        buttonText="Add People"
+        backgroundColor="green"
+      />
     </View>
   );
 }
@@ -449,9 +774,10 @@ function ParticipantView({ participantId }) {
         streamURL={new MediaStream([webcamStream.track]).toURL()}
         objectFit="cover"
         style={{
-          height: 200,
-          marginVertical: 16,
-          marginHorizontal: 16,
+          flex: 1,
+          margin: 8,
+          width: viewportWidth * 0.9, 
+          height: viewportHeight * 0.65
         }}
       />
     );
@@ -459,9 +785,8 @@ function ParticipantView({ participantId }) {
     return (
       <View
         style={{
-          height: 400,
-          marginVertical: 16,
-          marginHorizontal: 16,
+          flex: 1,
+          margin: 8,
           backgroundColor: '#cccccc',
           justifyContent: 'center',
           alignItems: 'center',
@@ -474,10 +799,11 @@ function ParticipantView({ participantId }) {
 
 function ParticipantList({ participants }) {
   return participants.length > 0 ? (
-    <FlatList
-      data={participants}
-      renderItem={({ item }) => <ParticipantView participantId={item} />}
-    />
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+      {participants.map((participantId) => (
+        <ParticipantView key={participantId} participantId={participantId} />
+      ))}
+    </View>
   ) : (
     <View
       style={{
@@ -491,12 +817,12 @@ function ParticipantList({ participants }) {
   );
 }
 
-function MeetingView({ autoJoin, setAutoJoin }) {
+function MeetingView({ autoJoin, setAutoJoin, callUser }) {
   const { join, leave, toggleWebcam, toggleMic, meetingId, participants } = useMeeting({});
   const participantsArrId = [...participants.keys()];
-
-  
- 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [contacts, setContacts] = useState([]);
+  const [selectedContact, setSelectedContact] = useState(null);
 
   useEffect(() => {
     if (autoJoin) {
@@ -506,25 +832,61 @@ function MeetingView({ autoJoin, setAutoJoin }) {
     }
   }, [autoJoin, join, toggleWebcam, setAutoJoin]);
 
+  useEffect(() => {
+    const fetchContacts = async () => {
+      const contactsCollection = collection(FIRESTORE_DB, 'users');
+      const contactsSnapshot = await getDocs(contactsCollection);
+      const contactsList = contactsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setContacts(contactsList);
+    };
 
+    fetchContacts();
+  }, []);
 
-const handleBack = () => {
-  router.back();
-};
+  const addPeople = () => {
+    setModalVisible(true);
+  };
 
+  const handleAddPeople = async () => {
+    if (selectedContact) {
+      await callUser(selectedContact.id);
+    }
+    setModalVisible(false);
+    setSelectedContact(null);
+  };
 
   return (
-    <View style={{ flex: 1, width: viewportWidth * 0.9, height: viewportHeight * 0.5, alignContent: 'center', backgroundColor:"white", borderRadius: 40, }}>
+    <View style={{ flex: 1, width: viewportWidth * 0.9, height: viewportHeight * 0.5, alignContent: 'center', backgroundColor: "white", borderRadius: 40, }}>
       {meetingId ? <Text style={{ fontSize: 22, padding: 16 }}>Meeting Id: {meetingId}</Text> : null}
       <ParticipantList participants={participantsArrId} />
-
-      <ControlsContainer join={join} leave={leave} toggleWebcam={toggleWebcam} toggleMic={toggleMic} back={handleBack}/>
-
+      <ControlsContainer join={join} leave={leave} toggleWebcam={toggleWebcam} toggleMic={toggleMic} addPeople={addPeople} />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <View style={{ width: 300, backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
+            <Text style={{ fontSize: 18, marginBottom: 10 }}>Select a contact to add:</Text>
+            <FlatList
+              data={contacts}
+              keyExtractor={item => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => setSelectedContact(item)}>
+                  <Text style={{ padding: 10, backgroundColor: selectedContact?.id === item.id ? '#ddd' : '#fff' }}>{item.userName}</Text>
+                </TouchableOpacity>
+              )}
+            />
+            <Button title="Add" onPress={handleAddPeople} />
+            <Button title="Cancel" onPress={() => setModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
-
-
 
 export default function VideoSDK() {
   const [meetingId, setMeetingId] = useState(null);
@@ -536,7 +898,6 @@ export default function VideoSDK() {
   useEffect(() => {
     if (params.meetingId) {
       setMeetingId(params.meetingId);
-      // setAutoJoin(true);
     }
   }, [params]);
 
@@ -549,7 +910,6 @@ export default function VideoSDK() {
     const newMeetingId = await createMeeting({ token });
     setMeetingId(newMeetingId);
     setAutoJoin(true);
-   
 
     const callerDoc = await getDoc(doc(FIRESTORE_DB, 'users', user.uid));
     const caller = callerDoc.data().userName;
@@ -593,14 +953,11 @@ export default function VideoSDK() {
   useEffect(() => {
     if (params.calleeUid) {
       callUser(params.calleeUid);
-      // setAutoJoin(true); 
     }
   }, [params.calleeUid]);
 
-
   return meetingId ? (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FCF8E3',justifyContent: "center", // Centers vertically
-      alignItems: "center", }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#FCF8E3', justifyContent: "center", alignItems: "center" }}>
       <MeetingProvider
         config={{
           meetingId,
@@ -609,16 +966,16 @@ export default function VideoSDK() {
           name: user.displayName || 'Test User',
         }}
         token={token}>
-        <MeetingView autoJoin={autoJoin} setAutoJoin={setAutoJoin} />
+        <MeetingView autoJoin={autoJoin} setAutoJoin={setAutoJoin} callUser={callUser} />
+        {/* <MeetingView autoJoin={autoJoin} setAutoJoin={setAutoJoin} /> */}
       </MeetingProvider>
     </SafeAreaView>
   ) : (
     <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <JoinScreen getMeetingId={getMeetingId}  />
+      <JoinScreen getMeetingId={getMeetingId} />
     </SafeAreaView>
   );
 }
-
 
 
 
