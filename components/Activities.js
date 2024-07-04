@@ -51,7 +51,7 @@ const Activities = () => {
     const responseSubscription =
       Notifications.addNotificationResponseReceivedListener((response) => {
         Alert.alert(
-          "Notification Clicked",
+          "Garden Loft",
           response.notification.request.content.body
         );
       });

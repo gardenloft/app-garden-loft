@@ -638,7 +638,6 @@ import {
   FlatList,
   Dimensions,
   Alert,
-  TextInput,
   Modal,
   Button
 } from 'react-native';
@@ -669,7 +668,6 @@ Notifications.setNotificationHandler({
 });
 
 function JoinScreen(props) {
-  const [meetingVal, setMeetingVal] = useState('');
   return (
     <SafeAreaView
       style={{
@@ -901,6 +899,7 @@ export default function VideoSDK() {
     }
   }, [params]);
 
+
   const getMeetingId = async id => {
     const newMeetingId = id == null ? await createMeeting({ token }) : id;
     setMeetingId(newMeetingId);
@@ -930,7 +929,7 @@ export default function VideoSDK() {
       sound: 'default',
       title: 'Incoming Call',
       body: `${caller} is calling you`,
-      data: { meetingId: newMeetingId },
+      data: { meetingId: newMeetingId, caller: caller },
       categoryId: 'incoming_call',
     };
 
@@ -976,26 +975,3 @@ export default function VideoSDK() {
     </SafeAreaView>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
