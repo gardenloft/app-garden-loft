@@ -733,7 +733,7 @@ function ControlsContainer({ join, leave, toggleWebcam, toggleMic, addPeople }) 
           toggleWebcam();
         }}
         iconName="camera"
-        buttonText="Toggle Webcam"
+        buttonText="Webcam On/Off"
         backgroundColor="orange"
       />
       <IconButton
@@ -741,7 +741,7 @@ function ControlsContainer({ join, leave, toggleWebcam, toggleMic, addPeople }) 
           toggleMic();
         }}
         iconName="microphone"
-        buttonText="Toggle Mic"
+        buttonText="Mic On/Off"
         backgroundColor="orange"
       />
       <IconButton
@@ -788,6 +788,8 @@ function ParticipantView({ participantId }) {
           backgroundColor: '#cccccc',
           justifyContent: 'center',
           alignItems: 'center',
+          width: viewportWidth * 0.9, 
+          height: viewportHeight * 0.65
         }}>
         <Text style={{ fontSize: 18 }}>Webcam is off</Text>
       </View>
