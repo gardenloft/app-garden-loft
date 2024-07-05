@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     gap: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.9)',
+    backgroundColor: '#FCF8E3',
     borderRadius: "70px",
     // width: viewportWidth * 0.8 
   },
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   callerText: {
     fontSize: 44,
-    color: 'white',
+    color: '#272624',
     marginBottom: 20,
   },
   buttonContainer: {

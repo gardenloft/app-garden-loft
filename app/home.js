@@ -56,9 +56,11 @@ export default function App() {
       });
 
       responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-        const { meetingId, caller } = response.notification.request.content.data;
+        const { meetingId, caller, setAutoJoinForCallee } = response.notification.request.content.data;
         if (response.actionIdentifier === 'ACCEPT_CALL') {
-          Linking.openURL(`app-garden-loft://VideoSDK2?meetingId=${meetingId}?caller=${caller}`);
+      
+          Linking.openURL(`app-garden-loft://VideoSDK2?meetingId=${meetingId}?caller=${caller}?setAutoJoinForCallee=${setAutoJoinForCallee}`);
+    
         } else if (response.actionIdentifier === 'DECLINE_CALL') {
           // Handle decline action if needed
         }
@@ -81,6 +83,7 @@ export default function App() {
       pathname: '/VideoSDK2',
       params: { meetingId }
     });
+
   };
 
   const handleDecline = () => {
