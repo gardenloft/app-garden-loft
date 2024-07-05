@@ -37,8 +37,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FCF8E3',
-    borderRadius: "70px",
-    // width: viewportWidth * 0.8 
   },
   logo: {
     width: 300,
