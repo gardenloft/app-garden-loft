@@ -720,14 +720,14 @@ function ControlsContainer({ join, leave, toggleWebcam, toggleMic, addPeople }) 
         width: viewportWidth * 0.9,
       }}>
 
-      <IconButton
+      {/* <IconButton
         onPress={() => {
           join();
         }}
         iconName={"video"}
         buttonText={'Join'}
         backgroundColor={'#FF9900'}
-      />
+      /> */}
       <IconButton
         onPress={() => {
           toggleWebcam();
@@ -895,12 +895,20 @@ export default function VideoSDK() {
   const auth = getAuth();
   const user = auth.currentUser;
 
+  // useEffect(() => {
+  //   if (params.meetingId) {
+  //     setMeetingId(params.meetingId);
+  //   }
+  // }, [params]);
+
   useEffect(() => {
     if (params.meetingId) {
       setMeetingId(params.meetingId);
+      if (params.autoJoin === 'true') {
+        setAutoJoin(true);
+      }
     }
-  }, [params]);
-
+  }, [params.meetingId, params.autoJoin]);
 
   const getMeetingId = async id => {
     const newMeetingId = id == null ? await createMeeting({ token }) : id;
