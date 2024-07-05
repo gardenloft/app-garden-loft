@@ -855,7 +855,7 @@ function MeetingView({ autoJoin, setAutoJoin, callUser }) {
 
   return (
     <View style={{ flex: 1, width: viewportWidth * 0.9, height: viewportHeight * 0.5, alignContent: 'center', backgroundColor: "white", borderRadius: 40, }}>
-      {meetingId ? <Text style={{ fontSize: 22, padding: 16 }}>Meeting Id: {meetingId}</Text> : null}
+      {meetingId ? <Text style={{ fontSize: 22, padding: 16 }}>Video Call: {meetingId}</Text> : null}
       <ParticipantList participants={participantsArrId} />
       <ControlsContainer join={join} leave={leave} toggleWebcam={toggleWebcam} toggleMic={toggleMic} addPeople={addPeople} />
       <Modal
@@ -947,7 +947,7 @@ export default function VideoSDK() {
   };
 
   const joinMeeting = async meetingId => {
-    console.log('Joining meeting with ID:', meetingId);
+    console.log('Joining Video Call with ID:', meetingId);
   };
 
   useEffect(() => {
