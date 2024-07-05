@@ -921,6 +921,7 @@ export default function VideoSDK() {
     const calleeData = calleeDoc.data();
     const calleePushToken = calleeData.pushToken;
 
+
     await setDoc(doc(FIRESTORE_DB, 'users', user.uid), { callerId: newMeetingId }, { merge: true });
     await setDoc(doc(FIRESTORE_DB, 'users', calleeUid), { calleeId: newMeetingId }, { merge: true });
 
