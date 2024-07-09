@@ -23,12 +23,15 @@
       "android": {
         "gradleCommand": ":app:assembleRelease"
       }
+   
     },
     "preview3": {
-      "developmentClient": true
+      "developmentClient": true,
+    
     },
     "preview4": {
-      "distribution": "internal"
+      "distribution": "internal",
+      
     },
     "production": {
     
@@ -41,10 +44,12 @@
   },
   "submit": {
     "production": {
+
       "ios": { "ascAppId": "6508169875", "appleId": "doughsally@icloud.com", "appleTeamId": "GXPC3HRVU2" }
     },
     "development": {
       "ios": { "ascAppId": "6508169875", "appleId": "doughsally@icloud.com", "appleTeamId": "GXPC3HRVU2" }
+
     }
   }
 }
