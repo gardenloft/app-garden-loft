@@ -228,7 +228,7 @@
 // export default VideoCall;
 
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Modal, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import Carousel from 'react-native-reanimated-carousel';
 import { FIRESTORE_DB } from '../FirebaseConfig';
@@ -258,7 +258,8 @@ const VideoCall = () => {
       id: doc.id,
       name: doc.data().userName,
       pushToken: doc.data().pushToken,
-      uid: doc.id
+      uid: doc.id,
+      imageUrl: doc.data().imageUrl,
     }));
     setUserNames(fetchedUserNames);
   };
@@ -283,6 +284,7 @@ const VideoCall = () => {
       }]}
       onPress={() => startVideoCall(item.uid)}
     >
+      <Image source={item.imageUrl} style={styles.image} />
       <Text style={styles.cardText}>{item.name}</Text>
     </TouchableOpacity>
   );
@@ -348,6 +350,12 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: '#393939',
     fontWeight: '700',
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
   },
   prompt: {
     fontSize: 20,
