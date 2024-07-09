@@ -32,10 +32,11 @@
     },
     "production": {
       "channel": "production"
+
     }
   },
   "submit": {
-    "production": {
+    "development": {
       "ios": { "ascAppId": "6508169875", "appleId": "doughsally@icloud.com", "appleTeamId": "GXPC3HRVU2" }
     }
   }
