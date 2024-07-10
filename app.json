@@ -24,24 +24,27 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.sallydough.appgardenloft",
       "googleServicesFile": "./GoogleService-Info (4).plist",
-      "infoPlist": {
-        "NSAppTransportSecurity": {
-          "NSAllowsArbitraryLoads": true,
-          "NSExceptionDomains": {
-            "youtube.com": {
-              "NSExceptionAllowsInsecureHTTPLoads": true,
-              "NSIncludesSubdomains": true,
-              "NSExceptionRequiresForwardSecrecy": false
-            },
-            "ytimg.com": {
-              "NSExceptionAllowsInsecureHTTPLoads": true,
-              "NSIncludesSubdomains": true,
-              "NSExceptionRequiresForwardSecrecy": false
+        "buildNumber": "2",
+        "infoPlist": {
+          "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
+          "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
+          "NSAppTransportSecurity": {
+            "NSAllowsArbitraryLoads": true,
+            "NSExceptionDomains": {
+              "youtube.com": {
+                "NSExceptionAllowsInsecureHTTPLoads": true,
+                "NSIncludesSubdomains": true,
+                "NSExceptionRequiresForwardSecrecy": false
+              },
+              "ytimg.com": {
+                "NSExceptionAllowsInsecureHTTPLoads": true,
+                "NSIncludesSubdomains": true,
+                "NSExceptionRequiresForwardSecrecy": false
+              }
             }
           }
         }
-      }
-    },
+      },
     "extra": {
       "eas": {
         "projectId": "598d65e5-14db-479e-a297-3561c87ddbc5"
