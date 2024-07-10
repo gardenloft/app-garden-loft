@@ -24,7 +24,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.sallydough.appgardenloft",
       "googleServicesFile": "./GoogleService-Info (4).plist",
-        "buildNumber": "2",
+        "buildNumber": "3",
         "infoPlist": {
           "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
           "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
