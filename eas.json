@@ -7,7 +7,7 @@
       "developmentClient": true,
       "channel": "development",
       "distribution": "internal",
-      "buildnumber": "4"
+      
     },
     "preview": {
       "developmentClient": true,
