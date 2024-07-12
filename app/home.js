@@ -100,16 +100,30 @@ export default function App() {
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
       }
+      
       if (finalStatus !== 'granted') {
         alert('Failed to get push token for push notification!');
         return;
       }
+      console.log('Existing status:', existingStatus);
+      console.log('Final status:', finalStatus);
+      
 
       token = (await Notifications.getExpoPushTokenAsync({
         projectId: Constants.expoConfig?.extra?.eas?.projectId
       })).data;
+      
     } else {
       alert('Must use physical device for Push Notifications');
+    }
+    
+    try {
+      token = (await Notifications.getExpoPushTokenAsync({
+        projectId: Constants.expoConfig?.extra?.eas?.projectId
+      })).data;
+      console.log('Push token:', token);
+    } catch (error) {
+      console.error('Error getting push token:', error);
     }
 
     if (Platform.OS === 'android') {
@@ -139,4 +153,5 @@ export default function App() {
   </GestureHandlerRootView>
   )
 }
+
 
