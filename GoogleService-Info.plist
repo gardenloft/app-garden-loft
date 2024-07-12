@@ -16,6 +16,10 @@
 	<string>appgardenloft.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
+	<key>UIBackgroundModes</key>
+ <array>
+  <string>remote-notification</string>
+ </array>
 	<key>IS_ANALYTICS_ENABLED</key>
 	<false></false>
 	<key>IS_APPINVITE_ENABLED</key>
