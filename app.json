@@ -3,13 +3,8 @@
     "name": "app-garden-loft",
     "slug": "app-garden-loft",
     "scheme": "app-garden-loft",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "platforms": ["ios", "android", "web"],
 
-    
     "runtimeVersion": {
       "policy": "sdkVersion"
     },
@@ -26,33 +21,38 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.sallydough.appgardenloft",
       "googleServicesFile": "./GoogleService-Info.plist",
-        "buildNumber": "4",
-        "infoPlist": {
-          "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
-          "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
-          "NSAppTransportSecurity": {
-            "NSAllowsArbitraryLoads": true,
-            "NSExceptionDomains": {
-              "youtube.com": {
-                "NSExceptionAllowsInsecureHTTPLoads": true,
-                "NSIncludesSubdomains": true,
-                "NSExceptionRequiresForwardSecrecy": false
-              },
-              "ytimg.com": {
-                "NSExceptionAllowsInsecureHTTPLoads": true,
-                "NSIncludesSubdomains": true,
-                "NSExceptionRequiresForwardSecrecy": false
-              }
+      "buildNumber": "4",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true,
+          "NSExceptionDomains": {
+            "youtube.com": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSIncludesSubdomains": true,
+              "NSExceptionRequiresForwardSecrecy": false
+            },
+            "UISupportedInterfaceOrientations": [
+              "UIInterfaceOrientationPortrait",
+              "UIInterfaceOrientationPortraitUpsideDown",
+              "UIInterfaceOrientationLandscapeLeft",
+              "UIInterfaceOrientationLandscapeRight"
+            ],
+            "ytimg.com": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSIncludesSubdomains": true,
+              "NSExceptionRequiresForwardSecrecy": false
             }
           }
         }
-      },
+      }
+    },
     "extra": {
       "eas": {
         "projectId": "598d65e5-14db-479e-a297-3561c87ddbc5"
       }
     }
-  
   },
   "android": {
     "adaptiveIcon": {
@@ -73,7 +73,7 @@
   },
   "plugins": [
     "expo-notifications",
-  
+
     "expo-router",
     "@videosdk.live/expo-config-plugin",
     [
