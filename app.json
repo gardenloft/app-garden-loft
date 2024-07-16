@@ -8,6 +8,8 @@
       "android",
       "web"
     ],
+
+    
     "runtimeVersion": {
       "policy": "sdkVersion"
     },
@@ -23,8 +25,8 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.sallydough.appgardenloft",
-      "googleServicesFile": "./GoogleService-Info (4).plist",
-        "buildNumber": "3",
+      "googleServicesFile": "./GoogleService-Info.plist",
+        "buildNumber": "4",
         "infoPlist": {
           "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
           "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
@@ -58,7 +60,7 @@
       "backgroundColor": "#ffffff"
     },
     "package": "com.sallydough.appgardenloft",
-    "googleServicesFile": "./google-services (5).json"
+    "googleServicesFile": "./google-services.json"
   },
   "web": {
     "favicon": "./assets/favicon.png",
@@ -70,6 +72,8 @@
     }
   },
   "plugins": [
+    "expo-notifications",
+  
     "expo-router",
     "@videosdk.live/expo-config-plugin",
     [
