@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  useWindowDimensions
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import VideoCall from "../VideoCall";
@@ -18,8 +19,8 @@ import GLClub from "../GLClub";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import Logout from "../Logout";
 
-const { width: viewportWidth, height: viewportHeight } =
-  Dimensions.get("window");
+// const { width: viewportWidth, height: viewportHeight } =
+//   Dimensions.get("window");
 
 const data = [
   {
@@ -70,6 +71,7 @@ const data = [
 const Home = () => {
   const [activeIndex, setActiveIndex] = useState(0); // Set initial active index to the yellow card (index 2)
   const carouselRef = useRef(null);
+  const { width: viewportWidth, height: viewportHeight } = useWindowDimensions();
 
   const handleSnapToItem = (index) => {
     setActiveIndex(index);
@@ -116,6 +118,7 @@ const Home = () => {
   );
 
 
+  const cardsToShow = viewportWidth > viewportHeight ? 5 : 3;
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -129,7 +132,8 @@ const Home = () => {
       </TouchableOpacity>
       <Carousel
         ref={carouselRef}
-        width={Math.round(viewportWidth / 5)} // Display 5 cards
+        // width={Math.round(viewportWidth / 5)} // Display 5 cards
+        width={Math.round(viewportWidth / cardsToShow)} // Display 5 cards
         height={Math.round(viewportHeight * 0.3)}
         autoPlay={false}
         data={data}
@@ -173,7 +177,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   carousel: {
-    width: Math.round(viewportWidth * 0.8),
+    // width: Math.round(viewportWidth * 0.8),
+    width: Math.round(Dimensions.get("window").width * 0.8),
     marginTop: 10,
   },
   prompt: {
@@ -183,8 +188,10 @@ const styles = StyleSheet.create({
   },
   item: {
   
-    width: Math.round(viewportWidth * 0.18), // Width for 5 items
-    height: Math.round(viewportHeight * 0.25),
+    // width: Math.round(viewportWidth * 0.18), // Width for 5 items
+    // height: Math.round(viewportHeight * 0.25),
+    width: Math.round(Dimensions.get("window").width * 0.18), // Adjust the width for 5 or 3 items
+    height: Math.round(Dimensions.get("window").height * 0.25),
     gap: 10,
     marginLeft: 350,
     justifyContent: "center",
