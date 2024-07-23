@@ -734,6 +734,7 @@ const Entertainment = () => {
             allowsInlineMediaPlayback={true}
             mediaPlaybackRequiresUserAction={false}
             useWebKit={true}
+            domStorageEnabled={true}
             source={{ uri: `https://www.youtube.com/embed/${selectedVideoId}` }}
             onError={(syntheticEvent) => {
               const { nativeEvent } = syntheticEvent;
