@@ -21,7 +21,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.sallydough.appgardenloft",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "5", // always change this number before you build using "eas build --profile production --platform ios"
+      "buildNumber": "7", // always change this number before you build using "eas build --profile production --platform ios"
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
