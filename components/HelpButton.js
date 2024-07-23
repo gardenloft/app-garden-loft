@@ -52,12 +52,12 @@ const HelpButton = () => {
   return (
     <View style={styles.container}>
       <View style={styles.container2}>
-        <ImageBackground
+        {/* <ImageBackground
           source={image}
           resizeMode={"contain"}
-          style={styles.image}>
-          <Text style={styles.Welcome}>Hello {userInfo?.userName}</Text>
-        </ImageBackground>
+          style={styles.image}> */}
+        <Text style={styles.Welcome}>Hello {userInfo?.userName}</Text>
+        {/* </ImageBackground> */}
       </View>
       <TouchableOpacity onPress={handleCallSupport} style={styles.callButton}>
         <Text style={styles.EmergencyButton}>Call Emergency</Text>
@@ -75,13 +75,13 @@ const HelpButton = () => {
 const styles = StyleSheet.create({
   container: {
     width: viewportWidth * 0.92,
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     flexDirection: "row",
     marginTop: 45,
     marginBottom: 45,
     paddingTop: 12,
     alignSelf: "center",
-    backgroundColor: "#FCF8E3"
+    backgroundColor: "#FCF8E3",
   },
   container2: {
     flex: 1,
