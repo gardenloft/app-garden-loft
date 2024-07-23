@@ -981,7 +981,8 @@ export default function VideoSDK() {
           micEnabled: true,
           webcamEnabled: true,
           name: user.displayName || 'Test User',
-           // Video settings
+
+              // Video settings
     resolution: { width: 1920, height: 1080 }, // Full HD resolution
     frameRate: 30,
     bitrate: 4000, // Increased for better quality
@@ -1030,14 +1031,6 @@ export default function VideoSDK() {
   }}
   token={token}
   joinWithoutUserInteraction={true}
-
-        //   resolution: { width: 1280, height: 720 }, // HD resolution
-        //             frameRate: 30, // Standard frame rate
-        //             bitrate: 2500, // High bitrate for HD quality
-        //             codec: 'H264', // High-quality codec
-        // }}
-        // token={token}
-        
         
         >
         <MeetingView autoJoin={autoJoin} setAutoJoin={setAutoJoin} callUser={callUser} />
