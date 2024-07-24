@@ -138,7 +138,14 @@ const Home = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={styles.arrowLeft}
+        style={[styles.arrowLeft,
+          {left: viewportWidth > viewportHeight
+            ? 10
+            : 18,
+          top: viewportWidth > viewportHeight
+            ? "12%"
+            : "14.5%",}
+        ]}
         // onPress={handlePrev}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: -1, animated: true });
@@ -159,7 +166,7 @@ const Home = () => {
         style={[styles.carousel,
           {marginTop: viewportWidth > viewportHeight
             ? 10
-            : 50,}
+            : 70,}
         ]}
         // autoFillData={true}
         // defaultIndex={2} // Ensure the yellow card is centered initially
@@ -177,7 +184,7 @@ const Home = () => {
             : 22,
           top: viewportWidth > viewportHeight
             ? "12%"
-            : "13%",}
+            : "15%",}
         ]}
         // onPress={handleNext}
         onPress={() => {
@@ -235,8 +242,6 @@ const styles = StyleSheet.create({
   },
   arrowLeft: {
     position: "absolute",
-    top: "12%",
-    left: 10,
     transform: [{ translateY: -10 }],
   },
   arrowRight: {
