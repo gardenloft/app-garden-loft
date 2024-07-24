@@ -93,7 +93,22 @@ const Home = () => {
           styles.item,
           { backgroundColor: index === activeIndex ? "#f3b718" : "#909090",
           transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}]
-           }
+           },
+           {
+            width: viewportWidth > viewportHeight
+              ? Math.round(Dimensions.get("window").width * 0.18)
+              : Math.round(Dimensions.get("window").width  * 0.28),
+          },
+           {
+            height: viewportWidth > viewportHeight
+              ? Math.round(Dimensions.get("window").height * 0.25)
+              : Math.round(Dimensions.get("window").height * 0.20),
+          },
+           {
+            marginLeft: viewportWidth > viewportHeight
+              ? 350
+              : 220,
+          },
           
         ]}
       >
@@ -119,6 +134,7 @@ const Home = () => {
 
 
   const cardsToShow = viewportWidth > viewportHeight ? 5 : 3;
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -140,7 +156,11 @@ const Home = () => {
         renderItem={renderItem}
         loop={true}
         onSnapToItem={handleSnapToItem}
-        style={styles.carousel}
+        style={[styles.carousel,
+          {marginTop: viewportWidth > viewportHeight
+            ? 10
+            : 50,}
+        ]}
         // autoFillData={true}
         // defaultIndex={2} // Ensure the yellow card is centered initially
         // mode="parallax"
@@ -151,7 +171,14 @@ const Home = () => {
         }}
       />
       <TouchableOpacity
-        style={styles.arrowRight}
+        style={[styles.arrowRight,
+          {right: viewportWidth > viewportHeight
+            ? 35
+            : 22,
+          top: viewportWidth > viewportHeight
+            ? "12%"
+            : "13%",}
+        ]}
         // onPress={handleNext}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: 1, animated: true });
@@ -164,6 +191,8 @@ const Home = () => {
     </View>
   );
 };
+// const cardsSpacing = viewportWidth > viewportHeight ? 0.18 : 3;
+
 
 const styles = StyleSheet.create({
   container: {
@@ -177,9 +206,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   carousel: {
-    // width: Math.round(viewportWidth * 0.8),
     width: Math.round(Dimensions.get("window").width * 0.8),
-    marginTop: 10,
   },
   prompt: {
     fontSize: 30,
@@ -187,11 +214,6 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   item: {
-  
-    // width: Math.round(viewportWidth * 0.18), // Width for 5 items
-    // height: Math.round(viewportHeight * 0.25),
-    width: Math.round(Dimensions.get("window").width * 0.18), // Adjust the width for 5 or 3 items
-    height: Math.round(Dimensions.get("window").height * 0.25),
     gap: 10,
     marginLeft: 350,
     justifyContent: "center",
@@ -219,8 +241,6 @@ const styles = StyleSheet.create({
   },
   arrowRight: {
     position: "absolute",
-    top: "12%",
-    right: 35,
     transform: [{ translateY: -10 }],
   },
   icon: {},
