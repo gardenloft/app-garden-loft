@@ -13,6 +13,7 @@ import Carousel from "react-native-reanimated-carousel";
 import { collection, getDocs } from "firebase/firestore";
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import { WebView } from "react-native-webview";
+import YouTube from 'react-native-youtube-iframe';
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
@@ -131,10 +132,22 @@ const HowTo = () => {
         visible={isVideoModalVisible}
         onRequestClose={closeVideoModal}>
         <View style={styles.modalView}>
-          <WebView
+          {/* use webview code below for android */}
+          {/* <WebView
             style={{ width: "100%" }}
             javaScriptEnabled
             source={{ uri: `https://www.youtube.com/embed/${selectedVideoId}` }}
+          /> */} 
+          <YouTube
+            width={viewportWidth * 0.8}
+            height={viewportHeight * 0.7}
+            play={true}
+            videoId={selectedVideoId} // Pass the selected video ID here
+            // onError={(e) => {
+            //   console.error('YouTubeIframe error:', e);
+            //   setError("Failed to load video. Please try again later.");
+            //   setIsVideoModalVisible(false);
+            // }}
           />
           <Pressable style={styles.closeButton} onPress={closeVideoModal}>
             <FontAwesome name="close" size={24} color="black" />
@@ -189,8 +202,8 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 10,
-    height: viewportHeight * 0.7,
-    marginTop: 50,
+    height: viewportHeight * 0.8,
+    marginTop: 80,
     backgroundColor: "white",
     borderRadius: 20,
     padding: 3,
