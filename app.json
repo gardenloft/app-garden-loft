@@ -3,8 +3,11 @@
     "name": "app-garden-loft",
     "slug": "app-garden-loft",
     "scheme": "app-garden-loft",
-    "platforms": ["ios", "android", "web"],
-
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "runtimeVersion": {
       "policy": "sdkVersion"
     },
@@ -21,7 +24,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.sallydough.appgardenloft",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "7", // always change this number before you build using "eas build --profile production --platform ios"
+      "buildNumber": "8",
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
@@ -52,6 +55,9 @@
       "eas": {
         "projectId": "598d65e5-14db-479e-a297-3561c87ddbc5"
       }
+    },
+    "android": {
+      "package": "com.sallydough.appgardenloft"
     }
   },
   "android": {
@@ -73,7 +79,6 @@
   },
   "plugins": [
     "expo-notifications",
-
     "expo-router",
     "@videosdk.live/expo-config-plugin",
     [
