@@ -6,7 +6,7 @@
     "development": {
       "developmentClient": true,
       "channel": "development",
-      "distribution": "internal",
+      "distribution": "internal"
       
     },
     "preview": {
@@ -27,11 +27,11 @@
    
     },
     "preview3": {
-      "developmentClient": true,
+      "developmentClient": true
     
     },
     "preview4": {
-      "distribution": "internal",
+      "distribution": "internal"
       
     },
     "production": {
