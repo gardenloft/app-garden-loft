@@ -21,8 +21,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "expo-router/build/useNavigation";
 import { FontAwesome } from "@expo/vector-icons";
 
-
-
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
 
@@ -179,6 +177,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderRadius: 30,
     marginBottom: 20,
+    color: "black",
   },
   passwordContainer: {
     flexDirection: "row",
@@ -197,6 +196,7 @@ const styles = StyleSheet.create({
     height: viewportHeight * 0.08,
     borderTopLeftRadius: 30,
     borderBottomLeftRadius: 30,
+    color: "black",
   },
   eyeIcon: {
     padding: 10,
