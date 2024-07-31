@@ -379,8 +379,8 @@ export default function VideoSDK() {
               // Video settings
     resolution: { width: 1920, height: 1080 }, // Full HD resolution
     frameRate: 30,
-    bitrate: 4000, // Increased for better quality
-    codec: 'VP9', // More efficient codec
+    bitrate: 3000, // Increased for better quality
+    codec: 'H264', // Widely supported codec
     
     // Audio settings
     audioCodec: 'opus',

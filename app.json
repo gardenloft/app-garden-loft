@@ -26,6 +26,9 @@
       "googleServicesFile": "./GoogleService-Info.plist",
       "buildNumber": "8",
       "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
         "NSAppTransportSecurity": {
