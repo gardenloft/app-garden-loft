@@ -77,6 +77,11 @@ const HowTo = () => {
         { backgroundColor: index === activeIndex ? "#f3b718" : "#f09030",
         transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}]
          },
+         {
+          height: viewportWidth > viewportHeight
+            ? Math.round(Dimensions.get("window").height * 0.3)
+            : Math.round(Dimensions.get("window").height * 0.25),
+        },
       ]}
       onPress={() => openVideoModal(item.videoId)}>
       <MaterialCommunityIcons name="television-play" size={94} color="white" />
@@ -100,7 +105,11 @@ const HowTo = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,
+      {height: viewportWidth > viewportHeight
+        ? 320
+        : 450,}
+    ]}>
       <Carousel
         ref={carouselRef}
         data={videos}
@@ -108,20 +117,34 @@ const HowTo = () => {
         width={Math.round(viewportWidth * 0.3)}
         height={Math.round(viewportWidth * 0.3)}
         loop={true}
-        style={{ width: Math.round(viewportWidth * 0.9) }}
+        style={{ width: Math.round(viewportWidth * 0.9), height: Math.round(viewportWidth * 0.5) }}
         onSnapToItem={(index) => setActiveIndex(index)}
-        pagingEnabled={false}
-        snapEnabled={false}
+        scrollAnimationDuration={800}
+        snapEnabled
 
       />
       <Pressable
-        style={styles.arrowLeft}
+        style={[styles.arrowLeft,
+          {left: viewportWidth > viewportHeight
+            ? -17
+            : -22,
+          top: viewportWidth > viewportHeight
+            ? "40%"
+            : "30%",}
+        ]}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: -1, animated: true });}}>
         <FontAwesome name="angle-left" size={100} color="black" />
       </Pressable>
       <Pressable
-        style={styles.arrowRight}
+        style={[styles.arrowRight,
+          {right: viewportWidth > viewportHeight
+            ? -25
+            : -22,
+          top: viewportWidth > viewportHeight
+            ? "40%"
+            : "30%",}
+        ]}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: 1, animated: true });}}>
         <FontAwesome name="angle-right" size={100} color="black" />
@@ -132,22 +155,11 @@ const HowTo = () => {
         visible={isVideoModalVisible}
         onRequestClose={closeVideoModal}>
         <View style={styles.modalView}>
-          {/* use webview code below for android */}
-          {/* <WebView
-            style={{ width: "100%" }}
-            javaScriptEnabled
-            source={{ uri: `https://www.youtube.com/embed/${selectedVideoId}` }}
-          /> */} 
           <YouTube
             width={viewportWidth * 0.8}
             height={viewportHeight * 0.7}
             play={true}
             videoId={selectedVideoId} // Pass the selected video ID here
-            // onError={(e) => {
-            //   console.error('YouTubeIframe error:', e);
-            //   setError("Failed to load video. Please try again later.");
-            //   setIsVideoModalVisible(false);
-            // }}
           />
           <Pressable style={styles.closeButton} onPress={closeVideoModal}>
             <FontAwesome name="close" size={24} color="black" />
@@ -162,16 +174,19 @@ const styles = StyleSheet.create({
   container: {
     position: "relative",
     alignItems: "center",
-    height: 320, // changes height placement of carousel
   },
   cardContainer: {
     width: viewportWidth * 0.3, //changes width of carousel cards
-    height: viewportHeight * 0.3,
     backgroundColor: "#f09030",
-    borderRadius: 30,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 5, // Add margin to create gap between cards
+    marginHorizontal: 10, // Add margin to create gap between cards
+    shadowColor: "#000",
+    shadowOffset: { width: 8, height: 7 },
+    shadowOpacity: 0.22,
+    shadowRadius: 9.22,
+    elevation: 12,
     // marginLeft: 355, //edits the centering of the carousel
     padding: 10,
   },
@@ -188,26 +203,23 @@ const styles = StyleSheet.create({
   },
   arrowLeft: {
     position: "absolute",
-    top: "50%",
-    left: -17,
     zIndex: 10,
     transform: [{ translateY: -50 }],
   },
   arrowRight: {
     position: "absolute",
-    top: "50%",
-    right: -25,
     zIndex: 10,
     transform: [{ translateY: -50 }],
   },
   modalView: {
     margin: 10,
-    height: viewportHeight * 0.8,
-    marginTop: 80,
+    height: viewportHeight * 0.9,
+    width: viewportWidth * 0.95,
+    marginTop: 50,
     backgroundColor: "white",
     borderRadius: 20,
-    padding: 3,
-    paddingTop: 20,
+    padding: 20,
+    paddingTop: 70,
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -218,7 +230,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 3,
-    width: "90%",
     alignSelf: "center",
   },
   closeButton: {
