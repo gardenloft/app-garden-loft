@@ -193,7 +193,9 @@ const Home = () => {
       >
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
-      <Text style={styles.prompt}>{data[activeIndex].prompt}</Text>
+      <Text style={[styles.prompt,
+        {marginBottom: viewportWidth > viewportHeight ? 30 : 50}
+      ]}>{data[activeIndex].prompt}</Text>
       <View style={styles.carousel2}>{data[activeIndex].component}</View>
     </View>
   );
@@ -218,7 +220,6 @@ const styles = StyleSheet.create({
   prompt: {
     fontSize: 30,
     color: "rgb(45, 62, 95)",
-    marginBottom: 50,
   },
   item: {
     gap: 10,
