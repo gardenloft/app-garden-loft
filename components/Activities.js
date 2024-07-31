@@ -223,6 +223,12 @@ const Activities = () => {
         { backgroundColor: index === activeIndex ? "#f3b718" : "#f09030",
         transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}],
          },
+         {
+          height:
+            viewportWidth > viewportHeight
+              ? Math.round(Dimensions.get("window").height * 0.3)
+              : Math.round(Dimensions.get("window").height * 0.25),
+        },
       ]}
       onPress={() => navigateToZoomLink(item)}>
       <Text style={styles.cardText}>{item.item}</Text>
@@ -274,7 +280,10 @@ const Activities = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[
+      styles.container,
+      { height: viewportWidth > viewportHeight ? 320 : 450 },
+    ]}>
       {loading ? (
         <ActivityIndicator size="large" color="orange" style={styles.loading} />
       ) : error ? (
@@ -288,22 +297,35 @@ const Activities = () => {
             renderItem={renderItem}
             width={Math.round(viewportWidth * 0.3)}
             height={Math.round(viewportHeight * 0.3)}
-            style={{ width: Math.round(viewportWidth * 0.9) }}
+            style={{ width: Math.round(viewportWidth * 0.9),  height: Math.round(viewportWidth * 0.5) }}
             itemWidth={Math.round(viewportWidth * 0.3)}
             loop={true}
             useScrollView={true}
             activeSlideAlignment="center"
             onSnapToItem={(index) => handleSnapToItem(index)}
+            scrollAnimationDuration={800}
           />
           <Pressable
-            style={styles.arrowLeft}
+            style={[
+              styles.arrowLeft,
+              {
+                left: viewportWidth > viewportHeight ? -17 : -22,
+                top: viewportWidth > viewportHeight ? "40%" : "30%",
+              },
+            ]}
             onPress={() => {
               carouselRef.current?.scrollTo({ count: -1, animated: true });}}
             >
             <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
           </Pressable>
           <Pressable
-            style={styles.arrowRight}
+            style={[
+              styles.arrowRight,
+              {
+                right: viewportWidth > viewportHeight ? -25 : -22,
+                top: viewportWidth > viewportHeight ? "40%" : "30%",
+              },
+            ]}
             onPress={() => {
               carouselRef.current?.scrollTo({ count: 1, animated: true });}}
             
@@ -342,28 +364,23 @@ const Activities = () => {
 const styles = StyleSheet.create({
   container: {
     position: "relative",
-    height: 320,
     alignItems: "center",
   },
   cardContainer: {
     width: viewportWidth * 0.3, //changes width of carousel cards
-    height: viewportHeight * 0.3,
     backgroundColor: "#f09030",
-    borderRadius: 30,
+    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 5,
+    marginHorizontal: 10,
     // marginLeft: 365,  //edits the centering of the carousel
     flexDirection: "column",
     gap: 10,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 6,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 10,
+    shadowOffset: { width: 8, height: 7 },
+    shadowOpacity: 0.22,
+    shadowRadius: 9.22,
+    elevation: 12,
   },
   cardText: {
     fontSize: 30,
@@ -384,14 +401,10 @@ const styles = StyleSheet.create({
   },
   arrowLeft: {
     position: "absolute",
-    top: "40%",
-    left: -17,
     transform: [{ translateY: -50 }],
   },
   arrowRight: {
     position: "absolute",
-    top: "40%",
-    right: -25,
     transform: [{ translateY: -50 }],
   },
   modalContainer: {
