@@ -6,7 +6,7 @@ import Carousel from "react-native-reanimated-carousel";
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
 
-const Lights: React.FC = () => {
+const Lights = () => {
   const [contacts, setContacts] = useState([
     {
       id: 1,
@@ -48,7 +48,7 @@ const Lights: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const carouselRef = useRef(null);
 
-  const toggleLight = (id: number) => {
+  const toggleLight = (id) => {
     setContacts((contacts) =>
       contacts.map((contact) =>
         contact.id === id ? { ...contact, active: !contact.active } : contact
@@ -56,15 +56,20 @@ const Lights: React.FC = () => {
     );
   };
 
-  const renderItem = ({ item, index }: { item: any, index: number }) => (
+  const renderItem = ({ item, index }) => (
     <Pressable
       key={item.id}
       style={[
         styles.cardContainer,
         {
           backgroundColor: index === activeIndex ? "#f3b718" : "#f09030",
-          transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}],
-          
+          transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}],  
+        },
+        {
+          height:
+            viewportWidth > viewportHeight
+              ? Math.round(Dimensions.get("window").height * 0.3)
+              : Math.round(Dimensions.get("window").height * 0.25),
         },
       ]}
       onPress={() => toggleLight(item.id)}>
@@ -80,14 +85,17 @@ const Lights: React.FC = () => {
 
 
   return (
-    <View style={styles.container}>
+    <View style={[
+      styles.container,
+      { height: viewportWidth > viewportHeight ? 320 : 450 },
+    ]}>
       <Carousel
         ref={carouselRef}
         data={contacts}
         renderItem={renderItem}
         width={Math.round(viewportWidth * 0.3)}
         height={viewportHeight * 0.3} //width of carousel card
-        style={{ width: Math.round(viewportWidth * 0.9) }} //width of the carousel
+        style={{ width: Math.round(viewportWidth * 0.9), height: Math.round(viewportWidth * 0.5) }} //width of the carousel
         loop={true}
         onSnapToItem={(index) => setActiveIndex(index)}
         // mode="parallax"
@@ -95,21 +103,37 @@ const Lights: React.FC = () => {
         //   parallaxScrollingScale: 0.9,
         //   parallaxScrollingOffset: 50,
         // }}
-        pagingEnabled={true}
       />
       {/* Prompt */}
-      <Text style={styles.prompt}>
+      <Text style={[
+          styles.prompt,
+          {
+            marginBottom: viewportWidth > viewportHeight ? 35 : 100,
+          },
+        ]}>
         {contacts[activeIndex].prompt && contacts[activeIndex].prompt}
       </Text>
       <Pressable
-        style={styles.arrowLeft}
+        style={[
+          styles.arrowLeft,
+          {
+            left: viewportWidth > viewportHeight ? -17 : -22,
+            top: viewportWidth > viewportHeight ? "40%" : "30%",
+          },
+        ]}
         
         onPress={() => {
           carouselRef.current?.scrollTo({ count: -1, animated: true });}}>
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </Pressable>
       <Pressable
-        style={styles.arrowRight}
+        style={[
+          styles.arrowRight,
+          {
+            right: viewportWidth > viewportHeight ? -25 : -22,
+            top: viewportWidth > viewportHeight ? "40%" : "30%",
+          },
+        ]}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: 1, animated: true });}}
         >
@@ -122,35 +146,32 @@ const Lights: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     position: "relative",
-    height: 320,
     alignItems: "center",
   },
   cardContainer: {
     width: viewportWidth * 0.3,
-    height: viewportHeight * 0.3,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 30,
-    marginHorizontal: 5,
+    borderRadius: 20,
+    marginHorizontal: 10,
     // marginLeft: 355, //edits the centering of the carousel
     flexDirection: "column",
-    gap: 25,
-    shadowOffset: {
-      width: 6,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
+    gap: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 8, height: 7 },
+    shadowOpacity: 0.22,
+    shadowRadius: 9.22,
     elevation: 12,
   },
   cardText: {
     fontSize: 25,
     color: "#393939",
     fontWeight: "700",
+    textAlign: "center",
   },
   prompt: {
-    fontSize: 20,
-    marginBottom: 35,
+    fontSize: 25,
+    color: "#393939",
   },
   arrowLeft: {
     position: "absolute",
