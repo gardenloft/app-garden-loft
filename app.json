@@ -24,7 +24,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.sallydough.appgardenloft",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "8",
+      "buildNumber": "9",
       "infoPlist": {
         "UIBackgroundModes": [
           "remote-notification"
@@ -61,7 +61,10 @@
     },
     "android": {
       "package": "com.sallydough.appgardenloft"
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   },
   "android": {
     "adaptiveIcon": {
