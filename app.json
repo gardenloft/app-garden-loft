@@ -13,10 +13,10 @@
     },
     "version": "1.0.0",
     "orientation": "default",
-    "icon": "./assets/splash.png",
+    "icon": "./assets/garden loft logo app.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/garden loft logo app.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -59,20 +59,17 @@
         "projectId": "598d65e5-14db-479e-a297-3561c87ddbc5"
       }
     },
-    "android": {
-      "package": "com.sallydough.appgardenloft"
-    },
     "plugins": [
       "expo-router"
-    ]
-  },
-  "android": {
-    "adaptiveIcon": {
-      "foregroundImage": "./assets/adaptive-icon.png",
-      "backgroundColor": "#ffffff"
-    },
-    "package": "com.sallydough.appgardenloft",
-    "googleServicesFile": "./google-services.json"
+    ],
+    "android": {
+      "package": "com.sallydough.appgardenloft",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "googleServicesFile": "./google-services.json"
+    }
   },
   "web": {
     "favicon": "./assets/favicon.png",
