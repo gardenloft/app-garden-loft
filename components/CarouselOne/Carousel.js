@@ -6,11 +6,11 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  useWindowDimensions
+  useWindowDimensions,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import VideoCall from "../VideoCall";
-import Activities2 from "../Activities";
+import Activities2 from "../../assets/Activities";
 import Entertainment from "../Entertainment";
 import Lights from "../Lights";
 import HowTo from "../HowTo";
@@ -71,7 +71,8 @@ const data = [
 const Home = () => {
   const [activeIndex, setActiveIndex] = useState(0); // Set initial active index to the yellow card (index 2)
   const carouselRef = useRef(null);
-  const { width: viewportWidth, height: viewportHeight } = useWindowDimensions();
+  const { width: viewportWidth, height: viewportHeight } =
+    useWindowDimensions();
 
   const handleSnapToItem = (index) => {
     setActiveIndex(index);
@@ -84,34 +85,34 @@ const Home = () => {
   const handleCardPressSnap = (item, index) => {
     handleCardPress(item, index);
     handleSnapToItem(index);
-  }
+  };
 
   const renderItem = ({ item, index }) => (
     <TouchableOpacity onPress={() => handleCardPressSnap(item, index)}>
       <View
         style={[
           styles.item,
-          { backgroundColor: index === activeIndex ? "#f3b718" : "#909090",
-          transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}]
-           },
-           {
-            width: viewportWidth > viewportHeight
-              ? Math.round(Dimensions.get("window").width * 0.18)
-              : Math.round(Dimensions.get("window").width  * 0.28),
+          {
+            backgroundColor: index === activeIndex ? "#f3b718" : "#909090",
+            transform:
+              index === activeIndex ? [{ scale: 1 }] : [{ scale: 0.8 }],
           },
-           {
-            height: viewportWidth > viewportHeight
-              ? Math.round(Dimensions.get("window").height * 0.25)
-              : Math.round(Dimensions.get("window").height * 0.20),
+          {
+            width:
+              viewportWidth > viewportHeight
+                ? Math.round(Dimensions.get("window").width * 0.18)
+                : Math.round(Dimensions.get("window").width * 0.28),
           },
-           {
-            marginLeft: viewportWidth > viewportHeight
-              ? 350
-              : 220,
+          {
+            height:
+              viewportWidth > viewportHeight
+                ? Math.round(Dimensions.get("window").height * 0.25)
+                : Math.round(Dimensions.get("window").height * 0.2),
           },
-          
-        ]}
-      >
+          {
+            marginLeft: viewportWidth > viewportHeight ? 350 : 220,
+          },
+        ]}>
         <MaterialCommunityIcons
           style={[
             styles.icon,
@@ -124,33 +125,29 @@ const Home = () => {
           style={[
             styles.title,
             { color: index === activeIndex ? "black" : "#f3b718" },
-          ]}
-        >
+          ]}>
           {item.title}
         </Text>
       </View>
     </TouchableOpacity>
   );
 
-
   const cardsToShow = viewportWidth > viewportHeight ? 5 : 3;
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={[styles.arrowLeft,
-          {left: viewportWidth > viewportHeight
-            ? 10
-            : 18,
-          top: viewportWidth > viewportHeight
-            ? "12%"
-            : "14.5%",}
+        style={[
+          styles.arrowLeft,
+          {
+            left: viewportWidth > viewportHeight ? 10 : 18,
+            top: viewportWidth > viewportHeight ? "12%" : "14.5%",
+          },
         ]}
         // onPress={handlePrev}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: -1, animated: true });
-        }}
-      >
+        }}>
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
       <Carousel
@@ -163,45 +160,47 @@ const Home = () => {
         renderItem={renderItem}
         loop={true}
         onSnapToItem={handleSnapToItem}
-        style={[styles.carousel,
-          {marginTop: viewportWidth > viewportHeight
-            ? 10
-            : 70,}
+        style={[
+          styles.carousel,
+          { marginTop: viewportWidth > viewportHeight ? 10 : 70 },
         ]}
         // autoFillData={true}
         // defaultIndex={2} // Ensure the yellow card is centered initially
         // mode="parallax"
-        modeConfig={{
+        modeConfig={
+          {
             // parallaxScrollingScale: 1,
             // parallaxScrollingOffset: 20,
             // parallaxAdjacentItemScale: 0.85,
-        }}
+          }
+        }
       />
       <TouchableOpacity
-        style={[styles.arrowRight,
-          {right: viewportWidth > viewportHeight
-            ? 35
-            : 22,
-          top: viewportWidth > viewportHeight
-            ? "12%"
-            : "15%",}
+        style={[
+          styles.arrowRight,
+          {
+            right: viewportWidth > viewportHeight ? 35 : 22,
+            top: viewportWidth > viewportHeight ? "12%" : "15%",
+          },
         ]}
         // onPress={handleNext}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: 1, animated: true });
-        }}
-      >
+        }}>
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
-      <Text style={[styles.prompt,
-        {marginBottom: viewportWidth > viewportHeight ? 30 : 50}
-      ]}>{data[activeIndex].prompt}</Text>
+      <Text
+        style={[
+          styles.prompt,
+          { marginBottom: viewportWidth > viewportHeight ? 30 : 50 },
+        ]}>
+        {data[activeIndex].prompt}
+      </Text>
       <View style={styles.carousel2}>{data[activeIndex].component}</View>
     </View>
   );
 };
 // const cardsSpacing = viewportWidth > viewportHeight ? 0.18 : 3;
-
 
 const styles = StyleSheet.create({
   container: {
@@ -253,4 +252,3 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
-
