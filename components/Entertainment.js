@@ -337,6 +337,7 @@ const Entertainment = ({ videoId, onClose }) => {
       >
         <View style={styles.modalView}>
           <ScrollView style={{ width: "100%" }}>
+          <View style={styles.seasonButtonContainer}>
             {selectedSeasonVideos.map((season, index) => (
               <Pressable
                 key={index}
@@ -352,6 +353,7 @@ const Entertainment = ({ videoId, onClose }) => {
                 <Text style={styles.seasonButtonText}>{season.name}</Text>
               </Pressable>
             ))}
+            </View>
           </ScrollView>
           <Pressable
             style={styles.closeButton}
@@ -387,6 +389,7 @@ const Entertainment = ({ videoId, onClose }) => {
       >
         <View style={styles.modalView}>
           <ScrollView style={{ width: "100%" }}>
+          <View style={styles.seasonButtonContainer}>
             {favorites.map((favorite, index) => (
               <Pressable
                 key={index}
@@ -402,6 +405,7 @@ const Entertainment = ({ videoId, onClose }) => {
                 <Text style={styles.seasonButtonText}>{favorite.name}</Text>
               </Pressable>
             ))}
+            </View>
           </ScrollView>
           <Pressable
             style={styles.closeButton}
@@ -458,17 +462,30 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
   },
+  seasonButtonContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-evenly",
+  },
   seasonButton: {
     backgroundColor: "#f09030",
     padding: 10,
+    // marginVertical: 5,
+    // alignItems: "center",
+    // borderRadius: 10,
     marginVertical: 5,
+    marginHorizontal: 5,
     alignItems: "center",
     borderRadius: 10,
+    width: (viewportWidth * .85) / 3 - 10, // Subtracting margin and making space for three buttons in a row
+    height: 200,
+    justifyContent: "center",
   },
   seasonButtonText: {
     color: "white",
     fontSize: 18,
     fontWeight: "500",
+    textAlign: "center",
   },
   loading: {
     flex: 1,
@@ -527,3 +544,4 @@ const styles = StyleSheet.create({
 });
 
 export default Entertainment;
+
