@@ -391,8 +391,14 @@ const Entertainment = ({ videoId, onClose }) => {
               <Pressable
                 key={index}
                 style={styles.seasonButton}
-                onPress={() => openVideoModal(favorite.videoId, favorite.name)}
+                onPress={() => {
+                  openVideoModal(favorite.videoId, favorite.name);
+                  setIsFavoritesModalVisible(false);
+                }}
+                
               >
+
+
                 <Text style={styles.seasonButtonText}>{favorite.name}</Text>
               </Pressable>
             ))}

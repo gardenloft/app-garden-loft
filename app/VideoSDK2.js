@@ -568,7 +568,7 @@ function ControlsContainer({ join, leave, end, toggleWebcam, toggleMic, addPeopl
         buttonText="Add People"
         backgroundColor="green"
       />
-      <IconButton
+      {/* <IconButton
         onPress={() => changeQuality('low')}
         iconName="quality-low"
         buttonText="Low Quality"
@@ -585,7 +585,7 @@ function ControlsContainer({ join, leave, end, toggleWebcam, toggleMic, addPeopl
         iconName="quality-high"
         buttonText="High Quality"
         backgroundColor="blue"
-      />
+      /> */}
     </View>
   );
 }
@@ -666,10 +666,7 @@ function MeetingView({ autoJoin, setAutoJoin, callUser, onMeetingEnd, customVide
     //   resolution: { width: 1920, height: 1080 },
     //   frameRate: 30,
     //   bitrate: 3000,
-    //   codec: 'H264',
     //   optimizationMode: "motion",
-    // optimizationMode: "motion",
-    //   encoderConfig: "h720p_w1280p",
     //   facingMode: "user",
       multiStream: false,
       // videoCodec: "VP9", // Try VP9 for better quality at lower bitrates 
@@ -923,12 +920,13 @@ export default function VideoSDK() {
           name: user.displayName || 'Test User',
           customCameraVideoTrack: customVideoTrack,
           optimizationMode: "text", 
+          mediaStream: false,
 
           // Video settings
           // resolution: { width: 1920, height: 1080 },
           // frameRate: 30,
-          // bitrate: 3000,
-          // codec: 'H264',
+          bitrate: 3000,
+        
           
           // videoCodec: "VP9", // Try VP9 for better quality at lower bitrates 
           // resolution: { width: 1280, height: 720 }, 
