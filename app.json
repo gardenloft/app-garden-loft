@@ -24,7 +24,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.sallydough.appgardenloft",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "9",
+      "buildNumber": "11",
       "infoPlist": {
         "UIBackgroundModes": [
           "remote-notification"
