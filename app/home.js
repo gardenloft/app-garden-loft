@@ -59,7 +59,7 @@ export default function Home() {
         const { meetingId, caller, setAutoJoinForCallee } = response.notification.request.content.data;
         if (response.actionIdentifier === 'ACCEPT_CALL') {
       
-          Linking.openURL(`app-garden-loft://VideoSDK2?meetingId=${meetingId}?caller=${caller}&sutoJoin=true`);
+          Linking.openURL(`app-garden-loft://VideoSDK2?meetingId=${meetingId}?caller=${caller}&autoJoin=true`);
     
         } else if (response.actionIdentifier === 'DECLINE_CALL') {
           // Handle decline action if needed
