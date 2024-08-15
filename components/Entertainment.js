@@ -152,6 +152,7 @@
 //           favoritesData.push({
 //             videoId: data.videoId,
 //             name: data.name,
+//             title: data.title, // Ensure title is fetched
 //           });
 //         }
 //       });
@@ -159,7 +160,7 @@
 //     }
 //   };
 
-//   const updateWatchedVideos = async (videoId, videoName) => {
+//   const updateWatchedVideos = async (videoId, videoName, videoTitle) => {
 //     if (user) {
 //       const videoRef = doc(
 //         FIRESTORE_DB,
@@ -179,6 +180,7 @@
 //         await setDoc(videoRef, {
 //           videoId: videoId,
 //           name: videoName,
+//           title: videoTitle, // Ensure title is saved
 //           viewCount: 1,
 //           lastWatched: new Date(),
 //         });
@@ -205,7 +207,7 @@
 //     console.log("Opening Video Modal with Video ID: ", episode.videoId);
 //     setSelectedVideoId(episode.videoId);
 //     setIsVideoModalVisible(true);
-//     updateWatchedVideos(episode.videoId, episode.name);
+//     updateWatchedVideos(episode.videoId, episode.name, episode.title);
 //   };
 
 //   const closeVideoModal = () => {
@@ -214,21 +216,18 @@
 //   };
 
 //   const handleSurpriseMe = () => {
+//     const getRandomElement = (arr) =>
+//       arr[Math.floor(Math.random() * arr.length)];
+
 //     if (categories.length > 0) {
-//       const randomCategory =
-//         categories[Math.floor(Math.random() * (categories.length - 2))];
-//       const randomSubcategory =
-//         randomCategory.subcategories[
-//           Math.floor(Math.random() * randomCategory.subcategories.length)
-//         ];
-//       const randomSeason =
-//         randomSubcategory.seasons[
-//           Math.floor(Math.random() * randomSubcategory.seasons.length)
-//         ];
-//       const randomEpisode =
-//         randomSeason.episodes[
-//           Math.floor(Math.random() * randomSeason.episodes.length)
-//         ];
+//       const nonSpecialCategories = categories.filter(
+//         (category) => category.id !== "surprise" && category.id !== "favorites"
+//       );
+//       const randomCategory = getRandomElement(nonSpecialCategories);
+//       const randomSubcategory = getRandomElement(randomCategory.subcategories);
+//       const randomSeason = getRandomElement(randomSubcategory.seasons);
+//       const randomEpisode = getRandomElement(randomSeason.episodes);
+
 //       openEpisodeModal(randomEpisode);
 //     }
 //   };
@@ -327,6 +326,11 @@
 //     }
 //   };
 
+//   const handleBackPress = (setVisible, setPrevVisible) => {
+//     setVisible(false);
+//     setPrevVisible(true);
+//   };
+
 //   return (
 //     <View
 //       style={[
@@ -390,6 +394,13 @@
 //         visible={isCategoryModalVisible}
 //         onRequestClose={() => setIsCategoryModalVisible(false)}>
 //         <View style={styles.modalView}>
+//           <Pressable
+//             style={styles.backButton}
+//             onPress={() =>
+//               handleBackPress(setIsCategoryModalVisible, () => {})
+//             }>
+//             <FontAwesome name="arrow-left" size={24} color="black" />
+//           </Pressable>
 //           <ScrollView style={{ width: "100%" }}>
 //             <View style={styles.seasonButtonContainer}>
 //               {selectedSubcategories.map((subcategory, index) => (
@@ -425,6 +436,16 @@
 //         visible={isSubcategoryModalVisible}
 //         onRequestClose={() => setIsSubcategoryModalVisible(false)}>
 //         <View style={styles.modalView}>
+//           <Pressable
+//             style={styles.backButton}
+//             onPress={() =>
+//               handleBackPress(
+//                 setIsSubcategoryModalVisible,
+//                 setIsCategoryModalVisible
+//               )
+//             }>
+//             <FontAwesome name="arrow-left" size={24} color="black" />
+//           </Pressable>
 //           <ScrollView style={{ width: "100%" }}>
 //             <View style={styles.seasonButtonContainer}>
 //               {selectedSeasons.map((season, index) => (
@@ -456,6 +477,16 @@
 //         visible={isSeasonModalVisible}
 //         onRequestClose={() => setIsSeasonModalVisible(false)}>
 //         <View style={styles.modalView}>
+//           <Pressable
+//             style={styles.backButton}
+//             onPress={() =>
+//               handleBackPress(
+//                 setIsSeasonModalVisible,
+//                 setIsSubcategoryModalVisible
+//               )
+//             }>
+//             <FontAwesome name="arrow-left" size={24} color="black" />
+//           </Pressable>
 //           <ScrollView style={{ width: "100%" }}>
 //             <View style={styles.seasonButtonContainer}>
 //               {selectedEpisodes.map((episode, index) => (
@@ -468,6 +499,7 @@
 //                     setIsSeasonModalVisible(false);
 //                   }}>
 //                   <Text style={styles.seasonButtonText}>{episode.name}</Text>
+//                   <Text style={styles.seasonButtonText}>{episode.title}</Text>
 //                 </Pressable>
 //               ))}
 //             </View>
@@ -487,6 +519,13 @@
 //         visible={isVideoModalVisible}
 //         onRequestClose={closeVideoModal}>
 //         <View style={styles.modalView}>
+//           <Pressable
+//             style={styles.backButton}
+//             onPress={() =>
+//               handleBackPress(setIsVideoModalVisible, setIsSeasonModalVisible)
+//             }>
+//             <FontAwesome name="arrow-left" size={24} color="black" />
+//           </Pressable>
 //           <YouTubeVideoPlayer
 //             videoId={selectedVideoId}
 //             onClose={closeVideoModal}
@@ -504,6 +543,13 @@
 //         visible={isFavoritesModalVisible}
 //         onRequestClose={() => setIsFavoritesModalVisible(false)}>
 //         <View style={styles.modalView}>
+//           <Pressable
+//             style={styles.backButton}
+//             onPress={() =>
+//               handleBackPress(setIsFavoritesModalVisible, () => {})
+//             }>
+//             <FontAwesome name="arrow-left" size={24} color="black" />
+//           </Pressable>
 //           <ScrollView style={{ width: "100%" }}>
 //             <View style={styles.seasonButtonContainer}>
 //               {favorites.map((favorite, index) => (
@@ -514,7 +560,7 @@
 //                     openEpisodeModal(favorite);
 //                     setIsFavoritesModalVisible(false);
 //                   }}>
-//                   <Text style={styles.seasonButtonText}>{favorite.name}</Text>
+//                   <Text style={styles.seasonButtonText}>{favorite.title}</Text>
 //                 </Pressable>
 //               ))}
 //             </View>
@@ -630,6 +676,14 @@
 //     elevation: 5,
 //     alignSelf: "center",
 //   },
+//   backButton: {
+//     position: "absolute",
+//     top: 20,
+//     left: 20,
+//     backgroundColor: "lightblue",
+//     padding: 13,
+//     borderRadius: 5,
+//   },
 //   closeButton: {
 //     position: "absolute",
 //     top: 30,
@@ -710,6 +764,7 @@ const Entertainment = ({ videoId, onClose }) => {
   );
 
   const carouselRef = useRef(null);
+  const episodesCarouselRef = useRef(null);
 
   const auth = getAuth();
   const user = auth.currentUser;
@@ -759,6 +814,7 @@ const Entertainment = ({ videoId, onClose }) => {
             const episodes = episodesSnapshot.docs.map((episodeDoc) => ({
               id: episodeDoc.id,
               ...episodeDoc.data(),
+              isWatched: false, // Initialize with false
             }));
             const seasonData = seasonDoc.data();
             seasons.push({ id: seasonDoc.id, episodes, ...seasonData });
@@ -804,7 +860,8 @@ const Entertainment = ({ videoId, onClose }) => {
           favoritesData.push({
             videoId: data.videoId,
             name: data.name,
-            title: data.title, // Ensure title is fetched
+            title: data.title,
+            isWatched: data.viewCount >= 1, // Mark as watched if viewCount is 1 or more
           });
         }
       });
@@ -832,7 +889,7 @@ const Entertainment = ({ videoId, onClose }) => {
         await setDoc(videoRef, {
           videoId: videoId,
           name: videoName,
-          title: videoTitle, // Ensure title is saved
+          title: videoTitle,
           viewCount: 1,
           lastWatched: new Date(),
         });
@@ -856,10 +913,15 @@ const Entertainment = ({ videoId, onClose }) => {
   };
 
   const openEpisodeModal = (episode) => {
-    console.log("Opening Video Modal with Video ID: ", episode.videoId);
     setSelectedVideoId(episode.videoId);
     setIsVideoModalVisible(true);
     updateWatchedVideos(episode.videoId, episode.name, episode.title);
+    // Update watched status locally as well
+    setSelectedEpisodes((prevEpisodes) =>
+      prevEpisodes.map((ep) =>
+        ep.id === episode.id ? { ...ep, isWatched: true } : ep
+      )
+    );
   };
 
   const closeVideoModal = () => {
@@ -978,6 +1040,30 @@ const Entertainment = ({ videoId, onClose }) => {
     }
   };
 
+  const renderEpisodeItem = ({ item }) => {
+    return (
+      <Pressable
+        key={item.id}
+        style={[
+          styles.cardContainer,
+          {
+            backgroundColor: "#f09030",
+            transform: [{ scale: 1 }],
+            height: viewportHeight * 0.25,
+          },
+        ]}
+        onPress={() => openEpisodeModal(item)}>
+        <Text style={styles.cardText}>{item.name}</Text>
+        <Text style={styles.cardText}>{item.title}</Text>
+        {item.isWatched && (
+          <View style={styles.watchedOverlay}>
+            <Text style={styles.watchedText}>Watched</Text>
+          </View>
+        )}
+      </Pressable>
+    );
+  };
+
   const handleBackPress = (setVisible, setPrevVisible) => {
     setVisible(false);
     setPrevVisible(true);
@@ -1060,9 +1146,6 @@ const Entertainment = ({ videoId, onClose }) => {
                   key={index}
                   style={styles.seasonButton}
                   onPress={() => {
-                    console.log(
-                      `Button pressed for subcategory: ${subcategory.name}`
-                    );
                     openSubcategoryModal(subcategory);
                     setIsCategoryModalVisible(false);
                   }}>
@@ -1105,7 +1188,6 @@ const Entertainment = ({ videoId, onClose }) => {
                   key={index}
                   style={styles.seasonButton}
                   onPress={() => {
-                    console.log(`Button pressed for season: ${season.name}`);
                     openSeasonModal(season);
                     setIsSubcategoryModalVisible(false);
                   }}>
@@ -1139,23 +1221,59 @@ const Entertainment = ({ videoId, onClose }) => {
             }>
             <FontAwesome name="arrow-left" size={24} color="black" />
           </Pressable>
-          <ScrollView style={{ width: "100%" }}>
-            <View style={styles.seasonButtonContainer}>
-              {selectedEpisodes.map((episode, index) => (
-                <Pressable
-                  key={index}
-                  style={styles.seasonButton}
-                  onPress={() => {
-                    console.log(`Button pressed for episode: ${episode.name}`);
-                    openEpisodeModal(episode);
-                    setIsSeasonModalVisible(false);
-                  }}>
-                  <Text style={styles.seasonButtonText}>{episode.name}</Text>
-                  <Text style={styles.seasonButtonText}>{episode.title}</Text>
-                </Pressable>
-              ))}
-            </View>
-          </ScrollView>
+          <View style={{ width: "100%", alignItems: "center" }}>
+            <Carousel
+              ref={episodesCarouselRef}
+              loop={true}
+              data={selectedEpisodes}
+              renderItem={renderEpisodeItem}
+              width={Math.round(viewportWidth * 0.3)}
+              height={Math.round(viewportWidth * 0.3)}
+              style={{
+                width: Math.round(viewportWidth * 0.9),
+                height: Math.round(viewportWidth * 0.5),
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              snapEnabled
+              scrollAnimationDuration={800}
+              onSnapToItem={(index) => setActiveIndex(index)}
+            />
+            <Pressable
+              style={[
+                styles.arrowLeft,
+                {
+                  left: viewportWidth > viewportHeight ? -17 : -22,
+                  top: "50%",
+                  transform: [{ translateY: -50 }],
+                },
+              ]}
+              onPress={() => {
+                episodesCarouselRef.current?.scrollTo({
+                  count: -1,
+                  animated: true,
+                });
+              }}>
+              <FontAwesome name="angle-left" size={100} color="black" />
+            </Pressable>
+            <Pressable
+              style={[
+                styles.arrowRight,
+                {
+                  right: viewportWidth > viewportHeight ? -25 : -22,
+                  top: "50%",
+                  transform: [{ translateY: -50 }],
+                },
+              ]}
+              onPress={() => {
+                episodesCarouselRef.current?.scrollTo({
+                  count: 1,
+                  animated: true,
+                });
+              }}>
+              <FontAwesome name="angle-right" size={100} color="black" />
+            </Pressable>
+          </View>
           <Pressable
             style={styles.closeButton}
             onPress={() => setIsSeasonModalVisible(false)}>
@@ -1291,6 +1409,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "500",
     textAlign: "center",
+  },
+  watchedOverlay: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: 5,
+    borderRadius: 5,
+  },
+  watchedText: {
+    color: "white",
+    fontSize: 12,
   },
   loading: {
     flex: 1,
