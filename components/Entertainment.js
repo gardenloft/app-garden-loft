@@ -804,6 +804,7 @@ const Entertainment = ({ videoId, onClose }) => {
           favoritesData.push({
             videoId: data.videoId,
             name: data.name,
+            title: data.title, // Ensure title is fetched
           });
         }
       });
@@ -811,7 +812,7 @@ const Entertainment = ({ videoId, onClose }) => {
     }
   };
 
-  const updateWatchedVideos = async (videoId, videoName) => {
+  const updateWatchedVideos = async (videoId, videoName, videoTitle) => {
     if (user) {
       const videoRef = doc(
         FIRESTORE_DB,
@@ -831,6 +832,7 @@ const Entertainment = ({ videoId, onClose }) => {
         await setDoc(videoRef, {
           videoId: videoId,
           name: videoName,
+          title: videoTitle, // Ensure title is saved
           viewCount: 1,
           lastWatched: new Date(),
         });
@@ -857,7 +859,7 @@ const Entertainment = ({ videoId, onClose }) => {
     console.log("Opening Video Modal with Video ID: ", episode.videoId);
     setSelectedVideoId(episode.videoId);
     setIsVideoModalVisible(true);
-    updateWatchedVideos(episode.videoId, episode.name);
+    updateWatchedVideos(episode.videoId, episode.name, episode.title);
   };
 
   const closeVideoModal = () => {
@@ -1149,6 +1151,7 @@ const Entertainment = ({ videoId, onClose }) => {
                     setIsSeasonModalVisible(false);
                   }}>
                   <Text style={styles.seasonButtonText}>{episode.name}</Text>
+                  <Text style={styles.seasonButtonText}>{episode.title}</Text>
                 </Pressable>
               ))}
             </View>
@@ -1209,7 +1212,7 @@ const Entertainment = ({ videoId, onClose }) => {
                     openEpisodeModal(favorite);
                     setIsFavoritesModalVisible(false);
                   }}>
-                  <Text style={styles.seasonButtonText}>{favorite.name}</Text>
+                  <Text style={styles.seasonButtonText}>{favorite.title}</Text>
                 </Pressable>
               ))}
             </View>
