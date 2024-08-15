@@ -869,28 +869,37 @@ const Entertainment = ({ videoId, onClose }) => {
     }
   };
 
-  const updateWatchedVideos = async (videoId, videoName, videoTitle) => {
+  const fetchAlreadyWatched = async () => {
     if (user) {
-      const videoRef = doc(
+      const watchedSnapshot = await getDocs(
+        collection(FIRESTORE_DB, "users", user.uid, "alreadyWatched")
+      );
+      const watchedData = watchedSnapshot.docs.map((doc) => doc.data());
+      return watchedData.map((item) => item.title);
+    }
+    return [];
+  };
+
+  const updateAlreadyWatched = async (videoId, videoTitle) => {
+    if (user) {
+      const watchedRef = doc(
         FIRESTORE_DB,
         "users",
         user.uid,
-        "watchedVideos",
+        "alreadyWatched",
         videoId
       );
-      const videoSnap = await getDoc(videoRef);
-      if (videoSnap.exists()) {
-        const data = videoSnap.data();
-        await updateDoc(videoRef, {
-          viewCount: data.viewCount + 1,
+      const watchedSnap = await getDoc(watchedRef);
+      if (watchedSnap.exists()) {
+        // If the video is already marked as watched, just update the timestamp
+        await updateDoc(watchedRef, {
           lastWatched: new Date(),
         });
       } else {
-        await setDoc(videoRef, {
+        // If the video is not marked as watched, create a new document
+        await setDoc(watchedRef, {
           videoId: videoId,
-          name: videoName,
-          title: videoTitle,
-          viewCount: 1,
+          title: videoTitle, // Store the title in the database
           lastWatched: new Date(),
         });
       }
@@ -907,15 +916,21 @@ const Entertainment = ({ videoId, onClose }) => {
     setIsSubcategoryModalVisible(true);
   };
 
-  const openSeasonModal = (season) => {
-    setSelectedEpisodes(season.episodes);
+  const openSeasonModal = async (season) => {
+    const watchedTitles = await fetchAlreadyWatched();
+    const episodes = season.episodes.map((episode) => ({
+      ...episode,
+      isWatched: watchedTitles.includes(episode.title),
+    }));
+    setSelectedEpisodes(episodes);
     setIsSeasonModalVisible(true);
   };
 
   const openEpisodeModal = (episode) => {
     setSelectedVideoId(episode.videoId);
     setIsVideoModalVisible(true);
-    updateWatchedVideos(episode.videoId, episode.name, episode.title);
+    updateAlreadyWatched(episode.videoId, episode.title);
+
     // Update watched status locally as well
     setSelectedEpisodes((prevEpisodes) =>
       prevEpisodes.map((ep) =>
@@ -1050,6 +1065,7 @@ const Entertainment = ({ videoId, onClose }) => {
             backgroundColor: "#f09030",
             transform: [{ scale: 1 }],
             height: viewportHeight * 0.25,
+            marginHorizontal: 10, // Add gap between episode cards
           },
         ]}
         onPress={() => openEpisodeModal(item)}>
@@ -1373,7 +1389,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 10,
+    marginHorizontal: 10, // Add gap between cards
     padding: 10,
     gap: 4,
     shadowColor: "#000",
