@@ -1060,14 +1060,23 @@ const Entertainment = ({ videoId, onClose }) => {
       <Pressable
         key={item.id}
         style={[
-          styles.cardContainer,
-          {
-            backgroundColor: "#f09030",
-            transform: [{ scale: 1 }],
-            height: viewportHeight * 0.25,
-            marginHorizontal: 10, // Add gap between episode cards
-          },
-        ]}
+            styles.cardContainer,
+            {
+              backgroundColor:
+                item.id === categories[activeIndex]?.id ? "#f3b718" : "#f09030",
+              transform:
+                item.id === categories[activeIndex]?.id
+                  ? [{ scale: 1 }]
+                  : [{ scale: 0.8 }],
+            },
+            {
+              height:
+                viewportWidth > viewportHeight
+                  ? Math.round(Dimensions.get("window").height * 0.3)
+                  : Math.round(Dimensions.get("window").height * 0.25),
+            },
+          ]}
+        
         onPress={() => openEpisodeModal(item)}>
         <Text style={styles.cardText}>{item.name}</Text>
         <Text style={styles.cardText}>{item.title}</Text>
@@ -1237,7 +1246,12 @@ const Entertainment = ({ videoId, onClose }) => {
             }>
             <FontAwesome name="arrow-left" size={24} color="black" />
           </Pressable>
-          <View style={{ width: "100%", alignItems: "center" }}>
+          <View 
+          style={[
+            styles.container,
+            { height: viewportWidth > viewportHeight ? 540 : 450 },
+          ]}
+             >
             <Carousel
               ref={episodesCarouselRef}
               loop={true}
@@ -1259,9 +1273,8 @@ const Entertainment = ({ videoId, onClose }) => {
               style={[
                 styles.arrowLeft,
                 {
-                  left: viewportWidth > viewportHeight ? -17 : -22,
-                  top: "50%",
-                  transform: [{ translateY: -50 }],
+                  left: viewportWidth > viewportHeight ? -7 : -22,
+                  top: viewportWidth > viewportHeight ? "40%" : "30%",
                 },
               ]}
               onPress={() => {
@@ -1277,8 +1290,7 @@ const Entertainment = ({ videoId, onClose }) => {
                 styles.arrowRight,
                 {
                   right: viewportWidth > viewportHeight ? -25 : -22,
-                  top: "50%",
-                  transform: [{ translateY: -50 }],
+                  top: viewportWidth > viewportHeight ? "40%" : "30%",
                 },
               ]}
               onPress={() => {
