@@ -10,7 +10,14 @@ import {
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { FontAwesome } from "@expo/vector-icons";
-import { collection, addDoc, query, getDocs } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  query,
+  getDocs,
+  doc,
+  setDoc,
+} from "firebase/firestore";
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import { getAuth } from "firebase/auth";
 
@@ -25,7 +32,7 @@ const defaultImage = {
   matthew: require("../assets/images/portrait5.jpg"),
 };
 
-const GLClub= () => {
+const GLClub = () => {
   const [contacts, setContacts] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollViewRef = useRef(null);
@@ -40,12 +47,12 @@ const GLClub= () => {
   }, [user]);
 
   const fetchUserNames = async () => {
-    const querySnapshot = await getDocs(collection(FIRESTORE_DB, 'users'));
-    const fetchedContacts = querySnapshot.docs.map(doc => ({
+    const querySnapshot = await getDocs(collection(FIRESTORE_DB, "users"));
+    const fetchedContacts = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       name: doc.data().userName,
-      meetingId: doc.data().meetingId || '',
-      imageUrl: defaultImage[doc.data().userName.toLowerCase()] || defaultImage.john,
+      meetingId: doc.data().meetingId || "",
+      imageUrl: defaultImage[doc.data().userName] || defaultImage.john,
     }));
     setContacts(fetchedContacts);
     if (user) {
@@ -55,7 +62,7 @@ const GLClub= () => {
 
   const checkContactsInDatabase = async (uid, fetchedContacts) => {
     const contactsQuery = query(
-      collection(FIRESTORE_DB, `users/${uid}/contacts`)
+      collection(FIRESTORE_DB, `users/${uid}/addedContacts`)
     );
     const querySnapshot = await getDocs(contactsQuery);
     const dbContacts = querySnapshot.docs.map((doc) => doc.data().name);
@@ -80,11 +87,14 @@ const GLClub= () => {
     }
 
     try {
-      await addDoc(collection(FIRESTORE_DB, `users/${user.uid}/contacts`), {
-        name: contact.name,
-        meetingId: contact.meetingId,
-        imageUrl: contact.imageUrl,
-      });
+      await setDoc(
+        doc(FIRESTORE_DB, `users/${user.uid}/addedContacts`, contact.id),
+        {
+          name: contact.name,
+          meetingId: contact.meetingId,
+          imageUrl: contact.imageUrl,
+        }
+      );
       Alert.alert("Contact added successfully");
       fetchUserNames(); // Refresh the contacts list
     } catch (error) {
@@ -101,12 +111,16 @@ const GLClub= () => {
         {
           backgroundColor:
             item.id === contacts[activeIndex]?.id ? "#f3b718" : "#f09030",
-            transform: item.id === contacts[activeIndex]?.id ? [{scale: 1}] : [{scale: 0.8}],
+          transform:
+            item.id === contacts[activeIndex]?.id
+              ? [{ scale: 1 }]
+              : [{ scale: 0.8 }],
         },
         {
-          height: viewportWidth > viewportHeight
-            ? Math.round(Dimensions.get("window").height * 0.3)
-            : Math.round(Dimensions.get("window").height * 0.25),
+          height:
+            viewportWidth > viewportHeight
+              ? Math.round(Dimensions.get("window").height * 0.3)
+              : Math.round(Dimensions.get("window").height * 0.25),
         },
       ]}
       onPress={() => handleAddContact(item)}>
@@ -121,51 +135,52 @@ const GLClub= () => {
     </Pressable>
   );
 
-
-
   return (
-    <View style={[styles.container,
-      {height: viewportWidth > viewportHeight
-        ? 320
-        : 450,}
-    ]}>
+    <View
+      style={[
+        styles.container,
+        {
+          height: viewportWidth > viewportHeight ? 320 : 450,
+        },
+      ]}>
       <Carousel
         ref={scrollViewRef}
         data={contacts}
         renderItem={renderItem}
         width={Math.round(viewportWidth * 0.3)}
         height={Math.round(viewportWidth * 0.3)}
-        style={{ width: Math.round(viewportWidth * 0.9), height: Math.round(viewportWidth * 0.5) }}
+        style={{
+          width: Math.round(viewportWidth * 0.9),
+          height: Math.round(viewportWidth * 0.5),
+        }}
         scrollAnimationDuration={800}
         loop
         onSnapToItem={(index) => setActiveIndex(index)}
       />
       <Pressable
-        style={[styles.arrowLeft,
-          {left: viewportWidth > viewportHeight
-            ? -17
-            : -22,
-          top: viewportWidth > viewportHeight
-            ? "40%"
-            : "30%",}
+        style={[
+          styles.arrowLeft,
+          {
+            left: viewportWidth > viewportHeight ? -17 : -22,
+            top: viewportWidth > viewportHeight ? "40%" : "30%",
+          },
         ]}
         onPress={() => {
-          scrollViewRef.current?.scrollTo({ count: -1, animated: true });}}
-        >
+          scrollViewRef.current?.scrollTo({ count: -1, animated: true });
+        }}>
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </Pressable>
       <Pressable
-        style={[styles.arrowRight,
-          {right: viewportWidth > viewportHeight
-            ? -25
-            : -22,
-          top: viewportWidth > viewportHeight
-            ? "40%"
-            : "30%",}
+        style={[
+          styles.arrowRight,
+          {
+            right: viewportWidth > viewportHeight ? -25 : -22,
+            top: viewportWidth > viewportHeight ? "40%" : "30%",
+          },
         ]}
         onPress={() => {
-          scrollViewRef.current?.scrollTo({ count: 1, animated: true });}}
-        >
+          scrollViewRef.current?.scrollTo({ count: 1, animated: true });
+        }}>
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </Pressable>
     </View>
@@ -188,11 +203,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.22,
     shadowRadius: 9.22,
     elevation: 12,
-    // marginLeft: 355,
   },
   cardText: {
     fontSize: 30,
-    color: '#393939',
+    color: "#393939",
     fontWeight: "700",
   },
   image: {
@@ -207,13 +221,11 @@ const styles = StyleSheet.create({
     right: 10,
   },
   arrowLeft: {
-         // top and left styles are above in code for media queries
     position: "absolute",
     transform: [{ translateY: -50 }],
   },
   arrowRight: {
     position: "absolute",
-    // top and right styles are above in code for media queries
     transform: [{ translateY: -50 }],
   },
 });
