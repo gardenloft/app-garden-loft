@@ -28,15 +28,17 @@ const VideoCall = () => {
 
   useEffect(() => {
     if (user) {
-      fetchUserNames(user.uid);
+      fetchAddedContacts(user.uid);
     }
   }, [user]);
 
-  const fetchUserNames = async (userId) => {
-    const querySnapshot = await getDocs(collection(FIRESTORE_DB, "users"));
+  const fetchAddedContacts = async (userId) => {
+    const querySnapshot = await getDocs(
+      collection(FIRESTORE_DB, `users/${userId}/addedContacts`)
+    );
     const fetchedUserNames = querySnapshot.docs.map((doc) => ({
       id: doc.id,
-      name: doc.data().userName,
+      name: doc.data().name,
       pushToken: doc.data().pushToken,
       uid: doc.id,
       imageUrl: doc.data().imageUrl,
@@ -71,8 +73,7 @@ const VideoCall = () => {
               : Math.round(Dimensions.get("window").height * 0.25),
         },
       ]}
-      onPress={() => startVideoCall(item.uid)}
-    >
+      onPress={() => startVideoCall(item.uid)}>
       <Image source={item.imageUrl} style={styles.image} />
       <Text style={styles.cardText}>{item.name}</Text>
     </TouchableOpacity>
@@ -83,8 +84,7 @@ const VideoCall = () => {
       style={[
         styles.container,
         { height: viewportWidth > viewportHeight ? 320 : 450 },
-      ]}
-    >
+      ]}>
       <Carousel
         data={userNames}
         renderItem={renderItem}
@@ -111,8 +111,7 @@ const VideoCall = () => {
         ]}
         onPress={() => {
           scrollViewRef.current?.scrollTo({ count: -1, animated: true });
-        }}
-      >
+        }}>
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
       <TouchableOpacity
@@ -125,8 +124,7 @@ const VideoCall = () => {
         ]}
         onPress={() => {
           scrollViewRef.current?.scrollTo({ count: 1, animated: true });
-        }}
-      >
+        }}>
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
     </View>
