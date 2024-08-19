@@ -12,7 +12,7 @@ import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { getAuth } from 'firebase/auth';
 import { FIRESTORE_DB, FIREBASE_AUTH } from '../FirebaseConfig';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import * as Device from 'expo-device';
 import CallAlertModal from '../components/CallAlertModal';
 
@@ -66,6 +66,16 @@ export default function Home() {
         }
       });
 
+      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+        const { callerUid, meetingId } = notification.request.content.data;
+        setCallerName(callerUid);
+        setMeetingId(meetingId);
+        setModalVisible(true);
+      });
+
+
+
+
       return () => {
         if (notificationListener.current) {
           Notifications.removeNotificationSubscription(notificationListener.current);
@@ -86,10 +96,53 @@ export default function Home() {
 
   };
 
-  const handleDecline = () => {
-    setModalVisible(false);
-  };
+  // const handleDecline = () => {
+  //   setModalVisible(false);
+  // };
 
+
+
+  const handleDecline = async () => {
+    setModalVisible(false);
+  
+    // Send notification to the caller
+    if (user && callerName) {
+      try {
+        // Get the caller's document from Firestore
+        const callerDoc = await getDoc(doc(FIRESTORE_DB, "users", callerName));
+        if (callerDoc.exists()) {
+          const callerData = callerDoc.data();
+          const callerPushToken = callerData.pushToken;
+  
+          // Prepare the message
+          const message = {
+            to: callerPushToken,
+            sound: "default",
+            title: "Call Declined",
+            body: `${user.displayName || "User"} is not available right now.`,
+          };
+  
+          // Send the notification
+          await fetch("https://exp.host/--/api/v2/push/send", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify(message),
+          });
+        }
+      } catch (error) {
+        console.error("Error sending decline notification:", error);
+      }
+    }
+  
+    // Navigate back to the Home screen after declining the call
+    router.push('/home');
+  };
+  
+
+ 
 
 
   async function registerForPushNotificationsAsync() {
