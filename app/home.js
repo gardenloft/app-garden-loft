@@ -50,7 +50,7 @@ export default function Home() {
 
       notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
         const { caller, meetingId } = notification.request.content.data;
-        setCallerName(caller);
+        setCallerName(caller || callerUid);
         setMeetingId(meetingId);
         setModalVisible(true);
       });
@@ -66,13 +66,7 @@ export default function Home() {
         }
       });
 
-      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-        const { callerUid, meetingId } = notification.request.content.data;
-        setCallerName(callerUid);
-        setMeetingId(meetingId);
-        setModalVisible(true);
-      });
-
+    
 
 
 
