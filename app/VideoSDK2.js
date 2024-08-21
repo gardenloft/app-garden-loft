@@ -485,7 +485,7 @@ export default function VideoSDK() {
       sound: "default",
       title: "Incoming Call",
       body: `${caller} is calling you`,
-      data: { meetingId: newMeetingId, caller: caller, callerUid: user.uid  },
+      data: { meetingId: newMeetingId, callerUid: user.uid  },
       categoryId: "incoming_call",
     };
 
