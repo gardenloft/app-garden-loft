@@ -232,9 +232,6 @@
 
 // export default GLClub;
 
-
-
-
 import React, { useState, useRef, useEffect } from "react";
 import {
   View,
@@ -249,12 +246,7 @@ import {
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { FontAwesome } from "@expo/vector-icons";
-import {
-  collection,
-  getDocs,
-  doc,
-  setDoc,
-} from "firebase/firestore";
+import { collection, getDocs, doc, setDoc } from "firebase/firestore";
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import { getAuth } from "firebase/auth";
 
@@ -326,18 +318,18 @@ const GLClub = () => {
       setLikedContacts([...likedContacts, contact.id]);
     }
   };
-  
+
   const handleAddContact = async (contact) => {
     if (!user) {
       Alert.alert("No user signed in");
       return;
     }
-  
+
     if (contact.isAdded) {
       Alert.alert("Contact already added.");
       return;
     }
-  
+
     try {
       await setDoc(
         doc(FIRESTORE_DB, `users/${user.uid}/addedContacts`, contact.id),
@@ -348,29 +340,27 @@ const GLClub = () => {
           isRequestPending: true,
         }
       );
-  
+
       // Update the contacts state to reflect the added contact
       setContacts((prevContacts) =>
         prevContacts.map((c) =>
           c.id === contact.id ? { ...c, isAdded: true } : c
         )
       );
-  
+
       // Update the selected contact to reflect the added status
       setSelectedContact((prevContact) =>
         prevContact && prevContact.id === contact.id
           ? { ...prevContact, isAdded: true }
           : prevContact
       );
-  
+
       Alert.alert("Contact added successfully");
     } catch (error) {
       console.error("Error adding contact: ", error);
       Alert.alert("Error adding contact.");
     }
   };
-  
-  
 
   const handleCardPress = (contact) => {
     setSelectedContact(contact); // Set selected contact details
@@ -384,11 +374,11 @@ const GLClub = () => {
         styles.cardContainer,
         {
           backgroundColor:
-            item.id === contacts[activeIndex]?.id ? "#f3b718" : "#f09030",
+            item.id === contacts[activeIndex]?.id ? "transparent" : "transparent",
           transform:
             item.id === contacts[activeIndex]?.id
-              ? [{ scale: 1 }]
-              : [{ scale: 0.8 }],
+              ? [{ scale: 1.1 }]
+              : [{ scale: 1.1 }],
         },
         {
           height:
@@ -401,19 +391,27 @@ const GLClub = () => {
     >
       <Image source={item.imageUrl} style={styles.image} />
       <Text style={styles.cardText}>{item.name}</Text>
-  
+
       {/* Conditional Rendering for Icon */}
-      {item.isAdded ? (
-        <FontAwesome name="check-circle" size={24} color="green" style={styles.iconStyle} />
+      {/* {item.isAdded ? (
+        <FontAwesome
+          name="check-circle"
+          size={24}
+          color="green"
+          style={styles.iconStyle}
+        />
       ) : (
         <Pressable onPress={() => handleAddContact(item)}>
-          <FontAwesome name="plus-circle" size={24} color="white" style={styles.iconStyle} />
+          <FontAwesome
+            name="plus-circle"
+            size={24}
+            color="white"
+            style={styles.iconStyle}
+          />
         </Pressable>
-      )}
+      )} */}
     </Pressable>
   );
-  
-  
 
   return (
     <View
@@ -422,7 +420,8 @@ const GLClub = () => {
         {
           height: viewportWidth > viewportHeight ? 320 : 450,
         },
-      ]}>
+      ]}
+    >
       <Carousel
         ref={scrollViewRef}
         data={contacts}
@@ -447,7 +446,8 @@ const GLClub = () => {
         ]}
         onPress={() => {
           scrollViewRef.current?.scrollTo({ count: -1, animated: true });
-        }}>
+        }}
+      >
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </Pressable>
       <Pressable
@@ -460,75 +460,97 @@ const GLClub = () => {
         ]}
         onPress={() => {
           scrollViewRef.current?.scrollTo({ count: 1, animated: true });
-        }}>
+        }}
+      >
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </Pressable>
 
       {/* Modal for displaying contact details */}
       {selectedContact && (
-         <Modal
-         visible={modalVisible}
-         animationType="slide"
-         transparent={true}
-         onRequestClose={() => setModalVisible(false)}
-       >
-         <View style={styles.modalContainer}>
-           <View style={styles.modalContent}>
-             <Image source={selectedContact.imageUrl} style={styles.modalImage} />
-             <View style={styles.modalInfoContainer}>
-               <Text style={styles.modalName}>{selectedContact.name}, {selectedContact.age}</Text>
-               <Text style={styles.modalText}>City: {selectedContact.city}</Text>
-               <Text style={styles.modalText}>Hobbies:</Text>
-               {selectedContact.hobbies.map((hobby, index) => (
-                 <Text key={index} style={styles.modalText}>- {hobby}</Text>
-               ))}
-               <Text style={styles.modalText}>Clubs:</Text>
-               {selectedContact.clubs.map((club, index) => (
-                 <Text key={index} style={styles.modalText}>- {club}</Text>
-               ))}
+        <Modal
+          visible={modalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Image
+                source={selectedContact.imageUrl}
+                style={styles.modalImage}
+              />
+              <View style={styles.modalInfoContainer}>
+                <Text style={styles.modalName}>
+                  {selectedContact.name}, {selectedContact.age}
+                </Text>
+                <Text style={styles.modalText}>
+                  City: {selectedContact.city}
+                </Text>
+                <Text style={styles.modalText}>Hobbies:</Text>
+                {selectedContact.hobbies.map((hobby, index) => (
+                  <Text key={index} style={styles.modalText}>
+                    - {hobby}
+                  </Text>
+                ))}
+                <Text style={styles.modalText}>Clubs:</Text>
+                {selectedContact.clubs.map((club, index) => (
+                  <Text key={index} style={styles.modalText}>
+                    - {club}
+                  </Text>
+                ))}
 
-<View style={styles.actionContainer}>
-  <Pressable onPress={() => handleLikeContact(selectedContact)}>
-  <Text style={styles.iconText}>Like a friend</Text>
-    <FontAwesome
-      name={likedContacts.includes(selectedContact.id) ? "heart" : "heart-o"}
-      size={40} // Increased size
-      color={likedContacts.includes(selectedContact.id) ? "red" : "gray"}
-      style={styles.modalIcon}
-    />
-  </Pressable>
+                <View style={styles.actionContainer}>
+                  <Pressable onPress={() => handleLikeContact(selectedContact)}>
+                    <Text style={styles.iconText}>Like a friend</Text>
+                    <FontAwesome
+                      name={
+                        likedContacts.includes(selectedContact.id)
+                          ? "heart"
+                          : "heart-o"
+                      }
+                      size={40} // Increased size
+                      color={
+                        likedContacts.includes(selectedContact.id)
+                          ? "red"
+                          : "gray"
+                      }
+                      style={styles.modalIcon}
+                    />
+                  </Pressable>
 
-  {/* Check if the contact is added */}
-  {selectedContact.isAdded ? (
-    
-    <FontAwesome
-      name="check-circle"
-      size={40}
-      color="green" // Heart color after adding
-      style={styles.modalIcon}
-    />
-  ) : (
-    <Pressable onPress={() => handleAddContact(selectedContact)}>
-       <Text style={styles.iconText}>Add a friend</Text>
-      <FontAwesome
-        name="plus-circle"
-        size={40}
-        color="#4169E1"
-        style={styles.modalIcon}
-      />
-    </Pressable>
-  )}
+                  {/* Check if the contact is added */}
+                  {selectedContact.isAdded ? (
+                    <FontAwesome
+                      name="check-circle"
+                      size={40}
+                      color="green" // Heart color after adding
+                      style={styles.modalIcon}
+                    />
+                  ) : (
+                    <Pressable
+                      onPress={() => handleAddContact(selectedContact)}
+                    >
+                      <Text style={styles.iconText}>Add a friend</Text>
+                      <FontAwesome
+                        name="plus-circle"
+                        size={40}
+                        color="#4169E1"
+                        style={styles.modalIcon}
+                      />
+                    </Pressable>
+                  )}
 
-  <Pressable style={styles.closeButton} onPress={() => setModalVisible(false)}>
-    <Text style={styles.closeButtonText}>Close</Text>
-  </Pressable>
-</View>
-
-
-             </View>
-           </View>
-         </View>
-       </Modal>
+                  <Pressable
+                    style={styles.closeButton}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Text style={styles.closeButtonText}>Close</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+          </View>
+        </Modal>
       )}
     </View>
   );
@@ -557,48 +579,47 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   image: {
+    // this is oval
+    //  width: 120,          // Adjust the width based on your needs
+    // height: 180,         // Adjust the height to create an oval shape
+    // borderRadius: 90,    // Make sure this is half of the height to create the oval effect
+    // borderWidth: 3,      // Optional border for decoration
+    // borderColor: '#FFD700', // Example border color (you can change it)
+    // marginBottom: 10,
+    // shadowColor: "#000", // Optional shadow for depth
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.8,
+    // shadowRadius: 2,
+    // elevation: 5,       // Android shadow
+    // backgroundColor: '#fff' // Optional background color
 
-  //this is oval
-  //  width: 120,          // Adjust the width based on your needs
-  // height: 180,         // Adjust the height to create an oval shape
-  // borderRadius: 90,    // Make sure this is half of the height to create the oval effect
-  // borderWidth: 3,      // Optional border for decoration
-  // borderColor: '#FFD700', // Example border color (you can change it)
-  // marginBottom: 10,
-  // shadowColor: "#000", // Optional shadow for depth
-  // shadowOffset: { width: 0, height: 2 },
-  // shadowOpacity: 0.8,
-  // shadowRadius: 2,
-  // elevation: 5,       // Android shadow
-  // backgroundColor: '#fff' // Optional background color
+    // this is circle
+     width: 170,
+     height: 170,
+     borderRadius: 180,  // Circular shape
+    //  borderWidth: 2,    // Optional border width
+    //  borderColor: '#fff', // Optional border color
+     marginBottom: 10,
+     shadowColor: "#000", // Optional shadow
+     shadowOffset: { width: 0, height: 2 },
+     shadowOpacity: 0.8,
+     shadowRadius: 2,
+     elevation: 5,      // Shadow for Android
 
-// this is circle 
-  //  width: 170,
-  //  height: 170,
-  //  borderRadius: 180,  // Circular shape
-  //  borderWidth: 2,    // Optional border width
-  //  borderColor: '#fff', // Optional border color
-  //  marginBottom: 10,
-  //  shadowColor: "#000", // Optional shadow
-  //  shadowOffset: { width: 0, height: 2 },
-  //  shadowOpacity: 0.8,
-  //  shadowRadius: 2,
-  //  elevation: 5,      // Shadow for Android
-
-  //this is the square 
-  width: 180,
-  height: 190,
-  borderRadius: 20,  // This gives the rounded corners
-  marginBottom: -5,
-  shadowColor: "#000", // Optional shadow
-  shadowOffset: { width: 0, height: 2 },
-  borderWidth: 3, 
-  borderColor: '#FFD700', // Example border color (you can change it)
-  shadowOpacity: 0.8,
-  shadowRadius: 2,
-  elevation: 5,      // Shadow for Android
+    //this is the square
+    // width: 180,
+    // height: 190,
+    // borderRadius: 20, // This gives the rounded corners
+    // marginBottom: -5,
+    // shadowColor: "#000", // Optional shadow
+    // shadowOffset: { width: 0, height: 2 },
+    // borderWidth: 3,
+    // borderColor: "#FFD700", // Example border color (you can change it)
+    // shadowOpacity: 0.8,
+    // shadowRadius: 2,
+    // elevation: 5, // Shadow for Android
   },
-  
+
   iconStyle: {
     position: "absolute",
     bottom: 10,
@@ -613,7 +634,7 @@ const styles = StyleSheet.create({
     transform: [{ translateY: -50 }],
   },
   // Modal styles
- modalContainer: {
+  modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -635,8 +656,7 @@ const styles = StyleSheet.create({
     elevation: 8, // Increased shadow for better elevation
   },
   modalImage: {
-
-    //this is oval 
+    //this is oval
     // width: 120,          // Adjust the width based on your needs
     // height: 180,         // Adjust the height to create an oval shape
     // borderRadius: 90,    // Make sure this is half of the height to create the oval effect
@@ -651,36 +671,33 @@ const styles = StyleSheet.create({
     // elevation: 5,       // Android shadow
     // backgroundColor: '#fff' // Optional background color
 
+    // this is circle
+     width: 400,
+     height: 400,
+     borderRadius: 190,  // Circular shape
+     borderWidth: 2,    // Optional border width
+     borderColor: '#FFD700', // Optional border color
+     marginBottom: 10,
+     marginRight: 40, // Space between the image and text
+     shadowColor: "#000", // Optional shadow
+     shadowOffset: { width: 0, height: 2 },
+     shadowOpacity: 0.8,
+     shadowRadius: 2,
+     elevation: 5,
 
-   // this is circle 
-  //  width: 300,
-  //  height: 300,
-  //  borderRadius: 180,  // Circular shape
-  //  borderWidth: 2,    // Optional border width
-  //  borderColor: '#FFD700', // Optional border color
-  //  marginBottom: 10,
-  //  marginRight: 40, // Space between the image and text
-  //  shadowColor: "#000", // Optional shadow
-  //  shadowOffset: { width: 0, height: 2 },
-  //  shadowOpacity: 0.8,
-  //  shadowRadius: 2,
-  //  elevation: 5,   
-
-
-   //this is the square
-    width: 300,
-    height: 300,
-    borderRadius: 20,  // This gives the rounded corners
-    marginBottom: 10,
-    marginRight: 40, // Space between the image and text
-    borderWidth: 3, 
-    borderColor: '#FFD700', // Example border color (you can change it)
-    shadowColor: "#000", // Optional shadow
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 5,      // Shadow for Android
-    
+    //this is the square
+    // width: 300,
+    // height: 500,
+    // borderRadius: 20, // This gives the rounded corners
+    // marginBottom: 10,
+    // marginRight: 40, // Space between the image and text
+    // borderWidth: 3,
+    // borderColor: "#FFD700", // Example border color (you can change it)
+    // shadowColor: "#000", // Optional shadow
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.8,
+    // shadowRadius: 2,
+    // elevation: 5, // Shadow for Android
   },
   modalInfoContainer: {
     flex: 1, // Takes up remaining space
@@ -706,7 +723,7 @@ const styles = StyleSheet.create({
     marginLeft: -120,
   },
   modalIcon: {
-    marginHorizontal:2, // Adjust spacing between icons
+    marginHorizontal: 2, // Adjust spacing between icons
   },
   closeButton: {
     backgroundColor: "#f09030",
@@ -726,12 +743,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-  
 });
 
 export default GLClub;
-
-
-
-
-
