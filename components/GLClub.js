@@ -1,3 +1,590 @@
+// import React, { useState, useRef, useEffect } from "react";
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   Pressable,
+//   Dimensions,
+//   Image,
+//   Alert,
+// } from "react-native";
+// import Carousel from "react-native-reanimated-carousel";
+// import { FontAwesome } from "@expo/vector-icons";
+// import {
+//   collection,
+//   addDoc,
+//   query,
+//   getDocs,
+//   doc,
+//   setDoc,
+// } from "firebase/firestore";
+// import { FIRESTORE_DB } from "../FirebaseConfig";
+// import { getAuth } from "firebase/auth";
+
+// const { width: viewportWidth, height: viewportHeight } =
+//   Dimensions.get("window");
+
+// const defaultImage = {
+//   elizabeth: require("../assets/images/pexels-anna-nekrashevich-8993561.jpg"),
+//   shari: require("../assets/images/portrait2.jpg"),
+//   pat: require("../assets/images/portrait4.jpg"),
+//   john: require("../assets/images/portrait3.jpg"),
+//   matthew: require("../assets/images/portrait5.jpg"),
+// };
+
+// const GLClub = () => {
+//   const [contacts, setContacts] = useState([]);
+//   const [activeIndex, setActiveIndex] = useState(0);
+//   const scrollViewRef = useRef(null);
+
+//   const auth = getAuth();
+//   const user = auth.currentUser;
+
+//   useEffect(() => {
+//     if (user) {
+//       fetchUserNames();
+//     }
+//   }, [user]);
+
+//   const fetchUserNames = async () => {
+//     const querySnapshot = await getDocs(collection(FIRESTORE_DB, "users"));
+//     const fetchedContacts = querySnapshot.docs.map((doc) => ({
+//       id: doc.id,
+//       name: doc.data().userName,
+//       meetingId: doc.data().meetingId || "",
+//       imageUrl: defaultImage[doc.data().userName] || defaultImage.john,
+//     }));
+//     setContacts(fetchedContacts);
+//     if (user) {
+//       checkContactsInDatabase(user.uid, fetchedContacts);
+//     }
+//   };
+
+//   const checkContactsInDatabase = async (uid, fetchedContacts) => {
+//     const contactsQuery = query(
+//       collection(FIRESTORE_DB, `users/${uid}/addedContacts`)
+//     );
+//     const querySnapshot = await getDocs(contactsQuery);
+//     const dbContacts = querySnapshot.docs.map((doc) => doc.data().name);
+
+//     const updatedContacts = fetchedContacts.map((contact) => ({
+//       ...contact,
+//       isAdded: dbContacts.includes(contact.name),
+//     }));
+
+//     setContacts(updatedContacts);
+//   };
+
+//   const handleAddContact = async (contact) => {
+//     if (!user) {
+//       Alert.alert("No user signed in");
+//       return;
+//     }
+
+//     if (contact.isAdded) {
+//       Alert.alert("Contact already added.");
+//       return;
+//     }
+
+//     try {
+//       await setDoc(
+//         doc(FIRESTORE_DB, `users/${user.uid}/addedContacts`, contact.id),
+//         {
+//           name: contact.name,
+//           meetingId: contact.meetingId,
+//           imageUrl: contact.imageUrl,
+//         }
+//       );
+//       Alert.alert("Contact added successfully");
+//       fetchUserNames(); // Refresh the contacts list
+//     } catch (error) {
+//       console.error("Error adding contact: ", error);
+//       Alert.alert("Error adding contact.");
+//     }
+//   };
+
+//   const renderItem = ({ item }) => (
+//     <Pressable
+//       key={item.id}
+//       style={[
+//         styles.cardContainer,
+//         {
+//           backgroundColor:
+//             item.id === contacts[activeIndex]?.id ? "#f3b718" : "#f09030",
+//           transform:
+//             item.id === contacts[activeIndex]?.id
+//               ? [{ scale: 1 }]
+//               : [{ scale: 0.8 }],
+//         },
+//         {
+//           height:
+//             viewportWidth > viewportHeight
+//               ? Math.round(Dimensions.get("window").height * 0.3)
+//               : Math.round(Dimensions.get("window").height * 0.25),
+//         },
+//       ]}
+//       onPress={() => handleAddContact(item)}>
+//       <Image source={item.imageUrl} style={styles.image} />
+//       <Text style={styles.cardText}>{item.name}</Text>
+//       <FontAwesome
+//         name={item.isAdded ? "check-circle" : "plus-circle"}
+//         size={24}
+//         color={item.isAdded ? "green" : "white"}
+//         style={styles.iconStyle}
+//       />
+//     </Pressable>
+//   );
+
+//   return (
+//     <View
+//       style={[
+//         styles.container,
+//         {
+//           height: viewportWidth > viewportHeight ? 320 : 450,
+//         },
+//       ]}>
+//       <Carousel
+//         ref={scrollViewRef}
+//         data={contacts}
+//         renderItem={renderItem}
+//         width={Math.round(viewportWidth * 0.3)}
+//         height={Math.round(viewportWidth * 0.3)}
+//         style={{
+//           width: Math.round(viewportWidth * 0.9),
+//           height: Math.round(viewportWidth * 0.5),
+//         }}
+//         scrollAnimationDuration={800}
+//         loop
+//         onSnapToItem={(index) => setActiveIndex(index)}
+//       />
+//       <Pressable
+//         style={[
+//           styles.arrowLeft,
+//           {
+//             left: viewportWidth > viewportHeight ? -17 : -22,
+//             top: viewportWidth > viewportHeight ? "40%" : "30%",
+//           },
+//         ]}
+//         onPress={() => {
+//           scrollViewRef.current?.scrollTo({ count: -1, animated: true });
+//         }}>
+//         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
+//       </Pressable>
+//       <Pressable
+//         style={[
+//           styles.arrowRight,
+//           {
+//             right: viewportWidth > viewportHeight ? -25 : -22,
+//             top: viewportWidth > viewportHeight ? "40%" : "30%",
+//           },
+//         ]}
+//         onPress={() => {
+//           scrollViewRef.current?.scrollTo({ count: 1, animated: true });
+//         }}>
+//         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
+//       </Pressable>
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     position: "relative",
+//     alignItems: "center",
+//   },
+//   cardContainer: {
+//     width: viewportWidth * 0.3,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     borderRadius: 20,
+//     marginHorizontal: 10,
+//     shadowColor: "#000",
+//     shadowOffset: { width: 8, height: 7 },
+//     shadowOpacity: 0.22,
+//     shadowRadius: 9.22,
+//     elevation: 12,
+//   },
+//   cardText: {
+//     fontSize: 30,
+//     color: "#393939",
+//     fontWeight: "700",
+//   },
+//   image: {
+//     width: 100,
+//     height: 100,
+//     borderRadius: 50,
+//     marginBottom: 10,
+//   },
+//   iconStyle: {
+//     position: "absolute",
+//     bottom: 10,
+//     right: 10,
+//   },
+//   arrowLeft: {
+//     position: "absolute",
+//     transform: [{ translateY: -50 }],
+//   },
+//   arrowRight: {
+//     position: "absolute",
+//     transform: [{ translateY: -50 }],
+//   },
+// });
+
+// export default GLClub;
+
+
+
+
+// import React, { useState, useRef, useEffect } from "react";
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   Pressable,
+//   Dimensions,
+//   Image,
+//   Alert,
+//   Modal, // Import Modal
+//   ScrollView,
+// } from "react-native";
+// import Carousel from "react-native-reanimated-carousel";
+// import { FontAwesome } from "@expo/vector-icons";
+// import {
+//   collection,
+//   getDocs,
+//   doc,
+//   setDoc,
+// } from "firebase/firestore";
+// import { FIRESTORE_DB } from "../FirebaseConfig";
+// import { getAuth } from "firebase/auth";
+
+// const { width: viewportWidth, height: viewportHeight } =
+//   Dimensions.get("window");
+
+// const defaultImage = {
+//   elizabeth: require("../assets/images/pexels-anna-nekrashevich-8993561.jpg"),
+//   shari: require("../assets/images/portrait2.jpg"),
+//   pat: require("../assets/images/portrait4.jpg"),
+//   john: require("../assets/images/portrait3.jpg"),
+//   matthew: require("../assets/images/portrait5.jpg"),
+// };
+
+// const GLClub = () => {
+//   const [contacts, setContacts] = useState([]);
+//   const [activeIndex, setActiveIndex] = useState(0);
+//   const [modalVisible, setModalVisible] = useState(false); // Modal visibility state
+//   const [selectedContact, setSelectedContact] = useState(null); // Selected contact state
+//   const scrollViewRef = useRef(null);
+
+//   const auth = getAuth();
+//   const user = auth.currentUser;
+
+//   useEffect(() => {
+//     if (user) {
+//       fetchUserNames();
+//     }
+//   }, [user]);
+
+//   const fetchUserNames = async () => {
+//     const querySnapshot = await getDocs(collection(FIRESTORE_DB, "users"));
+//     const fetchedContacts = querySnapshot.docs.map((doc) => ({
+//       id: doc.id,
+//       name: doc.data().userName,
+//       age: doc.data().age || "Unknown", // Added age
+//       city: doc.data().city || "Unknown", // Added city
+//       hobbies: doc.data().hobbies || ["No hobbies listed"], // Added hobbies
+//       clubs: doc.data().clubs || ["No clubs listed"], // Added clubs
+//       meetingId: doc.data().meetingId || "",
+//       imageUrl: defaultImage[doc.data().userName] || defaultImage.john,
+//     }));
+//     setContacts(fetchedContacts);
+//     if (user) {
+//       checkContactsInDatabase(user.uid, fetchedContacts);
+//     }
+//   };
+
+//   const checkContactsInDatabase = async (uid, fetchedContacts) => {
+//     const contactsQuery = query(
+//       collection(FIRESTORE_DB, `users/${uid}/addedContacts`)
+//     );
+//     const querySnapshot = await getDocs(contactsQuery);
+//     const dbContacts = querySnapshot.docs.map((doc) => doc.data().name);
+
+//     const updatedContacts = fetchedContacts.map((contact) => ({
+//       ...contact,
+//       isAdded: dbContacts.includes(contact.name),
+//     }));
+
+//     setContacts(updatedContacts);
+//   };
+
+//   const handleAddContact = async (contact) => {
+//     if (!user) {
+//       Alert.alert("No user signed in");
+//       return;
+//     }
+
+//     if (contact.isAdded) {
+//       Alert.alert("Contact already added.");
+//       return;
+//     }
+
+//     try {
+//       await setDoc(
+//         doc(FIRESTORE_DB, `users/${user.uid}/addedContacts`, contact.id),
+//         {
+//           name: contact.name,
+//           meetingId: contact.meetingId,
+//           imageUrl: contact.imageUrl,
+//         }
+//       );
+//       Alert.alert("Contact added successfully");
+//       fetchUserNames(); // Refresh the contacts list
+//     } catch (error) {
+//       console.error("Error adding contact: ", error);
+//       Alert.alert("Error adding contact.");
+//     }
+//   };
+
+//   const handleCardPress = (contact) => {
+//     setSelectedContact(contact); // Set selected contact details
+//     setModalVisible(true); // Show modal
+//   };
+
+//   const renderItem = ({ item }) => (
+//     <Pressable
+//       key={item.id}
+//       style={[
+//         styles.cardContainer,
+//         {
+//           backgroundColor:
+//             item.id === contacts[activeIndex]?.id ? "#f3b718" : "#f09030",
+//           transform:
+//             item.id === contacts[activeIndex]?.id
+//               ? [{ scale: 1 }]
+//               : [{ scale: 0.8 }],
+//         },
+//         {
+//           height:
+//             viewportWidth > viewportHeight
+//               ? Math.round(Dimensions.get("window").height * 0.3)
+//               : Math.round(Dimensions.get("window").height * 0.25),
+//         },
+//       ]}
+//       onPress={() => handleCardPress(item)}>
+//       <Image source={item.imageUrl} style={styles.image} />
+//       <Text style={styles.cardText}>{item.name}</Text>
+//       <FontAwesome
+//         name={item.isAdded ? "check-circle" : "plus-circle"}
+//         size={24}
+//         color={item.isAdded ? "green" : "white"}
+//         style={styles.iconStyle}
+//       />
+//     </Pressable>
+//   );
+
+//   return (
+//     <View
+//       style={[
+//         styles.container,
+//         {
+//           height: viewportWidth > viewportHeight ? 320 : 450,
+//         },
+//       ]}>
+//       <Carousel
+//         ref={scrollViewRef}
+//         data={contacts}
+//         renderItem={renderItem}
+//         width={Math.round(viewportWidth * 0.3)}
+//         height={Math.round(viewportWidth * 0.3)}
+//         style={{
+//           width: Math.round(viewportWidth * 0.9),
+//           height: Math.round(viewportWidth * 0.5),
+//         }}
+//         scrollAnimationDuration={800}
+//         loop
+//         onSnapToItem={(index) => setActiveIndex(index)}
+//       />
+//       <Pressable
+//         style={[
+//           styles.arrowLeft,
+//           {
+//             left: viewportWidth > viewportHeight ? -17 : -22,
+//             top: viewportWidth > viewportHeight ? "40%" : "30%",
+//           },
+//         ]}
+//         onPress={() => {
+//           scrollViewRef.current?.scrollTo({ count: -1, animated: true });
+//         }}>
+//         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
+//       </Pressable>
+//       <Pressable
+//         style={[
+//           styles.arrowRight,
+//           {
+//             right: viewportWidth > viewportHeight ? -25 : -22,
+//             top: viewportWidth > viewportHeight ? "40%" : "30%",
+//           },
+//         ]}
+//         onPress={() => {
+//           scrollViewRef.current?.scrollTo({ count: 1, animated: true });
+//         }}>
+//         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
+//       </Pressable>
+
+//       {/* Modal for displaying contact details */}
+//       {selectedContact && (
+//         <Modal
+//           visible={modalVisible}
+//           animationType="slide"
+//           transparent={true}
+//           onRequestClose={() => setModalVisible(false)}>
+//           <View style={styles.modalContainer}>
+//             <View style={styles.modalContent}>
+//               <Image source={selectedContact.imageUrl} style={styles.modalImage} />
+//               <Text style={styles.modalName}>{selectedContact.name}</Text>
+//               <Text style={styles.modalText}>
+//                 Age: {selectedContact.age}
+//               </Text>
+//               <Text style={styles.modalText}>
+//                 City: {selectedContact.city}
+//               </Text>
+//               <Text style={styles.modalText}>Hobbies:</Text>
+//               <ScrollView>
+//                 {selectedContact.hobbies.map((hobby, index) => (
+//                   <Text key={index} style={styles.modalText}>
+//                     - {hobby}
+//                   </Text>
+//                 ))}
+//               </ScrollView>
+//               <Text style={styles.modalText}>Clubs:</Text>
+//               <ScrollView>
+//                 {selectedContact.clubs.map((club, index) => (
+//                   <Text key={index} style={styles.modalText}>
+//                     - {club}
+//                   </Text>
+//                 ))}
+//               </ScrollView>
+//               <Pressable
+//                 style={styles.closeButton}
+//                 onPress={() => setModalVisible(false)}>
+//                 <Text style={styles.closeButtonText}>Close</Text>
+//               </Pressable>
+//             </View>
+//           </View>
+//         </Modal>
+//       )}
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     position: "relative",
+//     alignItems: "center",
+//   },
+//   cardContainer: {
+//     width: viewportWidth * 0.3,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     borderRadius: 20,
+//     marginHorizontal: 10,
+//     shadowColor: "#000",
+//     shadowOffset: { width: 8, height: 7 },
+//     shadowOpacity: 0.22,
+//     shadowRadius: 9.22,
+//     elevation: 12,
+//   },
+//   cardText: {
+//     fontSize: 30,
+//     color: "#393939",
+//     fontWeight: "700",
+//   },
+//   image: {
+//    width: 120,          // Adjust the width based on your needs
+//   height: 180,         // Adjust the height to create an oval shape
+//   borderRadius: 90,    // Make sure this is half of the height to create the oval effect
+//   borderWidth: 3,      // Optional border for decoration
+//   borderColor: '#FFD700', // Example border color (you can change it)
+//   marginBottom: 10,
+//   shadowColor: "#000", // Optional shadow for depth
+//   shadowOffset: { width: 0, height: 2 },
+//   shadowOpacity: 0.8,
+//   shadowRadius: 2,
+//   elevation: 5,       // Android shadow
+//   backgroundColor: '#fff' // Optional background color
+//   },
+  
+//   iconStyle: {
+//     position: "absolute",
+//     bottom: 10,
+//     right: 10,
+//   },
+//   arrowLeft: {
+//     position: "absolute",
+//     transform: [{ translateY: -50 }],
+//   },
+//   arrowRight: {
+//     position: "absolute",
+//     transform: [{ translateY: -50 }],
+//   },
+//   // Modal styles
+//   modalContainer: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     backgroundColor: "rgba(0,0,0,0.5)",
+//   },
+//   modalContent: {
+//     width: viewportWidth * 0.8,
+//     backgroundColor: "#fff",
+//     borderRadius: 20,
+//     padding: 20,
+//     alignItems: "center",
+//   },
+//   modalImage: {
+//     width: 120,          // Adjust the width based on your needs
+//     height: 180,         // Adjust the height to create an oval shape
+//     borderRadius: 90,    // Make sure this is half of the height to create the oval effect
+//     borderWidth: 3,      // Optional border for decoration
+//     borderColor: '#FFD700', // Example border color (you can change it)
+//     marginBottom: 10,
+//     shadowColor: "#000", // Optional shadow for depth
+//     shadowOffset: { width: 0, height: 2 },
+//     shadowOpacity: 0.8,
+//     shadowRadius: 2,
+//     elevation: 5,       // Android shadow
+//     backgroundColor: '#fff' // Optional background color
+
+    
+//   },
+//   modalName: {
+//     fontSize: 24,
+//     fontWeight: "700",
+//     marginBottom: 10,
+//   },
+//   modalText: {
+//     fontSize: 18,
+//     marginBottom: 5,
+//   },
+//   closeButton: {
+//     marginTop: 20,
+//     backgroundColor: "#f09030",
+//     borderRadius: 10,
+//     padding: 10,
+//     alignItems: "center",
+//     width: "100%",
+//   },
+//   closeButtonText: {
+//     fontSize: 18,
+//     color: "#fff",
+//     fontWeight: "700",
+//   },
+// });
+
+// export default GLClub;
+
+
 import React, { useState, useRef, useEffect } from "react";
 import {
   View,
@@ -7,22 +594,16 @@ import {
   Dimensions,
   Image,
   Alert,
+  Modal,
+  ScrollView,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { FontAwesome } from "@expo/vector-icons";
-import {
-  collection,
-  addDoc,
-  query,
-  getDocs,
-  doc,
-  setDoc,
-} from "firebase/firestore";
+import { collection, getDocs, doc, setDoc } from "firebase/firestore";
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import { getAuth } from "firebase/auth";
 
-const { width: viewportWidth, height: viewportHeight } =
-  Dimensions.get("window");
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
 
 const defaultImage = {
   elizabeth: require("../assets/images/pexels-anna-nekrashevich-8993561.jpg"),
@@ -35,6 +616,8 @@ const defaultImage = {
 const GLClub = () => {
   const [contacts, setContacts] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedContact, setSelectedContact] = useState(null);
   const scrollViewRef = useRef(null);
 
   const auth = getAuth();
@@ -51,8 +634,14 @@ const GLClub = () => {
     const fetchedContacts = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       name: doc.data().userName,
+      age: doc.data().age || "Unknown",
+      city: doc.data().city || "Unknown",
+      hobbies: doc.data().hobbies || ["No hobbies listed"],
+      clubs: doc.data().clubs || ["No clubs listed"],
       meetingId: doc.data().meetingId || "",
       imageUrl: defaultImage[doc.data().userName] || defaultImage.john,
+      isAdded: doc.data().isAdded || false, // Status of added contact
+      isRequestPending: doc.data().isRequestPending || false, // Status of request pending
     }));
     setContacts(fetchedContacts);
     if (user) {
@@ -61,9 +650,7 @@ const GLClub = () => {
   };
 
   const checkContactsInDatabase = async (uid, fetchedContacts) => {
-    const contactsQuery = query(
-      collection(FIRESTORE_DB, `users/${uid}/addedContacts`)
-    );
+    const contactsQuery = query(collection(FIRESTORE_DB, `users/${uid}/addedContacts`));
     const querySnapshot = await getDocs(contactsQuery);
     const dbContacts = querySnapshot.docs.map((doc) => doc.data().name);
 
@@ -93,14 +680,20 @@ const GLClub = () => {
           name: contact.name,
           meetingId: contact.meetingId,
           imageUrl: contact.imageUrl,
+          isRequestPending: true,
         }
       );
-      Alert.alert("Contact added successfully");
+      Alert.alert("Contact request sent.");
       fetchUserNames(); // Refresh the contacts list
     } catch (error) {
       console.error("Error adding contact: ", error);
       Alert.alert("Error adding contact.");
     }
+  };
+
+  const handleCardPress = (contact) => {
+    setSelectedContact(contact);
+    setModalVisible(true);
   };
 
   const renderItem = ({ item }) => (
@@ -123,26 +716,25 @@ const GLClub = () => {
               : Math.round(Dimensions.get("window").height * 0.25),
         },
       ]}
-      onPress={() => handleAddContact(item)}>
+      onPress={() => handleCardPress(item)}
+    >
       <Image source={item.imageUrl} style={styles.image} />
       <Text style={styles.cardText}>{item.name}</Text>
-      <FontAwesome
-        name={item.isAdded ? "check-circle" : "plus-circle"}
-        size={24}
-        color={item.isAdded ? "green" : "white"}
-        style={styles.iconStyle}
-      />
+      {/* Icons to represent contact status */}
+      {item.isAdded ? (
+        <FontAwesome name="heart" size={24} color="green" style={styles.iconStyle} />
+      ) : item.isRequestPending ? (
+        <FontAwesome name="plus-circle" size={24} color="orange" style={styles.iconStyle} />
+      ) : (
+        <Pressable onPress={() => handleAddContact(item)}>
+          <FontAwesome name="plus-circle" size={24} color="white" style={styles.iconStyle} />
+        </Pressable>
+      )}
     </Pressable>
   );
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          height: viewportWidth > viewportHeight ? 320 : 450,
-        },
-      ]}>
+    <View style={styles.container}>
       <Carousel
         ref={scrollViewRef}
         data={contacts}
@@ -167,7 +759,8 @@ const GLClub = () => {
         ]}
         onPress={() => {
           scrollViewRef.current?.scrollTo({ count: -1, animated: true });
-        }}>
+        }}
+      >
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </Pressable>
       <Pressable
@@ -180,9 +773,52 @@ const GLClub = () => {
         ]}
         onPress={() => {
           scrollViewRef.current?.scrollTo({ count: 1, animated: true });
-        }}>
+        }}
+      >
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </Pressable>
+
+      {/* Modal for displaying contact details */}
+      {selectedContact && (
+        <Modal
+          visible={modalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Image source={selectedContact.imageUrl} style={styles.modalImage} />
+              <View style={styles.modalInfoContainer}>
+                <Text style={styles.modalName}>
+                  {selectedContact.name}, {selectedContact.age}
+                </Text>
+                <Text style={styles.modalText}>
+                  City: {selectedContact.city}
+                </Text>
+                <Text style={styles.modalText}>Hobbies:</Text>
+                {selectedContact.hobbies.map((hobby, index) => (
+                  <Text key={index} style={styles.modalText}>
+                    - {hobby}
+                  </Text>
+                ))}
+                <Text style={styles.modalText}>Clubs:</Text>
+                {selectedContact.clubs.map((club, index) => (
+                  <Text key={index} style={styles.modalText}>
+                    - {club}
+                  </Text>
+                ))}
+                <Pressable
+                  style={styles.closeButton}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.closeButtonText}>Close</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -210,10 +846,18 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   image: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 120,
+    height: 180, // Oval shape
+    borderRadius: 90,
+    borderWidth: 3,
+    borderColor: '#FFD700',
     marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+    backgroundColor: '#fff',
   },
   iconStyle: {
     position: "absolute",
@@ -228,6 +872,62 @@ const styles = StyleSheet.create({
     position: "absolute",
     transform: [{ translateY: -50 }],
   },
+  // Modal styles
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    flexDirection: "row", // To align image and info side by side
+    width: viewportWidth * 0.9,
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalImage: {
+    width: 120,
+    height: 180,
+    borderRadius: 90,
+    borderWidth: 3,
+    borderColor: '#FFD700',
+    marginRight: 20, // Space between image and info
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+    backgroundColor: '#fff',
+  },
+  modalInfoContainer: {
+    flex: 1,
+  },
+  modalName: {
+    fontSize: 24,
+    fontWeight: "700",
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 5,
+  },
+  closeButton: {
+    marginTop: 20,
+    backgroundColor: "#f09030",
+    borderRadius: 10,
+    padding: 10,
+    alignItems: "center",
+    width: "100%",
+  },
+  closeButtonText: {
+    fontSize: 18,
+    color: "#fff",
+    fontWeight: "700",
+  },
 });
 
 export default GLClub;
+
+
