@@ -192,7 +192,7 @@
 //   </GestureHandlerRootView>
 //   )
 // }
-
+//////////////////////
 
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -218,6 +218,7 @@ export default function Home() {
   const responseListener = useRef(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [callerUid, setCallerUid] = useState('');
+    const [callerName, setCallerName] = useState('');
   const [meetingId, setMeetingId] = useState(null);
   const router = useRouter();
 
@@ -243,8 +244,9 @@ export default function Home() {
       ]);
 
       notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-        const { callerUid, meetingId } = notification.request.content.data;
+        const { caller, callerUid, meetingId } = notification.request.content.data;
         setCallerUid(callerUid);
+        setCallerName(caller);
         setMeetingId(meetingId);
         setModalVisible(true);
       });
@@ -277,17 +279,27 @@ export default function Home() {
     });
   };
 
-  const handleDecline = async () => {
+  const handleDecline = async (calleeUid) => {
     setModalVisible(false);
   
     // Send notification to the caller
-    if (user && callerUid) {
+    if (user && callerName) {
       try {
+        //get calleeName
+        const calleeDoc = await getDoc(doc(FIRESTORE_DB, "users", calleeUid));
+        if (!calleeDoc.exists()) {
+          Alert.alert("Callee not found");
+          return;
+        }
+        const calleeData = calleeDoc.data();
+        const callee = calleeDoc.data().userName;
+        const calleePushToken = calleeData.pushToken;
         // Get the caller's document from Firestore using callerUid
         const callerDoc = await getDoc(doc(FIRESTORE_DB, "users", callerUid));
         if (callerDoc.exists()) {
           const callerData = callerDoc.data();
           const callerPushToken = callerData.pushToken;
+          console.log(callee);
   
           if (callerPushToken) {
             // Prepare the decline message
@@ -295,8 +307,9 @@ export default function Home() {
               to: callerPushToken,
               sound: "default",
               title: "Call Declined",
-              body: `${user.displayName || "User"} is not available right now.`,
+              body: `${callee || "User"} is not available right now.`,
             };
+
   
             // Send the notification
             const response = await fetch("https://exp.host/--/api/v2/push/send", {
@@ -372,9 +385,12 @@ export default function Home() {
         <Carousel />
         <CallAlertModal
           visible={modalVisible}
-          callerId={callerUid}
+          // callerUId={callerUid}
+          callerId={callerName}
           onAccept={joinMeeting}
-          onDecline={handleDecline}
+          // onDecline={handleDecline}
+          onDecline={() => handleDecline(callerUid)}
+          
         />
       </SafeAreaProvider>
     </GestureHandlerRootView>
