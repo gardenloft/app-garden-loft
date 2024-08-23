@@ -537,7 +537,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   image: {
-   width: 120,          // Adjust the width based on your needs
+
+  //this is oval
+  //  width: 120,          // Adjust the width based on your needs
   // height: 180,         // Adjust the height to create an oval shape
   // borderRadius: 90,    // Make sure this is half of the height to create the oval effect
   // borderWidth: 3,      // Optional border for decoration
@@ -549,31 +551,32 @@ const styles = StyleSheet.create({
   // shadowRadius: 2,
   // elevation: 5,       // Android shadow
   // backgroundColor: '#fff' // Optional background color
+
 // this is circle 
-   width: 170,
-   height: 170,
-   borderRadius: 180,  // Circular shape
-   borderWidth: 2,    // Optional border width
-   borderColor: '#fff', // Optional border color
-   marginBottom: 10,
-   shadowColor: "#000", // Optional shadow
-   shadowOffset: { width: 0, height: 2 },
-   shadowOpacity: 0.8,
-   shadowRadius: 2,
-   elevation: 5,      // Shadow for Android
+  //  width: 170,
+  //  height: 170,
+  //  borderRadius: 180,  // Circular shape
+  //  borderWidth: 2,    // Optional border width
+  //  borderColor: '#fff', // Optional border color
+  //  marginBottom: 10,
+  //  shadowColor: "#000", // Optional shadow
+  //  shadowOffset: { width: 0, height: 2 },
+  //  shadowOpacity: 0.8,
+  //  shadowRadius: 2,
+  //  elevation: 5,      // Shadow for Android
 
   //this is the square 
-  // width: 180,
-  // height: 190,
-  // borderRadius: 20,  // This gives the rounded corners
-  // marginBottom: -5,
-  // shadowColor: "#000", // Optional shadow
-  // shadowOffset: { width: 0, height: 2 },
-  // borderWidth: 3, 
-  // borderColor: '#FFD700', // Example border color (you can change it)
-  // shadowOpacity: 0.8,
-  // shadowRadius: 2,
-  // elevation: 5,      // Shadow for Android
+  width: 180,
+  height: 190,
+  borderRadius: 20,  // This gives the rounded corners
+  marginBottom: -5,
+  shadowColor: "#000", // Optional shadow
+  shadowOffset: { width: 0, height: 2 },
+  borderWidth: 3, 
+  borderColor: '#FFD700', // Example border color (you can change it)
+  shadowOpacity: 0.8,
+  shadowRadius: 2,
+  elevation: 5,      // Shadow for Android
   },
   
   iconStyle: {
@@ -601,6 +604,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     width: viewportWidth * 0.85, // Slightly wider modal for content
+    height: viewportHeight * 0.65,
     backgroundColor: "#fff",
     borderRadius: 15,
     padding: 20,
@@ -611,43 +615,51 @@ const styles = StyleSheet.create({
     elevation: 8, // Increased shadow for better elevation
   },
   modalImage: {
+
+    //this is oval 
     // width: 120,          // Adjust the width based on your needs
     // height: 180,         // Adjust the height to create an oval shape
     // borderRadius: 90,    // Make sure this is half of the height to create the oval effect
     // borderWidth: 3,      // Optional border for decoration
     // borderColor: '#FFD700', // Example border color (you can change it)
     // marginBottom: 10,
+    // marginRight: 40, // Space between the image and text
     // shadowColor: "#000", // Optional shadow for depth
     // shadowOffset: { width: 0, height: 2 },
     // shadowOpacity: 0.8,
     // shadowRadius: 2,
     // elevation: 5,       // Android shadow
     // backgroundColor: '#fff' // Optional background color
+
+
    // this is circle 
-   width: 300,
-   height: 300,
-   borderRadius: 180,  // Circular shape
-   borderWidth: 2,    // Optional border width
-   borderColor: '#FFD700', // Optional border color
-   marginBottom: 10,
-   marginRight: 40, // Space between the image and text
-   shadowColor: "#000", // Optional shadow
-   shadowOffset: { width: 0, height: 2 },
-   shadowOpacity: 0.8,
-   shadowRadius: 2,
-   elevation: 5,   
+  //  width: 300,
+  //  height: 300,
+  //  borderRadius: 180,  // Circular shape
+  //  borderWidth: 2,    // Optional border width
+  //  borderColor: '#FFD700', // Optional border color
+  //  marginBottom: 10,
+  //  marginRight: 40, // Space between the image and text
+  //  shadowColor: "#000", // Optional shadow
+  //  shadowOffset: { width: 0, height: 2 },
+  //  shadowOpacity: 0.8,
+  //  shadowRadius: 2,
+  //  elevation: 5,   
+
+
    //this is the square
-    // width: 300,
-    // height: 300,
-    // borderRadius: 20,  // This gives the rounded corners
-    // marginBottom: 10,
-    // borderWidth: 3, 
-    // borderColor: '#FFD700', // Example border color (you can change it)
-    // shadowColor: "#000", // Optional shadow
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.8,
-    // shadowRadius: 2,
-    // elevation: 5,      // Shadow for Android
+    width: 300,
+    height: 300,
+    borderRadius: 20,  // This gives the rounded corners
+    marginBottom: 10,
+    marginRight: 40, // Space between the image and text
+    borderWidth: 3, 
+    borderColor: '#FFD700', // Example border color (you can change it)
+    shadowColor: "#000", // Optional shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,      // Shadow for Android
     
   },
   modalInfoContainer: {
@@ -668,12 +680,13 @@ const styles = StyleSheet.create({
 
   actionContainer: {
     flexDirection: "row", // Align items horizontally
-    justifyContent: "space-between", // Distribute space between icons and button
+    justifyContent: "space-evenly", // Distribute space between icons and button
     alignItems: "center", // Center items vertically
     marginTop: 20, // Add margin to separate from the content above
+    marginLeft: -120,
   },
   modalIcon: {
-    marginHorizontal: 15, // Adjust spacing between icons
+    marginHorizontal:2, // Adjust spacing between icons
   },
   closeButton: {
     backgroundColor: "#f09030",

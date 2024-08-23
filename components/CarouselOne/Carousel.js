@@ -24,10 +24,10 @@ import Logout from "../Logout";
 
 const data = [
   {
-    title: "ACTIVITIES",
-    icon: "weight-lifter",
-    component: <Activities2 />,
-    prompt: "Join an Activity?",
+    title: "GARDEN LOFT",
+    icon: "home-group-plus",
+    component: <GLClub />,
+    prompt: "Meet Garden Loft Members?",
   },
   {
     title: "VIDEO CALL",
@@ -37,16 +37,35 @@ const data = [
     prompt: "Make a Video Call?",
   },
   {
-    title: "GARDEN LOFT",
-    icon: "home-group-plus",
-    component: <GLClub />,
-    prompt: "Meet Garden Loft Members?",
-  },
-  {
     title: "ENTERTAINMENT",
     icon: "movie-open-star",
     component: <Entertainment />,
     prompt: "Watch Entertainment?",
+  },
+  {
+    title: "CLUBS",
+    icon: "account-group",
+    component: <Entertainment />,
+    prompt: "Watch Entertainment?",
+  },
+  {
+    title: "EVENTS",
+    icon: "calendar-star",
+    component: <Lights />,
+    prompt: "Change Lights?",
+  },
+  {
+    title: "COURSES",
+    // icon: "card-account-details-star-outline",
+    icon: "food-variant",
+    component: <Lights />,
+    prompt: "Change Lights?",
+  },
+  {
+    title: "ACTIVITIES",
+    icon: "weight-lifter",
+    component: <Activities2 />,
+    prompt: "Join an Activity?",
   },
   {
     title: "HOW-TO VIDEOS",
@@ -65,6 +84,12 @@ const data = [
     icon: "logout",
     component: <Logout />,
     prompt: "Log Out of Garden Loft App?",
+  },
+  {
+    title: "CALENDAR",
+    icon: "calendar-month",
+    component: <Lights />,
+    prompt: "Change Lights?",
   },
 ];
 
