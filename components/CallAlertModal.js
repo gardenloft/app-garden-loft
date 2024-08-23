@@ -5,7 +5,7 @@ import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } fr
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
-const CallAlertModal = ({ visible, callerId, onAccept, onDecline }) => {
+const CallAlertModal = ({ visible, callerId, callerUId, onAccept, onDecline }) => {
   return (
     <Modal
       animationType="slide"
