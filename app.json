@@ -20,7 +20,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.sallydough.appgardenloft",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "11",
+      "buildNumber": "13",
       "infoPlist": {
         "UIBackgroundModes": ["remote-notification"],
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",

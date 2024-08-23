@@ -131,7 +131,7 @@ function ControlsContainer({
         buttonText="End"
         backgroundColor="red"
       />
-      <IconButton
+      {/* <IconButton
         onPress={() => {
           leave();
           handleBack();
@@ -139,7 +139,7 @@ function ControlsContainer({
         iconName="phone-hangup"
         buttonText="Leave"
         backgroundColor="red"
-      />
+      /> */}
       <IconButton
         onPress={addPeople}
         iconName="account-plus"
@@ -431,13 +431,9 @@ export default function VideoSDK() {
   useEffect(() => {
     if (params.meetingId) {
       setMeetingId(params.meetingId);
-      // if (params.autoJoin === 'true') {
-      //   setAutoJoin(true);
-      // }
     }
   }, [
     params.meetingId,
-    // , params.autoJoin,
   ]);
 
   useEffect(() => {
@@ -468,6 +464,7 @@ export default function VideoSDK() {
     }
     const calleeData = calleeDoc.data();
     const calleePushToken = calleeData.pushToken;
+    const callee = calleeDoc.data().userName;
 
     await setDoc(
       doc(FIRESTORE_DB, "users", user.uid),
@@ -485,7 +482,7 @@ export default function VideoSDK() {
       sound: "default",
       title: "Incoming Call",
       body: `${caller} is calling you`,
-      data: { meetingId: newMeetingId, callerUid: user.uid  },
+      data: { meetingId: newMeetingId, callerUid: user.uid, caller: caller},
       categoryId: "incoming_call",
     };
 
@@ -523,7 +520,7 @@ export default function VideoSDK() {
         config={{
           meetingId,
           micEnabled: true,
-          webcamEnabled: true,
+          webcamEnabled: false, //initializing webcam off when joining call
           name: user.displayName || "Test User",
           customCameraVideoTrack: customVideoTrack,
           optimizationMode: "text",
