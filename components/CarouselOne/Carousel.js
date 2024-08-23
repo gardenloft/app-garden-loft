@@ -24,7 +24,7 @@ import Logout from "../Logout";
 
 const data = [
   {
-    title: "GARDEN LOFT",
+    title: "MY FRIENDS",
     icon: "home-group-plus",
     component: <GLClub />,
     prompt: "Meet Garden Loft Members?",
