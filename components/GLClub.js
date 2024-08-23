@@ -356,12 +356,20 @@ const GLClub = () => {
         )
       );
   
+      // Update the selected contact to reflect the added status
+      setSelectedContact((prevContact) =>
+        prevContact && prevContact.id === contact.id
+          ? { ...prevContact, isAdded: true }
+          : prevContact
+      );
+  
       Alert.alert("Contact added successfully");
     } catch (error) {
       console.error("Error adding contact: ", error);
       Alert.alert("Error adding contact.");
     }
   };
+  
   
 
   const handleCardPress = (contact) => {
@@ -481,6 +489,7 @@ const GLClub = () => {
 
 <View style={styles.actionContainer}>
   <Pressable onPress={() => handleLikeContact(selectedContact)}>
+  <Text style={styles.iconText}>Like a friend</Text>
     <FontAwesome
       name={likedContacts.includes(selectedContact.id) ? "heart" : "heart-o"}
       size={40} // Increased size
@@ -489,12 +498,22 @@ const GLClub = () => {
     />
   </Pressable>
 
-  {!selectedContact.isAdded && (
+  {/* Check if the contact is added */}
+  {selectedContact.isAdded ? (
+    
+    <FontAwesome
+      name="check-circle"
+      size={40}
+      color="green" // Heart color after adding
+      style={styles.modalIcon}
+    />
+  ) : (
     <Pressable onPress={() => handleAddContact(selectedContact)}>
+       <Text style={styles.iconText}>Add a friend</Text>
       <FontAwesome
         name="plus-circle"
-        size={40} // Increased size
-        color={selectedContact.isAdded ? "gray" : "green"}
+        size={40}
+        color="#4169E1"
         style={styles.modalIcon}
       />
     </Pressable>
@@ -504,6 +523,7 @@ const GLClub = () => {
     <Text style={styles.closeButtonText}>Close</Text>
   </Pressable>
 </View>
+
 
              </View>
            </View>
