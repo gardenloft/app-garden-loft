@@ -1206,7 +1206,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     marginBottom: SCREEN_HEIGHT * 0.04,
-    marginTop: SCREEN_HEIGHT * 0.2,
+    marginTop: SCREEN_HEIGHT * 0.22,
   },
   filterButton: {
     paddingHorizontal: SCREEN_WIDTH * 0.05,
@@ -1285,6 +1285,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.7)", // Darker background overlay
   },
   modalContent: {
+  
     marginTop: 70,
     gap: 30,
     flexDirection: "row", // Side by side layout
@@ -1309,6 +1310,7 @@ const styles = StyleSheet.create({
     borderWidth: 2, // Optional border width
     borderColor: "#FFD700", // Optional border color
     marginBottom: 10,
+    marginLeft:40,
     marginRight: 40, // Space between the image and text
     shadowColor: "#000", // Optional shadow
     shadowOffset: { width: 0, height: 2 },
