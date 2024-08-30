@@ -27,7 +27,7 @@ const data = [
     title: "MY FRIENDS",
     icon: "home-group-plus",
     component: <GLClub />,
-    prompt: "Meet Garden Loft Members?",
+    prompt: "",
   },
   {
     title: "VIDEO CALL",
