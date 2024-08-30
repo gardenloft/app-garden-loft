@@ -747,7 +747,6 @@
 
 // export default GLClub;
 
-
 import React, { useState, useRef, useEffect } from "react";
 import {
   View,
@@ -763,13 +762,20 @@ import {
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { FontAwesome } from "@expo/vector-icons";
-import { collection, getDocs, doc, setDoc, deleteDoc, query, updateDoc, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  setDoc,
+  deleteDoc,
+  query,
+  updateDoc,
+  onSnapshot,
+} from "firebase/firestore";
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import { getAuth } from "firebase/auth";
 
-
-
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const defaultImage = {
   elizabeth: require("../assets/images/pexels-anna-nekrashevich-8993561.jpg"),
@@ -785,10 +791,10 @@ const GLClub = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState("all");
   const [friendRequests, setFriendRequests] = useState({});
 
-  const carouselRef = useRef(null);
+  const scrollViewRef = useRef(null);
 
   const auth = getAuth();
   const user = auth.currentUser;
@@ -810,7 +816,7 @@ const GLClub = () => {
       const data = doc.data();
       return {
         id: doc.id,
-        name: data.userName || 'Unknown User',
+        name: data.userName || "Unknown User",
         city: data.city || "Calgary",
         hobbies: data.hobbies || ["Reading", "Painting"],
         clubs: data.clubs || ["Book", "Knitting"],
@@ -822,7 +828,10 @@ const GLClub = () => {
   };
 
   const listenToFriendRequests = () => {
-    const friendRequestsRef = collection(FIRESTORE_DB, `users/${user.uid}/friendRequests`);
+    const friendRequestsRef = collection(
+      FIRESTORE_DB,
+      `users/${user.uid}/friendRequests`
+    );
     onSnapshot(friendRequestsRef, (snapshot) => {
       const requests = {};
       snapshot.docs.forEach((doc) => {
@@ -834,12 +843,14 @@ const GLClub = () => {
 
   const filterAndSortContacts = () => {
     let filtered = contacts;
-    if (filter === 'friends') {
-      filtered = contacts.filter(contact => friendRequests[contact.id] === 'accepted');
+    if (filter === "friends") {
+      filtered = contacts.filter(
+        (contact) => friendRequests[contact.id] === "accepted"
+      );
     }
     filtered.sort((a, b) => {
-      const nameA = (a.name || '').toLowerCase();
-      const nameB = (b.name || '').toLowerCase();
+      const nameA = (a.name || "").toLowerCase();
+      const nameB = (b.name || "").toLowerCase();
       return nameA.localeCompare(nameB);
     });
     setFilteredContacts([...new Set(filtered)]); // Remove duplicates
@@ -849,29 +860,28 @@ const GLClub = () => {
       Alert.alert("No user signed in");
       return;
     }
-  
+
     try {
       await setDoc(
         doc(FIRESTORE_DB, `users/${contact.id}/friendRequests`, user.uid),
         {
-          status: 'pending',
+          status: "pending",
           senderName: user.displayName || user.email,
         }
       );
-  
+
       Alert.alert("Friend request sent successfully");
-      
+
       // Update local state to reflect the request being sent
       setFriendRequests((prevRequests) => ({
         ...prevRequests,
-        [contact.id]: 'pending',
+        [contact.id]: "pending",
       }));
     } catch (error) {
       console.error("Error sending friend request: ", error);
       Alert.alert("Error sending friend request.");
     }
   };
-  
 
   const handleUnfriend = async (contact) => {
     if (!user) {
@@ -881,8 +891,12 @@ const GLClub = () => {
 
     try {
       // Remove friend request from both users
-      await deleteDoc(doc(FIRESTORE_DB, `users/${user.uid}/friendRequests`, contact.id));
-      await deleteDoc(doc(FIRESTORE_DB, `users/${contact.id}/friendRequests`, user.uid));
+      await deleteDoc(
+        doc(FIRESTORE_DB, `users/${user.uid}/friendRequests`, contact.id)
+      );
+      await deleteDoc(
+        doc(FIRESTORE_DB, `users/${contact.id}/friendRequests`, user.uid)
+      );
 
       Alert.alert("Friend removed successfully");
       setModalVisible(false);
@@ -892,49 +906,52 @@ const GLClub = () => {
     }
   };
 
- 
-const handleAcceptFriend = async (contact) => {
+  const handleAcceptFriend = async (contact) => {
     if (!user) {
       Alert.alert("No user signed in");
       return;
     }
-  
+
     try {
       await updateDoc(
         doc(FIRESTORE_DB, `users/${user.uid}/friendRequests`, contact.id),
         {
-          status: 'accepted',
+          status: "accepted",
         }
       );
-      
+
       setFriendRequests((prevRequests) => ({
         ...prevRequests,
-        [contact.id]: 'accepted',
+        [contact.id]: "accepted",
       }));
-      
+
       Alert.alert("Friend request accepted");
     } catch (error) {
       console.error("Error accepting friend request: ", error);
       Alert.alert("Error accepting friend request.");
     }
   };
-  
+
   const handleDeclineFriend = async (contact) => {
     if (!user) {
       Alert.alert("No user signed in");
       return;
     }
-  
+
     try {
-      await deleteDoc(doc(FIRESTORE_DB, `users/${user.uid}/friendRequests`, contact.id));
-      await deleteDoc(doc(FIRESTORE_DB, `users/${contact.id}/friendRequests`, user.uid));
-      
+      await deleteDoc(
+        doc(FIRESTORE_DB, `users/${user.uid}/friendRequests`, contact.id)
+      );
+      await deleteDoc(
+        doc(FIRESTORE_DB, `users/${contact.id}/friendRequests`, user.uid)
+      );
+
       setFriendRequests((prevRequests) => {
         const newRequests = { ...prevRequests };
         delete newRequests[contact.id];
         return newRequests;
       });
-      
+
       Alert.alert("Friend request declined");
     } catch (error) {
       console.error("Error declining friend request: ", error);
@@ -946,119 +963,230 @@ const handleAcceptFriend = async (contact) => {
     setSelectedContact(contact);
     setModalVisible(true);
   };
-  
 
   const renderItem = ({ item }) => (
     <Pressable
       key={item.id}
-      style={styles.cardContainer}
+      style={[
+        styles.cardContainer,
+        {
+          backgroundColor:
+            item.id === contacts[activeIndex]?.id
+              ? "transparent"
+              : "transparent",
+          transform:
+            item.id === contacts[activeIndex]?.id
+              ? [{ scale: 1.1 }]
+              : [{ scale: 1.1 }],
+        },
+        {
+          height:
+            SCREEN_WIDTH > SCREEN_HEIGHT
+              ? Math.round(Dimensions.get("window").height * 0.3)
+              : Math.round(Dimensions.get("window").height * 0.25),
+        },
+      ]}
       onPress={() => handleCardPress(item)}
     >
       <Image source={item.imageUrl} style={styles.image} />
       <Text style={styles.cardText}>{item.name}</Text>
-      
-      {friendRequests[item.id] === 'accepted' && (
-        <FontAwesome name="check-circle" size={24} color="green" style={styles.iconStyle} />
-      )}
-      {friendRequests[item.id] === 'pending' && (
-        <FontAwesome name="question-circle" size={24} color="orange" style={styles.iconStyle} />
-      )}
 
-  
-   
+      {friendRequests[item.id] === "accepted" && (
+        <FontAwesome
+          name="check-circle"
+          size={24}
+          color="green"
+          style={styles.iconStyle}
+        />
+      )}
+      {friendRequests[item.id] === "pending" && (
+        <FontAwesome
+          name="question-circle"
+          size={24}
+          color="orange"
+          style={styles.iconStyle}
+        />
+      )}
     </Pressable>
-    
   );
-  
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          {
+            height: SCREEN_WIDTH > SCREEN_HEIGHT ? 920 : 450,
+          },
+        ]}
+      >
         <View style={styles.filterButtons}>
           <Pressable
-            style={[styles.filterButton, filter === 'all' && styles.activeFilterButton]}
-            onPress={() => setFilter('all')}
+            style={[
+              styles.filterButton,
+              filter === "all" && styles.activeFilterButton,
+            ]}
+            onPress={() => setFilter("all")}
           >
-            <Text style={[styles.filterButtonText, filter === 'all' && styles.activeFilterButtonText]}>All</Text>
+            <Text
+              style={[
+                styles.filterButtonText,
+                filter === "all" && styles.activeFilterButtonText,
+              ]}
+            >
+              All
+            </Text>
           </Pressable>
           <Pressable
-            style={[styles.filterButton, filter === 'friends' && styles.activeFilterButton]}
-            onPress={() => setFilter('friends')}
+            style={[
+              styles.filterButton,
+              filter === "friends" && styles.activeFilterButton,
+            ]}
+            onPress={() => setFilter("friends")}
           >
-            <Text style={[styles.filterButtonText, filter === 'friends' && styles.activeFilterButtonText]}>My Friends</Text>
+            <Text
+              style={[
+                styles.filterButtonText,
+                filter === "friends" && styles.activeFilterButtonText,
+              ]}
+            >
+              My Friends
+            </Text>
           </Pressable>
         </View>
 
         <Carousel
-          ref={carouselRef}
+          ref={scrollViewRef}
           data={filteredContacts}
           renderItem={renderItem}
-          width={SCREEN_WIDTH * 0.8}
-          height={SCREEN_WIDTH * 0.8}
-          style={styles.carousel}
+          width={SCREEN_WIDTH * 0.3}
+          height={SCREEN_WIDTH * 0.3}
+          style={{
+            width: Math.round(SCREEN_WIDTH * 0.9),
+            height: Math.round(SCREEN_HEIGHT * 0.5),
+          }}
           loop
           onSnapToItem={(index) => setActiveIndex(index)}
           pagingEnabled
-          mode="parallax"
-          modeConfig={{
-            parallaxScrollingScale: 0.9,
-            parallaxScrollingOffset: 50,
-          }}
         />
+        <Pressable
+          style={[
+            styles.arrowLeft,
+            {
+              left: SCREEN_WIDTH > SCREEN_HEIGHT ? -17 : -22,
+              top: SCREEN_WIDTH > SCREEN_HEIGHT ? "40%" : "30%",
+            },
+          ]}
+          onPress={() => {
+            scrollViewRef.current?.scrollTo({ count: -1, animated: true });
+          }}
+        >
+          <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
+        </Pressable>
+        <Pressable
+          style={[
+            styles.arrowRight,
+            {
+              right: SCREEN_WIDTH > SCREEN_HEIGHT ? -25 : -22,
+              top: SCREEN_WIDTH > SCREEN_HEIGHT ? "40%" : "30%",
+            },
+          ]}
+          onPress={() => {
+            scrollViewRef.current?.scrollTo({ count: 1, animated: true });
+          }}
+        >
+          <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
+        </Pressable>
 
-{selectedContact && (
-  <Modal
-    visible={modalVisible}
-    animationType="slide"
-    transparent={true}
-    onRequestClose={() => setModalVisible(false)}
-  >
-    <View style={styles.modalContainer}>
-      <ScrollView contentContainerStyle={styles.modalContent}>
-        <Image source={selectedContact.imageUrl} style={styles.modalImage} />
-        <View style={styles.modalInfoContainer}>
-          <Text style={styles.modalName}>{selectedContact.name}</Text>
-          <Text style={styles.modalText}>City: {selectedContact.city}</Text>
-          <Text style={styles.modalInterestsTitle}>Interests:</Text>
-          {selectedContact.hobbies.map((hobby, index) => (
-            <Text key={index} style={styles.modalInterests}>- {hobby}</Text>
-          ))}
-          <Text style={styles.modalInterestsTitle}>Clubs:</Text>
-          {selectedContact.clubs.map((club, index) => (
-            <Text key={index} style={styles.modalInterests}>- {club}</Text>
-          ))}
+        {selectedContact && (
+          <Modal
+            visible={modalVisible}
+            animationType="slide"
+            transparent={true}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <ScrollView contentContainerStyle={styles.modalContent}>
+                <Image
+                  source={selectedContact.imageUrl}
+                  style={styles.modalImage}
+                />
+                <View style={styles.modalInfoContainer}>
+                  <Text style={styles.modalName}>{selectedContact.name}</Text>
+                  <Text style={styles.modalText}>
+                    City: {selectedContact.city}
+                  </Text>
+                  <Text style={styles.modalInterestsTitle}>Interests:</Text>
+                  {selectedContact.hobbies.map((hobby, index) => (
+                    <Text key={index} style={styles.modalInterests}>
+                      - {hobby}
+                    </Text>
+                  ))}
+                  <Text style={styles.modalInterestsTitle}>Clubs:</Text>
+                  {selectedContact.clubs.map((club, index) => (
+                    <Text key={index} style={styles.modalInterests}>
+                      - {club}
+                    </Text>
+                  ))}
 
-          <View style={styles.actionContainer}>
-          {!friendRequests[selectedContact.id] && (
-                      <Pressable onPress={() => handleAddFriend(selectedContact)} style={styles.actionButton}>
+                  <View style={styles.actionContainer}>
+                    {!friendRequests[selectedContact.id] && (
+                      <Pressable
+                        onPress={() => handleAddFriend(selectedContact)}
+                        style={styles.actionButton}
+                      >
                         <Text style={styles.actionButtonText}>Add Friend</Text>
-                        <FontAwesome name="user-plus" size={24} color="#4169E1" style={styles.modalIcon} />
+                        <FontAwesome
+                          name="user-plus"
+                          size={24}
+                          color="#4169E1"
+                          style={styles.modalIcon}
+                        />
                       </Pressable>
                     )}
-                    {friendRequests[selectedContact.id] === 'pending' && (
+                    {friendRequests[selectedContact.id] === "pending" && (
                       <Text style={styles.pendingText}>Request Sent</Text>
                     )}
-            {friendRequests[selectedContact.id] === 'pending' && (
-              <>
-                <Pressable onPress={() => handleAcceptFriend(selectedContact)} style={styles.actionButton}>
-                  <Text style={styles.actionButtonText}>Accept</Text>
-                  <FontAwesome name="check-circle" size={24} color="green" style={styles.modalIcon} />
-                </Pressable>
-                <Pressable onPress={() => handleDeclineFriend(selectedContact)} style={styles.actionButton}>
-                  <Text style={styles.actionButtonText}>Decline</Text>
-                  <FontAwesome name="times-circle" size={24} color="red" style={styles.modalIcon} />
-                </Pressable>
-              </>
-            )}
-            <Pressable style={styles.closeButton} onPress={() => setModalVisible(false)}>
-              <Text style={styles.closeButtonText}>Close</Text>
-            </Pressable>
-          </View>
-        </View>
-      </ScrollView>
-    </View>
-  </Modal>
-)}
-
+                    {friendRequests[selectedContact.id] === "pending" && (
+                      <>
+                        <Pressable
+                          onPress={() => handleAcceptFriend(selectedContact)}
+                          style={styles.actionButton}
+                        >
+                          <Text style={styles.actionButtonText}>Accept</Text>
+                          <FontAwesome
+                            name="check-circle"
+                            size={24}
+                            color="green"
+                            style={styles.modalIcon}
+                          />
+                        </Pressable>
+                        <Pressable
+                          onPress={() => handleDeclineFriend(selectedContact)}
+                          style={styles.actionButton}
+                        >
+                          <Text style={styles.actionButtonText}>Decline</Text>
+                          <FontAwesome
+                            name="times-circle"
+                            size={24}
+                            color="red"
+                            style={styles.modalIcon}
+                          />
+                        </Pressable>
+                      </>
+                    )}
+                    <Pressable
+                      style={styles.closeButton}
+                      onPress={() => setModalVisible(false)}
+                    >
+                      <Text style={styles.closeButtonText}>Close</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              </ScrollView>
+            </View>
+          </Modal>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -1067,24 +1195,25 @@ const handleAcceptFriend = async (contact) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-   
   },
   container: {
-    flex: 1,
+    // flex: 1,
     alignItems: "center",
-    justifyContent: "flex-start",
+    // justifyContent: "flex-start",
+    position: "relative",
   },
   filterButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: SCREEN_HEIGHT * 0.02,
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: SCREEN_HEIGHT * 0.04,
+    marginTop: SCREEN_HEIGHT * 0.2,
   },
   filterButton: {
     paddingHorizontal: SCREEN_WIDTH * 0.05,
     paddingVertical: SCREEN_HEIGHT * 0.015,
     marginHorizontal: SCREEN_WIDTH * 0.02,
     borderRadius: 20,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "grey",
     elevation: 3,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -1092,41 +1221,55 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   activeFilterButton: {
-    backgroundColor: '#4169E1',
+    backgroundColor: "orange",
   },
   filterButtonText: {
-    fontSize: SCREEN_WIDTH * 0.04,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 25,
+    fontWeight: "bold",
+    color: "white",
   },
   activeFilterButtonText: {
-    color: '#fff',
+    color: "#fff",
   },
-  carousel: {
-    width: SCREEN_WIDTH,
-    height: SCREEN_WIDTH,
+  arrowLeft: {
+    position: "absolute",
+    transform: [{ translateY: -50 }],
+  },
+  arrowRight: {
+    position: "absolute",
+    transform: [{ translateY: -50 }],
   },
   cardContainer: {
-    width: SCREEN_WIDTH * 0.7,
-    height: SCREEN_WIDTH * 0.7,
-    justifyContent: "flex-end",
+    width: SCREEN_WIDTH * 0.25,
+    justifyContent: "center",
     alignItems: "center",
-    borderRadius: 20,
-    overflow: 'hidden',
+    borderRadius: 30,
+    marginHorizontal: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 8, height: 7 },
+    shadowOpacity: 0.22,
+    shadowRadius: 9.22,
+    elevation: 12,
   },
+
   cardText: {
-    fontSize: SCREEN_WIDTH * 0.06,
-    color: "#fff",
+    fontSize: 30,
+    color: "black",
     fontWeight: "700",
-    marginBottom: SCREEN_HEIGHT * 0.02,
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: {width: -1, height: 1},
-    textShadowRadius: 10
+    // marginBottom: SCREEN_HEIGHT * 0.02,
   },
   image: {
-    ...StyleSheet.absoluteFillObject,
-    width: undefined,
-    height: undefined,
+    width: 190,
+    height: 190,
+    borderRadius: 180, // Circular shape
+    //  borderWidth: 2,    // Optional border width
+    //  borderColor: '#fff', // Optional border color
+    marginBottom: 10,
+    shadowColor: "#000", // Optional shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5, // Shadow for Android
   },
 
   iconStyle: {
@@ -1134,54 +1277,86 @@ const styles = StyleSheet.create({
     top: SCREEN_HEIGHT * 0.02,
     right: SCREEN_WIDTH * 0.03,
   },
-  
- 
+
   modalContainer: {
-    width: SCREEN_WIDTH * 0.9,
-    maxHeight: SCREEN_HEIGHT * 0.8,
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    overflow: 'hidden',
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.7)", // Darker background overlay
   },
   modalContent: {
+    marginTop: 70,
+    gap: 30,
+    flexDirection: "row", // Side by side layout
     alignItems: "center",
-    padding: SCREEN_WIDTH * 0.05,
+    justifyContent: "space-between",
+    width: SCREEN_WIDTH * 0.95, // Slightly wider modal for content
+    height: SCREEN_HEIGHT * 0.8,
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 8, // Increased shadow for better
   },
   modalImage: {
-    width: SCREEN_WIDTH * 0.6,
-    height: SCREEN_WIDTH * 0.6,
-    borderRadius: SCREEN_WIDTH * 0.3,
-    marginBottom: SCREEN_HEIGHT * 0.02,
+    //     // this is circle
+    width: 400,
+    height: 400,
+    borderRadius: 190, // Circular shape
+    borderWidth: 2, // Optional border width
+    borderColor: "#FFD700", // Optional border color
+    marginBottom: 10,
+    marginRight: 40, // Space between the image and text
+    shadowColor: "#000", // Optional shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+
+    //     //this is the square
+    //     // width: 300,
+    //     // height: 500,
+    //     // borderRadius: 20, // This gives the rounded corners
+    //     // marginBottom: 10,
+    //     // marginRight: 40, // Space between the image and text
+    //     // borderWidth: 3,
+    //     // borderColor: "#FFD700", // Example border color (you can change it)
+    //     // shadowColor: "#000", // Optional shadow
+    //     // shadowOffset: { width: 0, height: 2 },
+    //     // shadowOpacity: 0.8,
+    //     // shadowRadius: 2,
+    //     // elevation: 5, // Shadow for Android
+    //   },
   },
   modalInfoContainer: {
-    alignItems: "center",
-    width: '100%',
+    marginTop: 200,
+    flex: 1, // Takes up remaining space
+    justifyContent: "flex-start",
   },
   modalName: {
-    fontSize: SCREEN_WIDTH * 0.08,
+    fontSize: 50,
     fontWeight: "bold",
     color: "#333",
-    marginBottom: SCREEN_HEIGHT * 0.01,
+    // marginBottom: SCREEN_HEIGHT * 0.01,
+    marginBottom: 10,
   },
   modalText: {
-    fontSize: SCREEN_WIDTH * 0.045,
+    fontSize: 25,
     color: "#666",
     marginBottom: SCREEN_HEIGHT * 0.005,
   },
   modalInterestsTitle: {
-    fontSize: SCREEN_WIDTH * 0.05,
+    fontSize: 30,
     fontWeight: "bold",
     color: "#333",
     marginTop: SCREEN_HEIGHT * 0.015,
     marginBottom: SCREEN_HEIGHT * 0.005,
   },
   modalInterests: {
-    fontSize: SCREEN_WIDTH * 0.045,
+    fontSize: 23,
     color: "#666",
     marginBottom: SCREEN_HEIGHT * 0.005,
   },
@@ -1189,19 +1364,20 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     marginTop: SCREEN_HEIGHT * 0.02,
-    width: '100%',
-    height:'100%',
+    width: "100%",
+    height: "100%",
   },
   actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f0f0f0',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f0f0f0",
     borderRadius: 20,
     paddingVertical: SCREEN_HEIGHT * 0.015,
     paddingHorizontal: SCREEN_WIDTH * 0.05,
     marginBottom: SCREEN_HEIGHT * 0.01,
-    width: '100%',
+    marginRight: 100,
+    width: "80%",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -1209,8 +1385,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   actionButtonText: {
-    fontSize: SCREEN_WIDTH * 0.045,
-    fontWeight: '600',
+    fontSize: 24,
+    fontWeight: "600",
     marginRight: SCREEN_WIDTH * 0.02,
   },
   modalIcon: {
@@ -1218,20 +1394,19 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     backgroundColor: "#f09030",
+    marginRight: 100,
     borderRadius: 20,
     paddingVertical: SCREEN_HEIGHT * 0.015,
     paddingHorizontal: SCREEN_WIDTH * 0.08,
     marginTop: SCREEN_HEIGHT * 0.01,
-    width: '100%',
-    alignItems: 'center',
+    width: "80%",
+    alignItems: "center",
   },
   closeButtonText: {
-    fontSize: SCREEN_WIDTH * 0.045,
+    fontSize: 24,
     color: "#fff",
     fontWeight: "bold",
   },
 });
 
 export default GLClub;
-
-
