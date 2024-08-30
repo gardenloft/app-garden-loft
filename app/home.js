@@ -388,6 +388,8 @@
 //   );
 // }
 
+
+
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -404,17 +406,24 @@ import { FIRESTORE_DB, FIREBASE_AUTH } from '../FirebaseConfig';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import * as Device from 'expo-device';
 import CallAlertModal from '../components/CallAlertModal';
+import CallDeclineModal from './CallDeclineModal'; 
+import { useLocalSearchParams } from "expo-router"; 
 
 export default function Home() {
   const auth = FIREBASE_AUTH;
   const user = auth.currentUser;
   const notificationListener = useRef(null);
   const responseListener = useRef(null);
+  const params = useLocalSearchParams(); // Retrieve parameters
   const [modalVisible, setModalVisible] = useState(false);
+  const [declineModalVisible, setDeclineModalVisible] = useState(false);
   const [callerUid, setCallerUid] = useState('');
-    const [callerName, setCallerName] = useState('');
+  const [calleeUid, setCalleeUid] = useState(params.calleeUid || ''); 
+  const [callerName, setCallerName] = useState('');
+  const [calleeName, setCalleeName] = useState('');
   const [meetingId, setMeetingId] = useState(null);
   const router = useRouter();
+
 
   useEffect(() => {
     if (user) {
@@ -438,19 +447,29 @@ export default function Home() {
       ]);
 
       notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-        const { caller, callerUid, meetingId } = notification.request.content.data;
+        const { caller, callerUid, meetingId, calleeUid} = notification.request.content.data;
         setCallerUid(callerUid);
         setCallerName(caller);
         setMeetingId(meetingId);
         setModalVisible(true);
+        setCalleeUid(calleeUid); 
+
       });
 
       responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-        const { meetingId, callerUid } = response.notification.request.content.data;
+        const { meetingId, callerUid, callee, calleeUid, calleeName, decline} = response.notification.request.content.data;
+        setCalleeUid(calleeUid);
+
+        if (decline && user.uid === callerUid) {  // Check if the decline notification is for this caller
+          setCalleeName(calleeName);
+          setDeclineModalVisible(true);  // Only show the modal on the caller's side
+        }
         if (response.actionIdentifier === 'ACCEPT_CALL') {
           Linking.openURL(`app-garden-loft://VideoSDK2?meetingId=${meetingId}&caller=${callerUid}&autoJoin=true`);
         } else if (response.actionIdentifier === 'DECLINE_CALL') {
           handleDecline();
+
+    
         }
       });
 
@@ -473,11 +492,13 @@ export default function Home() {
     });
   };
 
-  const handleDecline = async (calleeUid) => {
+  const handleDecline = async () => {
+    console.log("Decline triggered for calleeUid:", calleeUid);
     setModalVisible(false);
   
+    
     // Send notification to the caller
-    if (user && callerName) {
+    if (user && callerName && calleeUid) {
       try {
         //get calleeName
         const calleeDoc = await getDoc(doc(FIRESTORE_DB, "users", calleeUid));
@@ -488,6 +509,7 @@ export default function Home() {
         const calleeData = calleeDoc.data();
         const callee = calleeDoc.data().userName;
         const calleePushToken = calleeData.pushToken;
+
         // Get the caller's document from Firestore using callerUid
         const callerDoc = await getDoc(doc(FIRESTORE_DB, "users", callerUid));
         if (callerDoc.exists()) {
@@ -502,7 +524,14 @@ export default function Home() {
               sound: "default",
               title: "Call Declined",
               body: `${callee || "User"} is not available right now.`,
-            };
+              data: {
+                callerUid: callerUid,
+                calleeUid: calleeUid,
+                calleeName: callee,
+                decline: true,
+              },
+            }
+            ;
 
   
             // Send the notification
@@ -514,7 +543,7 @@ export default function Home() {
               },
               body: JSON.stringify(message),
             });
-  
+            // setDeclineModalVisible(true); 
             // Parse the response
             const data = await response.json();
             console.log("Decline Notification Response:", data);
@@ -579,12 +608,17 @@ export default function Home() {
         <Carousel />
         <CallAlertModal
           visible={modalVisible}
-          // callerUId={callerUid}
+          callerUId={callerUid}
           callerId={callerName}
           onAccept={joinMeeting}
-          // onDecline={handleDecline}
-          onDecline={() => handleDecline(callerUid)}
+          onDecline={handleDecline}
+          // onDecline={() => handleDecline(callerUid)}
           
+        />
+           <CallDeclineModal
+          visible={declineModalVisible}
+          calleeName={calleeName}
+          onDismiss={() => setDeclineModalVisible(false)}
         />
       </SafeAreaProvider>
     </GestureHandlerRootView>

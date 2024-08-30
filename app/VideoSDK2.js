@@ -47,7 +47,8 @@ function JoinScreen(props) {
         justifyContent: "center",
         paddingHorizontal: 60,
         width: viewportWidth * 0.8,
-      }}>
+      }}
+    >
       {/* Your join screen content here */}
     </SafeAreaView>
   );
@@ -66,7 +67,8 @@ const IconButton = ({ onPress, iconName, buttonText, backgroundColor }) => {
         padding: 16,
         borderRadius: 8,
         marginBottom: 40,
-      }}>
+      }}
+    >
       <MaterialCommunityIcons name={iconName} size={24} color="white" />
       <Text style={{ color: "white", fontSize: 16 }}>{buttonText}</Text>
     </TouchableOpacity>
@@ -100,7 +102,8 @@ function ControlsContainer({
         position: "absolute",
         bottom: 20,
         width: viewportWidth * 0.9,
-      }}>
+      }}
+    >
       <IconButton
         onPress={() => {
           toggleWebcam();
@@ -183,7 +186,8 @@ function ParticipantView({ participantId }) {
           alignItems: "center",
           width: viewportWidth * 0.9,
           height: viewportHeight * 0.65,
-        }}>
+        }}
+      >
         <Text style={{ fontSize: 18 }}>Webcam is off</Text>
       </View>
     );
@@ -197,7 +201,8 @@ function ParticipantList({ participants }) {
         flexDirection: "row",
         flexWrap: "wrap",
         justifyContent: "center",
-      }}>
+      }}
+    >
       {participants.map((participantId) => (
         <ParticipantView key={participantId} participantId={participantId} />
       ))}
@@ -209,7 +214,8 @@ function ParticipantList({ participants }) {
         backgroundColor: "#F6F6FF",
         justifyContent: "center",
         alignItems: "center",
-      }}>
+      }}
+    >
       <Text style={{ fontSize: 18 }}>No participants yet.</Text>
     </View>
   );
@@ -338,7 +344,8 @@ function MeetingView({
         alignContent: "center",
         backgroundColor: "white",
         borderRadius: 40,
-      }}>
+      }}
+    >
       {meetingId ? (
         <Text style={{ fontSize: 22, padding: 16 }}>
           Video Call: {meetingId}
@@ -362,21 +369,24 @@ function MeetingView({
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(!modalVisible);
-        }}>
+        }}
+      >
         <View
           style={{
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: "rgba(0,0,0,0.5)",
-          }}>
+          }}
+        >
           <View
             style={{
               width: 300,
               backgroundColor: "white",
               padding: 20,
               borderRadius: 10,
-            }}>
+            }}
+          >
             <Text style={{ fontSize: 18, marginBottom: 10 }}>
               Select a contact to add:
             </Text>
@@ -390,7 +400,8 @@ function MeetingView({
                       padding: 10,
                       backgroundColor:
                         selectedContact?.id === item.id ? "#ddd" : "#fff",
-                    }}>
+                    }}
+                  >
                     {item.userName}
                   </Text>
                 </TouchableOpacity>
@@ -432,9 +443,7 @@ export default function VideoSDK() {
     if (params.meetingId) {
       setMeetingId(params.meetingId);
     }
-  }, [
-    params.meetingId,
-  ]);
+  }, [params.meetingId]);
 
   useEffect(() => {
     const setupCustomTrack = async () => {
@@ -482,7 +491,13 @@ export default function VideoSDK() {
       sound: "default",
       title: "Incoming Call",
       body: `${caller} is calling you`,
-      data: { meetingId: newMeetingId, callerUid: user.uid, caller: caller},
+      data: {
+        meetingId: newMeetingId,
+        callerUid: user.uid,
+        caller: caller,
+        calleeUid: calleeUid,
+        callee: callee,
+      },
       categoryId: "incoming_call",
     };
 
@@ -494,6 +509,12 @@ export default function VideoSDK() {
       },
       body: JSON.stringify(message),
     });
+
+     // Pass calleeUid when navigating to Home.js
+  router.push({
+    pathname: '/home',
+    params: { calleeUid: calleeUid }
+  });
 
     joinMeeting(newMeetingId);
   };
@@ -515,7 +536,8 @@ export default function VideoSDK() {
         backgroundColor: "#FCF8E3",
         justifyContent: "center",
         alignItems: "center",
-      }}>
+      }}
+    >
       <MeetingProvider
         config={{
           meetingId,
@@ -556,7 +578,8 @@ export default function VideoSDK() {
           },
         }}
         token={token}
-        joinWithoutUserInteraction={true}>
+        joinWithoutUserInteraction={true}
+      >
         <MeetingView
           autoJoin={autoJoin}
           setAutoJoin={setAutoJoin}
@@ -572,7 +595,8 @@ export default function VideoSDK() {
     </SafeAreaView>
   ) : (
     <SafeAreaView
-      style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+    >
       <JoinScreen getMeetingId={getMeetingId} />
     </SafeAreaView>
   );
