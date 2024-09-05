@@ -1359,15 +1359,14 @@ const styles = StyleSheet.create({
     elevation: 5, // Shadow for Android
   },
 
-
   iconStyle: {
     position: "absolute",
     top: SCREEN_HEIGHT * 0.02,
     right: SCREEN_WIDTH * 0.03,
+  },
 
   nameIconStyle: {
     marginLeft: 10,
-
   },
 
   modalContainer: {
@@ -1499,7 +1498,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
 
 // const styles = StyleSheet.create({
 //   safeArea: {
