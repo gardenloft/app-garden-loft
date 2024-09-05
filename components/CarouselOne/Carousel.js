@@ -15,6 +15,7 @@ import Entertainment from "../Entertainment";
 import Lights from "../Lights";
 import HowTo from "../HowTo";
 import GLClub from "../GLClub";
+import WatchParty from "../WatchParty";
 // import VideoSDK from  '../../app/VideoSDK'
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import Logout from "../Logout";
@@ -53,6 +54,12 @@ const data = [
     icon: "calendar-star",
     component: <Lights />,
     prompt: "Change Lights?",
+  },
+  {
+    title: "Watch Party",
+    icon: "calendar-star",
+    component: <WatchParty />,
+    prompt: "Watch Party?",
   },
   {
     title: "COURSES",

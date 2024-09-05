@@ -1284,7 +1284,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
+    // flex: 1,
     alignItems: "center",
+    // justifyContent: "flex-start",
     position: "relative",
   },
   filterButtons: {
@@ -1336,38 +1338,51 @@ const styles = StyleSheet.create({
     shadowRadius: 9.22,
     elevation: 12,
   },
+
   cardText: {
     fontSize: 30,
     color: "black",
     fontWeight: "700",
+    // marginBottom: SCREEN_HEIGHT * 0.02,
   },
   image: {
     width: 190,
     height: 190,
-    borderRadius: 180,
+    borderRadius: 180, // Circular shape
+    //  borderWidth: 2,    // Optional border width
+    //  borderColor: '#fff', // Optional border color
     marginBottom: 10,
-    shadowColor: "#000",
+    shadowColor: "#000", // Optional shadow
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
-    elevation: 5,
+    elevation: 5, // Shadow for Android
   },
+
+
+  iconStyle: {
+    position: "absolute",
+    top: SCREEN_HEIGHT * 0.02,
+    right: SCREEN_WIDTH * 0.03,
+
   nameIconStyle: {
     marginLeft: 10,
+
   },
+
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: "rgba(0, 0, 0, 0.7)", // Darker background overlay
   },
   modalContent: {
     marginTop: 70,
     gap: 30,
-    flexDirection: "row",
+    flexDirection: "row", // Side by side layout
     alignItems: "center",
     justifyContent: "space-between",
-    width: SCREEN_WIDTH * 0.95,
+    width: SCREEN_WIDTH * 0.95, // Slightly wider modal for content
     height: SCREEN_HEIGHT * 0.8,
     backgroundColor: "#fff",
     borderRadius: 15,
@@ -1376,32 +1391,49 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
-    elevation: 8,
+    elevation: 8, // Increased shadow for better
   },
   modalImage: {
+    //     // this is circle
     width: 400,
     height: 400,
-    borderRadius: 190,
-    borderWidth: 2,
-    borderColor: "#FFD700",
+    borderRadius: 190, // Circular shape
+    borderWidth: 2, // Optional border width
+    borderColor: "#FFD700", // Optional border color
     marginBottom: 10,
     marginLeft: 40,
-    marginRight: 40,
-    shadowColor: "#000",
+    marginRight: 40, // Space between the image and text
+    shadowColor: "#000", // Optional shadow
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 5,
+
+    //     //this is the square
+    //     // width: 300,
+    //     // height: 500,
+    //     // borderRadius: 20, // This gives the rounded corners
+    //     // marginBottom: 10,
+    //     // marginRight: 40, // Space between the image and text
+    //     // borderWidth: 3,
+    //     // borderColor: "#FFD700", // Example border color (you can change it)
+    //     // shadowColor: "#000", // Optional shadow
+    //     // shadowOffset: { width: 0, height: 2 },
+    //     // shadowOpacity: 0.8,
+    //     // shadowRadius: 2,
+    //     // elevation: 5, // Shadow for Android
+    //   },
   },
   modalInfoContainer: {
     marginTop: 200,
-    flex: 1,
+    flex: 1, // Takes up remaining space
     justifyContent: "flex-start",
   },
   modalName: {
     fontSize: 50,
     fontWeight: "bold",
     color: "#333",
+    // marginBottom: SCREEN_HEIGHT * 0.01,
     marginBottom: 10,
   },
   modalText: {
@@ -1467,6 +1499,200 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+
+// const styles = StyleSheet.create({
+//   safeArea: {
+//     flex: 1,
+//   },
+//   container: {
+//     alignItems: "center",
+//     position: "relative",
+//   },
+//   filterButtons: {
+//     flexDirection: "row",
+//     justifyContent: "center",
+//     marginBottom: SCREEN_HEIGHT * 0.04,
+//     marginTop: SCREEN_HEIGHT * 0.22,
+//   },
+//   filterButton: {
+//     paddingHorizontal: SCREEN_WIDTH * 0.05,
+//     paddingVertical: SCREEN_HEIGHT * 0.015,
+//     marginHorizontal: SCREEN_WIDTH * 0.02,
+//     borderRadius: 20,
+//     backgroundColor: "grey",
+//     elevation: 3,
+//     shadowColor: "#000",
+//     shadowOffset: { width: 0, height: 2 },
+//     shadowOpacity: 0.1,
+//     shadowRadius: 4,
+//   },
+//   activeFilterButton: {
+//     backgroundColor: "orange",
+//   },
+//   filterButtonText: {
+//     fontSize: 25,
+//     fontWeight: "bold",
+//     color: "white",
+//   },
+//   activeFilterButtonText: {
+//     color: "#fff",
+//   },
+//   arrowLeft: {
+//     position: "absolute",
+//     transform: [{ translateY: -50 }],
+//   },
+//   arrowRight: {
+//     position: "absolute",
+//     transform: [{ translateY: -50 }],
+//   },
+//   cardContainer: {
+//     width: SCREEN_WIDTH * 0.25,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     borderRadius: 30,
+//     marginHorizontal: 10,
+//     shadowColor: "#000",
+//     shadowOffset: { width: 8, height: 7 },
+//     shadowOpacity: 0.22,
+//     shadowRadius: 9.22,
+//     elevation: 12,
+//   },
+//   cardText: {
+//     fontSize: 30,
+//     color: "black",
+//     fontWeight: "700",
+//   },
+//   image: {
+//     width: 190,
+//     height: 190,
+//     borderRadius: 180,
+//     marginBottom: 10,
+//     shadowColor: "#000",
+//     shadowOffset: { width: 0, height: 2 },
+//     shadowOpacity: 0.8,
+//     shadowRadius: 2,
+//     elevation: 5,
+//   },
+//   iconStyle: {
+//     position: "absolute",
+//     top: SCREEN_HEIGHT * 0.02,
+//     right: SCREEN_WIDTH * 0.03,
+//   },
+//   modalContainer: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     backgroundColor: "rgba(0, 0, 0, 0.7)",
+//   },
+//   modalContent: {
+//     marginTop: 70,
+//     gap: 30,
+//     flexDirection: "row",
+//     alignItems: "center",
+//     justifyContent: "space-between",
+//     width: SCREEN_WIDTH * 0.95,
+//     height: SCREEN_HEIGHT * 0.8,
+//     backgroundColor: "#fff",
+//     borderRadius: 15,
+//     padding: 20,
+//     shadowColor: "#000",
+//     shadowOffset: { width: 0, height: 4 },
+//     shadowOpacity: 0.3,
+//     shadowRadius: 4,
+//     elevation: 8,
+//   },
+//   modalImage: {
+//     width: 400,
+//     height: 400,
+//     borderRadius: 190,
+//     borderWidth: 2,
+//     borderColor: "#FFD700",
+//     marginBottom: 10,
+//     marginLeft: 40,
+//     marginRight: 40,
+//     shadowColor: "#000",
+//     shadowOffset: { width: 0, height: 2 },
+//     shadowOpacity: 0.8,
+//     shadowRadius: 2,
+//     elevation: 5,
+//   },
+//   modalInfoContainer: {
+//     marginTop: 200,
+//     flex: 1,
+//     justifyContent: "flex-start",
+//   },
+//   modalName: {
+//     fontSize: 50,
+//     fontWeight: "bold",
+//     color: "#333",
+//     marginBottom: 10,
+//   },
+//   modalText: {
+//     fontSize: 25,
+//     color: "#666",
+//     marginBottom: SCREEN_HEIGHT * 0.005,
+//   },
+//   modalInterestsTitle: {
+//     fontSize: 30,
+//     fontWeight: "bold",
+//     color: "#333",
+//     marginTop: SCREEN_HEIGHT * 0.015,
+//     marginBottom: SCREEN_HEIGHT * 0.005,
+//   },
+//   modalInterests: {
+//     fontSize: 23,
+//     color: "#666",
+//     marginBottom: SCREEN_HEIGHT * 0.005,
+//   },
+//   actionContainer: {
+//     flexDirection: "column",
+//     alignItems: "center",
+//     marginTop: SCREEN_HEIGHT * 0.02,
+//     width: "100%",
+//     height: "100%",
+//   },
+//   actionButton: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     justifyContent: "center",
+//     backgroundColor: "#f0f0f0",
+//     borderRadius: 20,
+//     paddingVertical: SCREEN_HEIGHT * 0.015,
+//     paddingHorizontal: SCREEN_WIDTH * 0.05,
+//     marginBottom: SCREEN_HEIGHT * 0.01,
+//     marginRight: 100,
+//     width: "80%",
+//     shadowColor: "#000",
+//     shadowOffset: { width: 0, height: 2 },
+//     shadowOpacity: 0.1,
+//     shadowRadius: 3,
+//     elevation: 2,
+//   },
+//   actionButtonText: {
+//     fontSize: 24,
+//     fontWeight: "600",
+//     marginRight: SCREEN_WIDTH * 0.02,
+//   },
+//   modalIcon: {
+//     marginLeft: SCREEN_WIDTH * 0.02,
+//   },
+//   closeButton: {
+//     backgroundColor: "#f09030",
+//     marginRight: 100,
+//     borderRadius: 20,
+//     paddingVertical: SCREEN_HEIGHT * 0.015,
+//     paddingHorizontal: SCREEN_WIDTH * 0.08,
+//     marginTop: SCREEN_HEIGHT * 0.01,
+//     width: "80%",
+//     alignItems: "center",
+//   },
+//   closeButtonText: {
+//     fontSize: 24,
+//     color: "#fff",
+//     fontWeight: "bold",
+//   },
+// });
 
 export default GLClub;
 
