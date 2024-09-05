@@ -1265,10 +1265,25 @@ const Entertainment = ({ videoId, onClose }) => {
                     openSubcategoryModal(subcategory);
                     setIsCategoryModalVisible(false);
                   }}>
-                  <Image
+                  {/* <Image
                     source={{ uri: subcategory.imageUrl, cache: "force-cache" }}
                     style={styles.imageUrl}
+                  /> */}
+                  <Image
+                    source={{
+                      uri:
+                        subcategory.imageUrl ||
+                        "https://via.placeholder.com/150",
+                    }}
+                    style={styles.imageUrl}
+                    onError={(e) => {
+                      console.error(
+                        `Failed to load image for ${subcategory.name}: `,
+                        e.nativeEvent.error
+                      );
+                    }}
                   />
+
                   <Text style={styles.seasonButtonText}>
                     {subcategory.name}
                   </Text>
