@@ -746,8 +746,7 @@
 // });
 
 // export default GLClub;
-
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -772,6 +771,7 @@ import {
 } from "firebase/firestore";
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import { getAuth } from "firebase/auth";
+import { useRouter } from "expo-router";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -797,6 +797,7 @@ const GLClub = () => {
 
   const auth = getAuth();
   const user = auth.currentUser;
+  const router = useRouter();
 
   useEffect(() => {
     if (user) {
@@ -838,8 +839,10 @@ const GLClub = () => {
     );
     const unsubscribe = onSnapshot(friendRequestsRef, (snapshot) => {
       const requests = {};
-      snapshot.docs.forEach((doc) => {
-        requests[doc.id] = doc.data().status;
+      snapshot.forEach((doc) => {
+        const request = doc.data();
+        const role = request.senderId === user.uid ? "sender" : "receiver";
+        requests[doc.id] = { ...request, role };
       });
       setFriendRequests(requests);
     });
@@ -887,6 +890,7 @@ const GLClub = () => {
         {
           status: "pending",
           senderName: user.displayName || user.email,
+          senderId: user.uid,
         }
       );
 
@@ -894,7 +898,7 @@ const GLClub = () => {
 
       setFriendRequests((prevRequests) => ({
         ...prevRequests,
-        [contact.id]: "pending",
+        [contact.id]: { status: "pending", role: "sender" },
       }));
     } catch (error) {
       console.error("Error sending friend request: ", error);
@@ -927,10 +931,10 @@ const GLClub = () => {
       });
 
       await setDoc(doc(FIRESTORE_DB, `users/${contact.id}/friends`, user.uid), {
-        name: user.displayName || user.email,
-        city: "Calgary", // Replace with actual data
-        hobbies: ["Reading", "Painting"], // Replace with actual data
-        clubs: ["Book", "Knitting"], // Replace with actual data
+        name: user.userName || user.email,
+        city: "Calgary",
+        hobbies: ["Reading", "Painting"],
+        clubs: ["Book", "Knitting"],
         imageUrl: defaultImage[user.displayName] || defaultImage.john,
       });
 
@@ -973,12 +977,65 @@ const GLClub = () => {
     }
   };
 
+  const handleUnfriend = async (contact) => {
+    if (!user) {
+      Alert.alert("No user signed in");
+      return;
+    }
+
+    try {
+      // Remove friend from current user's friends subcollection
+      await deleteDoc(
+        doc(FIRESTORE_DB, `users/${user.uid}/friends`, contact.id)
+      );
+
+      // Remove current user from friend's friends subcollection
+      await deleteDoc(
+        doc(FIRESTORE_DB, `users/${contact.id}/friends`, user.uid)
+      );
+
+      // Remove any friend requests between the users
+      await deleteDoc(
+        doc(FIRESTORE_DB, `users/${user.uid}/friendRequests`, contact.id)
+      );
+      await deleteDoc(
+        doc(FIRESTORE_DB, `users/${contact.id}/friendRequests`, user.uid)
+      );
+
+      // Update local friendRequests state
+      setFriendRequests((prevRequests) => {
+        const updatedRequests = { ...prevRequests };
+        delete updatedRequests[contact.id];
+        return updatedRequests;
+      });
+
+      // Update local friends state
+      setFriends((prevFriends) =>
+        prevFriends.filter((friend) => friend.id !== contact.id)
+      );
+
+      Alert.alert("Unfriended successfully");
+    } catch (error) {
+      console.error("Error unfriending:", error);
+      Alert.alert("Error unfriending.");
+    }
+  };
+
+  const handleCall = (contactId) => {
+    // Close modal and initiate video call
+    setModalVisible(false);
+    router.push({
+      pathname: "/VideoSDK2",
+      params: { calleeUid: contactId },
+    });
+  };
+
   const handleCardPress = (contact) => {
     setSelectedContact(contact);
     setModalVisible(true);
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item, index }) => (
     <Pressable
       key={item.id}
       style={[
@@ -996,24 +1053,25 @@ const GLClub = () => {
       ]}
       onPress={() => handleCardPress(item)}>
       <Image source={item.imageUrl} style={styles.image} />
-      <Text style={styles.cardText}>{item.name}</Text>
-
-      {friendRequests[item.id] === "accepted" && (
-        <FontAwesome
-          name="check-circle"
-          size={24}
-          color="green"
-          style={styles.iconStyle}
-        />
-      )}
-      {friendRequests[item.id] === "pending" && (
-        <FontAwesome
-          name="question-circle"
-          size={24}
-          color="orange"
-          style={styles.iconStyle}
-        />
-      )}
+      <Text style={styles.cardText}>
+        {item.name}
+        {friendRequests[item.id]?.status === "accepted" && (
+          <FontAwesome
+            name="check-circle"
+            size={40} // Bigger tick mark
+            color="green"
+            style={styles.nameIconStyle}
+          />
+        )}
+        {friendRequests[item.id]?.status === "pending" && (
+          <FontAwesome
+            name="question-circle"
+            size={40} // Bigger pending icon
+            color="orange"
+            style={styles.nameIconStyle}
+          />
+        )}
+      </Text>
     </Pressable>
   );
 
@@ -1071,6 +1129,7 @@ const GLClub = () => {
           onSnapToItem={(index) => setActiveIndex(index)}
           pagingEnabled
         />
+
         <Pressable
           style={[
             styles.arrowLeft,
@@ -1142,46 +1201,67 @@ const GLClub = () => {
                         />
                       </Pressable>
                     )}
-                    {friendRequests[selectedContact.id] === "pending" && (
+                    {friendRequests[selectedContact.id]?.role === "receiver" &&
+                      friendRequests[selectedContact.id].status ===
+                        "pending" && (
+                        <>
+                          <Pressable
+                            onPress={() => handleAcceptFriend(selectedContact)}
+                            style={styles.actionButton}>
+                            <Text style={styles.actionButtonText}>Accept</Text>
+                            <FontAwesome
+                              name="check-circle"
+                              size={24}
+                              color="green"
+                              style={styles.modalIcon}
+                            />
+                          </Pressable>
+                          <Pressable
+                            onPress={() => handleDeclineFriend(selectedContact)}
+                            style={styles.actionButton}>
+                            <Text style={styles.actionButtonText}>Decline</Text>
+                            <FontAwesome
+                              name="times-circle"
+                              size={24}
+                              color="red"
+                              style={styles.modalIcon}
+                            />
+                          </Pressable>
+                        </>
+                      )}
+                    {friendRequests[selectedContact.id]?.role === "sender" &&
+                      friendRequests[selectedContact.id].status ===
+                        "pending" && (
+                        <Text style={styles.pendingText}>
+                          Friend request sent
+                        </Text>
+                      )}
+                    {friendRequests[selectedContact.id]?.status ===
+                      "accepted" && (
                       <>
                         <Pressable
-                          onPress={() => handleAcceptFriend(selectedContact)}
+                          onPress={() => handleCall(selectedContact.id)}
                           style={styles.actionButton}>
-                          <Text style={styles.actionButtonText}>Accept</Text>
+                          <Text style={styles.actionButtonText}>Call</Text>
                           <FontAwesome
-                            name="check-circle"
+                            name="video-camera"
                             size={24}
                             color="green"
                             style={styles.modalIcon}
                           />
                         </Pressable>
                         <Pressable
-                          onPress={() => handleDeclineFriend(selectedContact)}
+                          onPress={() => handleUnfriend(selectedContact)}
                           style={styles.actionButton}>
-                          <Text style={styles.actionButtonText}>Decline</Text>
+                          <Text style={styles.actionButtonText}>Unfriend</Text>
                           <FontAwesome
-                            name="times-circle"
+                            name="user-times"
                             size={24}
                             color="red"
                             style={styles.modalIcon}
                           />
                         </Pressable>
                       </>
-                    )}
-                    {friendRequests[selectedContact.id] === "accepted" && (
-                      <Pressable
-                        onPress={() => Alert.alert("Already friends")}
-                        style={styles.actionButton}>
-                        <Text style={styles.actionButtonText}>
-                          Already Friends
-                        </Text>
-                        <FontAwesome
-                          name="user-check"
-                          size={24}
-                          color="green"
-                          style={styles.modalIcon}
-                        />
-                      </Pressable>
                     )}
                     <Pressable
                       style={styles.closeButton}
@@ -1272,10 +1352,8 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 5,
   },
-  iconStyle: {
-    position: "absolute",
-    top: SCREEN_HEIGHT * 0.02,
-    right: SCREEN_WIDTH * 0.03,
+  nameIconStyle: {
+    marginLeft: 10,
   },
   modalContainer: {
     flex: 1,
@@ -1359,7 +1437,6 @@ const styles = StyleSheet.create({
     paddingVertical: SCREEN_HEIGHT * 0.015,
     paddingHorizontal: SCREEN_WIDTH * 0.05,
     marginBottom: SCREEN_HEIGHT * 0.01,
-    marginRight: 100,
     width: "80%",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -1377,7 +1454,6 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     backgroundColor: "#f09030",
-    marginRight: 100,
     borderRadius: 20,
     paddingVertical: SCREEN_HEIGHT * 0.015,
     paddingHorizontal: SCREEN_WIDTH * 0.08,
@@ -1415,8 +1491,6 @@ export default GLClub;
 //   doc,
 //   setDoc,
 //   deleteDoc,
-//   query,
-//   updateDoc,
 //   onSnapshot,
 // } from "firebase/firestore";
 // import { FIRESTORE_DB } from "../FirebaseConfig";
@@ -1440,8 +1514,9 @@ export default GLClub;
 //   const [selectedContact, setSelectedContact] = useState(null);
 //   const [filter, setFilter] = useState("all");
 //   const [friendRequests, setFriendRequests] = useState({});
+//   const [friends, setFriends] = useState([]);
 
-//   const scrollViewRef = useRef(null);
+//   const carouselRef = useRef(null);
 
 //   const auth = getAuth();
 //   const user = auth.currentUser;
@@ -1450,28 +1525,33 @@ export default GLClub;
 //     if (user) {
 //       fetchUserNames();
 //       listenToFriendRequests();
+//       listenToFriends();
 //     }
 //   }, [user]);
 
 //   useEffect(() => {
 //     filterAndSortContacts();
-//   }, [contacts, filter, friendRequests]);
+//   }, [contacts, filter, friendRequests, friends]);
 
 //   const fetchUserNames = async () => {
-//     const querySnapshot = await getDocs(collection(FIRESTORE_DB, "users"));
-//     const fetchedContacts = querySnapshot.docs.map((doc) => {
-//       const data = doc.data();
-//       return {
-//         id: doc.id,
-//         name: data.userName || "Unknown User",
-//         city: data.city || "Calgary",
-//         hobbies: data.hobbies || ["Reading", "Painting"],
-//         clubs: data.clubs || ["Book", "Knitting"],
-//         meetingId: data.meetingId || "",
-//         imageUrl: defaultImage[data.userName] || defaultImage.john,
-//       };
-//     });
-//     setContacts(fetchedContacts);
+//     try {
+//       const querySnapshot = await getDocs(collection(FIRESTORE_DB, "users"));
+//       const fetchedContacts = querySnapshot.docs.map((doc) => {
+//         const data = doc.data();
+//         return {
+//           id: doc.id,
+//           name: data.userName || "Unknown User",
+//           city: data.city || "Calgary",
+//           hobbies: data.hobbies || ["Reading", "Painting"],
+//           clubs: data.clubs || ["Book", "Knitting"],
+//           meetingId: data.meetingId || "",
+//           imageUrl: defaultImage[data.userName] || defaultImage.john,
+//         };
+//       });
+//       setContacts(fetchedContacts);
+//     } catch (error) {
+//       console.error("Error fetching user names: ", error);
+//     }
 //   };
 
 //   const listenToFriendRequests = () => {
@@ -1479,20 +1559,35 @@ export default GLClub;
 //       FIRESTORE_DB,
 //       `users/${user.uid}/friendRequests`
 //     );
-//     onSnapshot(friendRequestsRef, (snapshot) => {
+//     const unsubscribe = onSnapshot(friendRequestsRef, (snapshot) => {
 //       const requests = {};
 //       snapshot.docs.forEach((doc) => {
 //         requests[doc.id] = doc.data().status;
 //       });
 //       setFriendRequests(requests);
 //     });
+
+//     return () => unsubscribe();
+//   };
+
+//   const listenToFriends = () => {
+//     const friendsRef = collection(FIRESTORE_DB, `users/${user.uid}/friends`);
+//     const unsubscribe = onSnapshot(friendsRef, (snapshot) => {
+//       const friendsList = snapshot.docs.map((doc) => ({
+//         id: doc.id,
+//         ...doc.data(),
+//       }));
+//       setFriends(friendsList);
+//     });
+
+//     return () => unsubscribe();
 //   };
 
 //   const filterAndSortContacts = () => {
 //     let filtered = contacts;
 //     if (filter === "friends") {
-//       filtered = contacts.filter(
-//         (contact) => friendRequests[contact.id] === "accepted"
+//       filtered = contacts.filter((contact) =>
+//         friends.some((friend) => friend.id === contact.id)
 //       );
 //     }
 //     filtered.sort((a, b) => {
@@ -1500,8 +1595,9 @@ export default GLClub;
 //       const nameB = (b.name || "").toLowerCase();
 //       return nameA.localeCompare(nameB);
 //     });
-//     setFilteredContacts([...new Set(filtered)]); // Remove duplicates
+//     setFilteredContacts([...new Set(filtered)]);
 //   };
+
 //   const handleAddFriend = async (contact) => {
 //     if (!user) {
 //       Alert.alert("No user signed in");
@@ -1519,7 +1615,6 @@ export default GLClub;
 
 //       Alert.alert("Friend request sent successfully");
 
-//       // Update local state to reflect the request being sent
 //       setFriendRequests((prevRequests) => ({
 //         ...prevRequests,
 //         [contact.id]: "pending",
@@ -1530,29 +1625,6 @@ export default GLClub;
 //     }
 //   };
 
-//   const handleUnfriend = async (contact) => {
-//     if (!user) {
-//       Alert.alert("No user signed in");
-//       return;
-//     }
-
-//     try {
-//       // Remove friend request from both users
-//       await deleteDoc(
-//         doc(FIRESTORE_DB, `users/${user.uid}/friendRequests`, contact.id)
-//       );
-//       await deleteDoc(
-//         doc(FIRESTORE_DB, `users/${contact.id}/friendRequests`, user.uid)
-//       );
-
-//       Alert.alert("Friend removed successfully");
-//       setModalVisible(false);
-//     } catch (error) {
-//       console.error("Error removing friend: ", error);
-//       Alert.alert("Error removing friend.");
-//     }
-//   };
-
 //   const handleAcceptFriend = async (contact) => {
 //     if (!user) {
 //       Alert.alert("No user signed in");
@@ -1560,12 +1632,30 @@ export default GLClub;
 //     }
 
 //     try {
-//       await updateDoc(
+//       await setDoc(
 //         doc(FIRESTORE_DB, `users/${user.uid}/friendRequests`, contact.id),
-//         {
-//           status: "accepted",
-//         }
+//         { status: "accepted" }
 //       );
+//       await setDoc(
+//         doc(FIRESTORE_DB, `users/${contact.id}/friendRequests`, user.uid),
+//         { status: "accepted" }
+//       );
+
+//       await setDoc(doc(FIRESTORE_DB, `users/${user.uid}/friends`, contact.id), {
+//         name: contact.name,
+//         city: contact.city,
+//         hobbies: contact.hobbies,
+//         clubs: contact.clubs,
+//         imageUrl: contact.imageUrl,
+//       });
+
+//       await setDoc(doc(FIRESTORE_DB, `users/${contact.id}/friends`, user.uid), {
+//         name: user.displayName || user.email,
+//         city: "Calgary", // Replace with actual data
+//         hobbies: ["Reading", "Painting"], // Replace with actual data
+//         clubs: ["Book", "Knitting"], // Replace with actual data
+//         imageUrl: defaultImage[user.displayName] || defaultImage.john,
+//       });
 
 //       setFriendRequests((prevRequests) => ({
 //         ...prevRequests,
@@ -1617,14 +1707,8 @@ export default GLClub;
 //       style={[
 //         styles.cardContainer,
 //         {
-//           backgroundColor:
-//             item.id === contacts[activeIndex]?.id
-//               ? "transparent"
-//               : "transparent",
-//           transform:
-//             item.id === contacts[activeIndex]?.id
-//               ? [{ scale: 1.1 }]
-//               : [{ scale: 1.1 }],
+//           backgroundColor: "transparent",
+//           transform: [{ scale: 1.1 }],
 //         },
 //         {
 //           height:
@@ -1697,7 +1781,7 @@ export default GLClub;
 //         </View>
 
 //         <Carousel
-//           ref={scrollViewRef}
+//           ref={carouselRef}
 //           data={filteredContacts}
 //           renderItem={renderItem}
 //           width={SCREEN_WIDTH * 0.3}
@@ -1719,7 +1803,7 @@ export default GLClub;
 //             },
 //           ]}
 //           onPress={() => {
-//             scrollViewRef.current?.scrollTo({ count: -1, animated: true });
+//             carouselRef.current?.scrollTo({ count: -1, animated: true });
 //           }}>
 //           <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
 //         </Pressable>
@@ -1732,7 +1816,7 @@ export default GLClub;
 //             },
 //           ]}
 //           onPress={() => {
-//             scrollViewRef.current?.scrollTo({ count: 1, animated: true });
+//             carouselRef.current?.scrollTo({ count: 1, animated: true });
 //           }}>
 //           <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
 //         </Pressable>
@@ -1782,9 +1866,6 @@ export default GLClub;
 //                       </Pressable>
 //                     )}
 //                     {friendRequests[selectedContact.id] === "pending" && (
-//                       <Text style={styles.pendingText}>Request Sent</Text>
-//                     )}
-//                     {friendRequests[selectedContact.id] === "pending" && (
 //                       <>
 //                         <Pressable
 //                           onPress={() => handleAcceptFriend(selectedContact)}
@@ -1810,6 +1891,21 @@ export default GLClub;
 //                         </Pressable>
 //                       </>
 //                     )}
+//                     {friendRequests[selectedContact.id] === "accepted" && (
+//                       <Pressable
+//                         onPress={() => Alert.alert("Already friends")}
+//                         style={styles.actionButton}>
+//                         <Text style={styles.actionButtonText}>
+//                           Already Friends
+//                         </Text>
+//                         <FontAwesome
+//                           name="user-check"
+//                           size={24}
+//                           color="green"
+//                           style={styles.modalIcon}
+//                         />
+//                       </Pressable>
+//                     )}
 //                     <Pressable
 //                       style={styles.closeButton}
 //                       onPress={() => setModalVisible(false)}>
@@ -1831,9 +1927,7 @@ export default GLClub;
 //     flex: 1,
 //   },
 //   container: {
-//     // flex: 1,
 //     alignItems: "center",
-//     // justifyContent: "flex-start",
 //     position: "relative",
 //   },
 //   filterButtons: {
@@ -1885,46 +1979,40 @@ export default GLClub;
 //     shadowRadius: 9.22,
 //     elevation: 12,
 //   },
-
 //   cardText: {
 //     fontSize: 30,
 //     color: "black",
 //     fontWeight: "700",
-//     // marginBottom: SCREEN_HEIGHT * 0.02,
 //   },
 //   image: {
 //     width: 190,
 //     height: 190,
-//     borderRadius: 180, // Circular shape
-//     //  borderWidth: 2,    // Optional border width
-//     //  borderColor: '#fff', // Optional border color
+//     borderRadius: 180,
 //     marginBottom: 10,
-//     shadowColor: "#000", // Optional shadow
+//     shadowColor: "#000",
 //     shadowOffset: { width: 0, height: 2 },
 //     shadowOpacity: 0.8,
 //     shadowRadius: 2,
-//     elevation: 5, // Shadow for Android
+//     elevation: 5,
 //   },
-
 //   iconStyle: {
 //     position: "absolute",
 //     top: SCREEN_HEIGHT * 0.02,
 //     right: SCREEN_WIDTH * 0.03,
 //   },
-
 //   modalContainer: {
 //     flex: 1,
 //     justifyContent: "center",
 //     alignItems: "center",
-//     backgroundColor: "rgba(0, 0, 0, 0.7)", // Darker background overlay
+//     backgroundColor: "rgba(0, 0, 0, 0.7)",
 //   },
 //   modalContent: {
 //     marginTop: 70,
 //     gap: 30,
-//     flexDirection: "row", // Side by side layout
+//     flexDirection: "row",
 //     alignItems: "center",
 //     justifyContent: "space-between",
-//     width: SCREEN_WIDTH * 0.95, // Slightly wider modal for content
+//     width: SCREEN_WIDTH * 0.95,
 //     height: SCREEN_HEIGHT * 0.8,
 //     backgroundColor: "#fff",
 //     borderRadius: 15,
@@ -1933,49 +2021,32 @@ export default GLClub;
 //     shadowOffset: { width: 0, height: 4 },
 //     shadowOpacity: 0.3,
 //     shadowRadius: 4,
-//     elevation: 8, // Increased shadow for better
+//     elevation: 8,
 //   },
 //   modalImage: {
-//     //     // this is circle
 //     width: 400,
 //     height: 400,
-//     borderRadius: 190, // Circular shape
-//     borderWidth: 2, // Optional border width
-//     borderColor: "#FFD700", // Optional border color
+//     borderRadius: 190,
+//     borderWidth: 2,
+//     borderColor: "#FFD700",
 //     marginBottom: 10,
 //     marginLeft: 40,
-//     marginRight: 40, // Space between the image and text
-//     shadowColor: "#000", // Optional shadow
+//     marginRight: 40,
+//     shadowColor: "#000",
 //     shadowOffset: { width: 0, height: 2 },
 //     shadowOpacity: 0.8,
 //     shadowRadius: 2,
 //     elevation: 5,
-
-//     //     //this is the square
-//     //     // width: 300,
-//     //     // height: 500,
-//     //     // borderRadius: 20, // This gives the rounded corners
-//     //     // marginBottom: 10,
-//     //     // marginRight: 40, // Space between the image and text
-//     //     // borderWidth: 3,
-//     //     // borderColor: "#FFD700", // Example border color (you can change it)
-//     //     // shadowColor: "#000", // Optional shadow
-//     //     // shadowOffset: { width: 0, height: 2 },
-//     //     // shadowOpacity: 0.8,
-//     //     // shadowRadius: 2,
-//     //     // elevation: 5, // Shadow for Android
-//     //   },
 //   },
 //   modalInfoContainer: {
 //     marginTop: 200,
-//     flex: 1, // Takes up remaining space
+//     flex: 1,
 //     justifyContent: "flex-start",
 //   },
 //   modalName: {
 //     fontSize: 50,
 //     fontWeight: "bold",
 //     color: "#333",
-//     // marginBottom: SCREEN_HEIGHT * 0.01,
 //     marginBottom: 10,
 //   },
 //   modalText: {
