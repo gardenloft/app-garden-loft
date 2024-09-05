@@ -287,7 +287,7 @@ const VideoCall = () => {
         onSnapToItem={handleSnapToItem}
         ref={scrollViewRef}
       />
-      <Text style={styles.prompt}>{userNames[activeIndex]?.name}</Text>
+      {/* <Text style={styles.prompt}>{userNames[activeIndex]?.name}</Text> */}
 
       <TouchableOpacity
         style={[
