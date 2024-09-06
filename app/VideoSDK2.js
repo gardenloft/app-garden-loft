@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   SafeAreaView,
   TouchableOpacity,
@@ -26,6 +26,7 @@ import { getAuth } from "firebase/auth";
 import { useLocalSearchParams } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import CallDeclineModal from "./CallDeclineModal";
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
@@ -265,6 +266,7 @@ function MeetingView({
       console.error("Error ending meeting:", error);
     } finally {
       setAutoJoin(false);
+      // router.push("/home"); // Navigate back to home
       console.log("handleend false autojoin activated");
     }
   };
@@ -434,10 +436,35 @@ const createCustomVideoTrack = async () => {
 export default function VideoSDK() {
   const [meetingId, setMeetingId] = useState(null);
   const [autoJoin, setAutoJoin] = useState(false);
+  const [calleeName, setCalleeName] = useState(""); // Add state for calleeName
+  const [declineModalVisible, setDeclineModalVisible] = useState(false);
+  const notificationListener = useRef(null);
   const [customVideoTrack, setCustomVideoTrack] = useState(null);
   const params = useLocalSearchParams();
   const auth = getAuth();
   const user = auth.currentUser;
+
+
+
+  useEffect(() => {
+    // Add notification listener to listen for decline notification
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        const { decline } = notification.request.content.data;
+        if (decline) {
+          setDeclineModalVisible(true); // Show the CallDeclineModal when the call is declined
+        }
+      });
+
+    // Clean up the notification listener when the component unmounts
+    return () => {
+      if (notificationListener.current) {
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (params.meetingId) {
@@ -474,6 +501,7 @@ export default function VideoSDK() {
     const calleeData = calleeDoc.data();
     const calleePushToken = calleeData.pushToken;
     const callee = calleeDoc.data().userName;
+    setCalleeName(callee); // Set the calleeName state
 
     await setDoc(
       doc(FIRESTORE_DB, "users", user.uid),
@@ -510,11 +538,16 @@ export default function VideoSDK() {
       body: JSON.stringify(message),
     });
 
-     // Pass calleeUid when navigating to Home.js
-  router.push({
-    pathname: '/home',
-    params: { calleeUid: calleeUid }
-  });
+    // Pass calleeUid when navigating to Home.js
+    router.push({
+      pathname: "/home",
+      params: {
+        callerName: caller,
+        callerUid: user.uid,
+        meetingId: newMeetingId,
+        calleeUid: calleeUid,
+      },
+    });
 
     joinMeeting(newMeetingId);
   };
@@ -538,6 +571,15 @@ export default function VideoSDK() {
         alignItems: "center",
       }}
     >
+      <CallDeclineModal
+        visible={declineModalVisible}
+        onDismiss={() => {
+          setDeclineModalVisible(false);
+        }}
+        // calleeName={"Callee"}
+        calleeName={calleeName}
+       
+      />
       <MeetingProvider
         config={{
           meetingId,

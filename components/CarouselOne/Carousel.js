@@ -19,6 +19,7 @@ import WatchParty from "../WatchParty";
 // import VideoSDK from  '../../app/VideoSDK'
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import Logout from "../Logout";
+import ComingSoon from "../ComingSoon";
 
 // const { width: viewportWidth, height: viewportHeight } =
 //   Dimensions.get("window");
@@ -46,13 +47,13 @@ const data = [
   {
     title: "CLUBS",
     icon: "account-group",
-    component: <Entertainment />,
+    component: <ComingSoon />,
     prompt: "Watch Entertainment?",
   },
   {
     title: "EVENTS",
     icon: "calendar-star",
-    component: <Lights />,
+    component: <ComingSoon />,
     prompt: "Change Lights?",
   },
   {
@@ -65,7 +66,7 @@ const data = [
     title: "COURSES",
     // icon: "card-account-details-star-outline",
     icon: "food-variant",
-    component: <Lights />,
+    component: <ComingSoon />,
     prompt: "Change Lights?",
   },
   {
@@ -83,7 +84,8 @@ const data = [
   {
     title: "LIGHTS",
     icon: "lightbulb",
-    component: <Lights />,
+    // component: <Lights />,
+    component: <ComingSoon/>,
     prompt: "Change Lights?",
   },
   {
@@ -95,7 +97,7 @@ const data = [
   {
     title: "CALENDAR",
     icon: "calendar-month",
-    component: <Lights />,
+    component: <ComingSoon/>,
     prompt: "Change Lights?",
   },
 ];

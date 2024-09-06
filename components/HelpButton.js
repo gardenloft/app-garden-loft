@@ -51,14 +51,14 @@ const HelpButton = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.container2}>
+      {/* <View style={styles.container2}> */}
         {/* <ImageBackground
           source={image}
           resizeMode={"contain"}
           style={styles.image}> */}
-        <Text style={styles.Welcome}>Hello {userInfo?.userName}</Text>
+        {/* <Text style={styles.Welcome}>Hello {userInfo?.userName}</Text> */}
         {/* </ImageBackground> */}
-      </View>
+      {/* </View> */}
       <TouchableOpacity onPress={handleCallSupport} style={styles.callButton}>
         <Text style={styles.EmergencyButton}>Call Emergency</Text>
         <MaterialCommunityIcons
@@ -66,6 +66,7 @@ const HelpButton = () => {
           style={styles.iconStyle}
           size={50}
           color="#f3b718"
+          // color="red"
         />
       </TouchableOpacity>
     </View>
@@ -83,11 +84,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: "#FCF8E3",
   },
-  container2: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  // container2: {
+  //   flex: 1,
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
   callButton: {
     backgroundColor: "#59ACCE",
     padding: 4,
