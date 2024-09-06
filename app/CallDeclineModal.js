@@ -1,5 +1,3 @@
-// components/CallDeclineModal.js
-
 import React from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
 
@@ -15,8 +13,8 @@ const CallDeclineModal = ({ visible, onDismiss, calleeName }) => {
     >
       <View style={styles.modalView}>
         <Image source={require('../assets/garden-loft-logo2.png')} style={styles.logo} />
-        <Text style={styles.messageText}>User is not available at the moment</Text>
-        <Text style={styles.callerText}>{`${calleeName} is is not available at the moment`}</Text>
+        <Text style={styles.messageText}>{`${calleeName} is not available right now`}</Text>
+        {/* <Text style={styles.callerText}>{`${calleeName} is is not available at the moment`}</Text> */}
         <TouchableOpacity style={[styles.button, styles.dismissButton]} onPress={onDismiss}>
           <Text style={styles.buttonText}>Dismiss</Text>
         </TouchableOpacity>

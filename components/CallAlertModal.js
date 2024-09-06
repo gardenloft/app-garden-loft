@@ -1,5 +1,3 @@
-// components/CallAlertModal.js
-
 import React from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
 
@@ -13,7 +11,6 @@ const CallAlertModal = ({ visible, callerId, callerUId, onAccept, onDecline }) =
       visible={visible}
       onRequestClose={onDecline}
     >
-     
       <View style={styles.modalView}>
         <Image source={require('../assets/garden-loft-logo2.png')} style={styles.logo} />
         <Text style={styles.callerText}>{`${callerId} is calling`}</Text>
