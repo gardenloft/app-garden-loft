@@ -19,9 +19,30 @@ import { getAuth } from "firebase/auth";
 import * as Notifications from "expo-notifications";
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
+import { WebView } from 'react-native-webview';
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
+
+
+
+  const ZoomMeetingWebView = ({ zoomLink }) => {
+    return (
+      <WebView
+        source={{ uri: zoomLink }}
+        style={styles.webViewStyle}
+        javaScriptEnabled={true} // Ensure JavaScript is enabled for full functionality
+        domStorageEnabled={true} // Enable DOM storage for Zoom session data
+        startInLoadingState={true} // Show loader until the Zoom meeting fully loads
+        allowsInlineMediaPlayback={true} // Allow video and media playback within the WebView
+        onError={(syntheticEvent) => {
+          const { nativeEvent } = syntheticEvent;
+          console.warn('WebView error: ', nativeEvent);
+          Alert.alert('Error', 'Failed to load the Zoom meeting. Please try again.');
+        }}
+      />
+    );
+  };
 
 const Activities = () => {
   const [loading, setLoading] = useState(true);
@@ -29,7 +50,18 @@ const Activities = () => {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showWebView, setShowWebView] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  // Example event with a Zoom meeting link
+  const exampleEvent = {
+    zoomLink: 'https://us06web.zoom.us/j/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09', // This is your Zoom meeting link
+  };
+
+  const handleJoinMeeting = (event) => {
+    setSelectedEvent(event);
+    setShowWebView(true); // Display the WebView when the user clicks "Join"
+  };
 
   const auth = getAuth();
   const user = auth.currentUser;
@@ -180,10 +212,42 @@ const Activities = () => {
     setIsModalOpen(true);
   };
 
+  const closeWebView = () => {
+    setShowWebView(false); // Close WebView when done
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedEvent(null);
+    setShowWebView(true);
   };
+  // const ZoomMeetingWebView = ({ zoomLink }) => (
+  //   <WebView
+  //     source={{ uri: zoomLink }}
+  //     style={styles.webViewStyle}
+  //     javaScriptEnabled={true}
+  //     domStorageEnabled={true}
+  //     startInLoadingState={true}
+  //     scalesPageToFit={true} // Optional for scaling
+  //     allowsInlineMediaPlayback={true}
+  //     allowUniversalAccessFromFileURLs={true} // Allow more universal access
+  //     originWhitelist={['*']} // Whitelist all origins to prevent errors
+  //     javaScriptCanOpenWindowsAutomatically={true} // Allow popups
+  //     onError={(syntheticEvent) => {
+  //       const { nativeEvent } = syntheticEvent;
+  //       console.warn('WebView error: ', nativeEvent);
+  //     }}
+
+  //     onNavigationStateChange={(navState) => {
+  //       const { url } = navState;
+  //       if (url.startsWith('zoommtg://')) {
+  //         openZoomLink(url); // Handle custom Zoom URLs
+  //       }
+  //     }}
+  
+  //   />
+
+  // );
 
   const renderModalContent = (event) => {
     const currentTime = new Date();
@@ -203,9 +267,11 @@ const Activities = () => {
       return (
         <Button
           title="Join Now"
-          onPress={() => {
-            Linking.openURL(selectedEvent.zoomLink);
-          }}
+
+          ZoomMeetingWebView zoomLink={event.zoomLink} 
+          // onPress={() => {
+          //   Linking.openURL(selectedEvent.zoomLink);
+          // }}
         />
       );
     } else if (event.startDate <= currentTime && currentTime < event.endDate) {
@@ -288,6 +354,22 @@ const Activities = () => {
         <ActivityIndicator size="large" color="orange" style={styles.loading} />
       ) : error ? (
         <Text style={styles.loading}>Error: {error}</Text>
+      ) : showWebView && selectedEvent ? ( // Show WebView if selectedEvent exists
+        <View style={{ flex: 1 }}>
+    {showWebView && selectedEvent ? (
+        // Show the Zoom Web Client inside the WebView
+        <ZoomMeetingWebView zoomLink={selectedEvent.zoomLink} />
+      ) : (
+        <View style={styles.meetingButtonContainer}>
+          <Pressable onPress={() => handleJoinMeeting(exampleEvent)} style={styles.joinButton}>
+            <Text style={styles.joinButtonText}>Join Zoom Meeting</Text>
+          </Pressable>
+        </View>
+      )}
+          <Pressable style={styles.closeButton} onPress={closeWebView}>
+            <Text>Close</Text>
+          </Pressable>
+        </View>
       ) : (
         <>
           <Carousel
@@ -429,6 +511,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    zIndex: 1, // Ensure the close button appears above the WebView
+  },
+
+  webViewStyle: {
+    flex: 1, // Take up the full screen
+    width: viewportWidth, // Full width of the device
+    height: viewportHeight, // Full height of the device
   },
 });
 
