@@ -54,9 +54,9 @@ const Activities = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   // Example event with a Zoom meeting link
-  const exampleEvent = {
-    zoomLink: 'https://us06web.zoom.us/j/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09', // This is your Zoom meeting link
-  };
+  // const exampleEvent = {
+  //   zoomLink: 'https://us06web.zoom.us/j/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09', // This is your Zoom meeting link
+  // };
 
   const handleJoinMeeting = (event) => {
     setSelectedEvent(event);
@@ -268,7 +268,7 @@ const Activities = () => {
         <Button
           title="Join Now"
 
-          ZoomMeetingWebView zoomLink={event.zoomLink} 
+          // ZoomMeetingWebView zoomLink={selectedEvent.zoomLink} 
           // onPress={() => {
           //   Linking.openURL(selectedEvent.zoomLink);
           // }}
@@ -361,7 +361,7 @@ const Activities = () => {
         <ZoomMeetingWebView zoomLink={selectedEvent.zoomLink} />
       ) : (
         <View style={styles.meetingButtonContainer}>
-          <Pressable onPress={() => handleJoinMeeting(exampleEvent)} style={styles.joinButton}>
+          <Pressable onPress={() => handleJoinMeeting(event)} style={styles.joinButton}>
             <Text style={styles.joinButtonText}>Join Zoom Meeting</Text>
           </Pressable>
         </View>
