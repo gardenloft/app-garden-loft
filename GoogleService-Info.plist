@@ -28,5 +28,11 @@
 	<string>1:561295329634:ios:4f4a513d389f056f50443b</string>
 	<key>DATABASE_URL</key>
 	<string>https://appgardenloft-default-rtdb.firebaseio.com</string>
+	<key>LSApplicationQueriesSchemes</key>
+<array>
+  <string>about</string>
+  <string>zoomus</string> <!-- if using zoomus URLs -->
+</array>
+
 </dict>
 </plist>
