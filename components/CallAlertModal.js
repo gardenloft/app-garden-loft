@@ -1,18 +1,13 @@
-import React from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
+import React from "react";
+import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from "react-native";
 
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
 
 const CallAlertModal = ({ visible, callerId, callerUId, onAccept, onDecline }) => {
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={visible}
-      onRequestClose={onDecline}
-    >
+    <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onDecline}>
       <View style={styles.modalView}>
-        <Image source={require('../assets/garden-loft-logo2.png')} style={styles.logo} />
+        <Image source={require("../assets/garden-loft-logo2.png")} style={styles.logo} />
         <Text style={styles.callerText}>{`${callerId} is calling`}</Text>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={onAccept}>
@@ -30,10 +25,9 @@ const CallAlertModal = ({ visible, callerId, callerUId, onAccept, onDecline }) =
 const styles = StyleSheet.create({
   modalView: {
     flex: 1,
-    gap: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FCF8E3',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FCF8E3",
   },
   logo: {
     width: 300,
@@ -42,13 +36,13 @@ const styles = StyleSheet.create({
   },
   callerText: {
     fontSize: 44,
-    color: '#272624',
+    color: "#272624",
     marginBottom: 20,
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '80%',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "80%",
   },
   button: {
     padding: 25,
@@ -56,16 +50,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   acceptButton: {
-    backgroundColor: 'green',
-   
+    backgroundColor: "green",
   },
   declineButton: {
-    backgroundColor: 'red',
+    backgroundColor: "red",
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 28,
   },
 });
 
 export default CallAlertModal;
+
