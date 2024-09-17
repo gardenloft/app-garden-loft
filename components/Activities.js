@@ -1699,8 +1699,9 @@ const Activities = () => {
               zoomLink={selectedEvent.zoomLink}
               onMeetingLeave={closeWebView}
             />
-            <Pressable style={styles.closeButton} onPress={closeWebView}>
-              <Text style={styles.closeButtonText}>Close</Text>
+            <Pressable style={styles.closeButton1} onPress={closeWebView}>
+              {/* <Text style={styles.closeButtonText}>Close</Text> */}
+              <FontAwesome name="close" size={24} color="black" />
             </Pressable>
           </View>
         </View>
@@ -1861,6 +1862,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 200,
     borderRadius: 5,
   },
+  closeButton1: {
+    position: "absolute",
+    top: 30,
+    right: 30,
+    backgroundColor: "lightblue",
+    padding: 13,
+    borderRadius: 5,
+  },
   closeButtonText: {
     fontWeight: "bold",
     color: "#fff",
@@ -1879,13 +1888,25 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.7)",
   },
   webViewContainer: {
-    width: viewportWidth * 0.98,
-    height: viewportHeight * 0.96,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 10,
-    justifyContent: "center",
+    margin: 10,
+    height: viewportHeight * 0.9,
+    width: viewportWidth * 0.95,
+    marginTop: 50,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    paddingTop: 100,
     alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    alignSelf: "center",
   },
 });
 
