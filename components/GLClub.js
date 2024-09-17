@@ -1346,12 +1346,12 @@ const styles = StyleSheet.create({
     // marginBottom: SCREEN_HEIGHT * 0.02,
   },
   image: {
-    width: 190,
-    height: 190,
+    width: 150,
+    height: 150,
     borderRadius: 180, // Circular shape
     //  borderWidth: 2,    // Optional border width
     //  borderColor: '#fff', // Optional border color
-    marginBottom: 10,
+    marginBottom: 6,
     shadowColor: "#000", // Optional shadow
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
