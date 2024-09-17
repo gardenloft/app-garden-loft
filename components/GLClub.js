@@ -758,6 +758,7 @@ import {
   Modal,
   SafeAreaView,
   ScrollView,
+  ActivityIndicator
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { FontAwesome } from "@expo/vector-icons";
@@ -772,6 +773,8 @@ import {
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import { getAuth } from "firebase/auth";
 import { useRouter } from "expo-router";
+import * as Notifications from "expo-notifications"; // Import for notifications
+import { callUser } from "../app/VideoSDK2"; // Import from VideoCall
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -792,6 +795,7 @@ const GLClub = () => {
   const [filter, setFilter] = useState("all");
   const [friendRequests, setFriendRequests] = useState({});
   const [friends, setFriends] = useState([]);
+  const [isCalling, setIsCalling] = useState(false); // Add for call logic
 
   const carouselRef = useRef(null);
 
@@ -1021,13 +1025,46 @@ const GLClub = () => {
     }
   };
 
+   // Function to initiate a video call (from VideoCall)
+   const startVideoCall = async (calleeUid) => {
+    if (!user) {
+      console.error("User not authenticated");
+      return;
+    }
+
+    setIsCalling(true); // Show the calling modal
+
+    await callUser(calleeUid, user); // Use the imported callUser function
+
+    const notificationListener = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        const { accept, meetingId } = notification.request.content.data;
+        if (accept) {
+          setIsCalling(false); // Hide the calling modal
+          router.push({
+            pathname: "/VideoSDK2",
+            params: { meetingId, autoJoin: true },
+          });
+        }
+      }
+    );
+
+    return () => {
+      if (notificationListener) {
+        Notifications.removeNotificationSubscription(notificationListener);
+      }
+    };
+  };
+
   const handleCall = (contactId) => {
     // Close modal and initiate video call
-    setModalVisible(false);
-    router.push({
-      pathname: "/VideoSDK2",
-      params: { calleeUid: contactId },
-    });
+    // setModalVisible(false);
+    // router.push({
+    //   pathname: "/VideoSDK2",
+    //   params: { calleeUid: contactId },
+    // });
+    setModalVisible(false); // Close modal
+    startVideoCall(contactId); // Start the video call using the contact's ID
   };
 
   const handleCardPress = (contact) => {
@@ -1274,7 +1311,15 @@ const GLClub = () => {
             </View>
           </Modal>
         )}
+          <Modal visible={isCalling} animationType="fade" transparent={true}>
+          <View style={styles.modalContainer}>
+            <ActivityIndicator size="large" color="#f3b718" />
+            <Text style={styles.modalTextCall}>Calling Callee...</Text>
+          </View>
+        </Modal>
+      
       </View>
+  
     </SafeAreaView>
   );
 };
@@ -1373,7 +1418,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.7)", // Darker background overlay
+    backgroundColor: "#FCF8E3", // Darker background overlay
+  },
+  modalTextCall: {
+    fontSize: 40,
+    color: "black",
+    marginTop: 20,
   },
   modalContent: {
     marginTop: 70,
