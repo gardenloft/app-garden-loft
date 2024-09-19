@@ -74,8 +74,8 @@ const HowTo = () => {
       style={[
         styles.cardContainer,
 
-        { backgroundColor: index === activeIndex ? "#f3b718" : "#f09030",
-        transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}]
+        { backgroundColor: index === activeIndex ? "#f09030" : "#f09030",
+        transform: index === activeIndex ? [{scale: 0.85}] : [{scale: 0.85}]
          },
          {
           height: viewportWidth > viewportHeight
@@ -182,13 +182,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 10, // Add margin to create gap between cards
+    marginLeft: 0,
     shadowColor: "#000",
-    shadowOffset: { width: 8, height: 7 },
+    shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.22,
     shadowRadius: 9.22,
     elevation: 12,
-    // marginLeft: 355, //edits the centering of the carousel
-    padding: 10,
+    padding: 20,
   },
   cardText: {
     fontSize: 25,
