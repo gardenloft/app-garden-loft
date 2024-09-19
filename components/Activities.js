@@ -1451,6 +1451,7 @@ const Activities = () => {
   const auth = getAuth();
   const user = auth.currentUser;
   const carouselRef = useRef(null);
+  const scrollViewRef = useRef(null);
 
   useEffect(() => {
     if (user) {
@@ -1627,8 +1628,8 @@ const Activities = () => {
       style={[
         styles.cardContainer,
         {
-          backgroundColor: index === activeIndex ? "#f3b718" : "#f09030",
-          transform: index === activeIndex ? [{ scale: 1 }] : [{ scale: 0.8 }],
+          backgroundColor: index === activeIndex ? "#f09030" : "#f09030",
+          transform: index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
         },
         {
           height:
@@ -1714,8 +1715,9 @@ const Activities = () => {
             ]}>
             <Carousel
               ref={carouselRef}
+              // ref={scrollViewRef}
               data={events}
-              layout={"default"}
+              // layout={"default"}
               renderItem={renderItem}
               width={Math.round(viewportWidth * 0.3)}
               height={Math.round(viewportHeight * 0.3)}
@@ -1799,13 +1801,15 @@ const styles = StyleSheet.create({
     width: viewportWidth * 0.3,
     backgroundColor: "#f09030",
     borderRadius: 20,
+    padding: 20,
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 10,
-    flexDirection: "column",
+    marginLeft: 0,
+    // flexDirection: "column",
     gap: 10,
     shadowColor: "#000",
-    shadowOffset: { width: 8, height: 7 },
+    shadowOffset: { width: 0, height: 7 },
     shadowOpacity: 0.22,
     shadowRadius: 9.22,
     elevation: 12,

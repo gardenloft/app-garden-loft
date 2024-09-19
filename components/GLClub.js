@@ -1119,6 +1119,7 @@ const GLClub = () => {
           styles.container,
           {
             height: SCREEN_WIDTH > SCREEN_HEIGHT ? 920 : 450,
+            marginTop: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : 45
           },
         ]}>
         <View style={styles.filterButtons}>
@@ -1172,7 +1173,7 @@ const GLClub = () => {
             styles.arrowLeft,
             {
               left: SCREEN_WIDTH > SCREEN_HEIGHT ? -17 : -22,
-              top: SCREEN_WIDTH > SCREEN_HEIGHT ? "40%" : "30%",
+              top: SCREEN_WIDTH > SCREEN_HEIGHT ? "40%" : "100%",
             },
           ]}
           onPress={() => {
@@ -1185,7 +1186,7 @@ const GLClub = () => {
             styles.arrowRight,
             {
               right: SCREEN_WIDTH > SCREEN_HEIGHT ? -25 : -22,
-              top: SCREEN_WIDTH > SCREEN_HEIGHT ? "40%" : "30%",
+              top: SCREEN_WIDTH > SCREEN_HEIGHT ? "40%" : "100%",
             },
           ]}
           onPress={() => {
