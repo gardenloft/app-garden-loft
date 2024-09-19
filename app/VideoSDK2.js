@@ -822,8 +822,8 @@ function ControlsContainer({
       <IconButton
         onPress={() => toggleMic()}
         iconName="microphone"
-        buttonText={isMicOn ? "Mic On" : "Mic Off"}
-        backgroundColor={isMicOn ? "green" : "red"}
+        buttonText={isMicOn ? "Turn Mic Off" : "Turn Mic On"}
+        backgroundColor={isMicOn ? "red" : "green"}
       />
       <IconButton
         onPress={() => {

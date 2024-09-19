@@ -282,8 +282,8 @@ const VideoCall = ({calleeName}) => {
       style={[
         styles.cardContainer,
         {
-          backgroundColor: index === activeIndex ? "#f3b718" : "#f09030",
-          transform: index === activeIndex ? [{ scale: 1 }] : [{ scale: 0.8 }],
+          backgroundColor: index === activeIndex ? "#f09030" : "#f09030",
+          transform: index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
           height:
                       viewportWidth > viewportHeight
                         ? Math.round(Dimensions.get("window").height * 0.3)
@@ -302,6 +302,29 @@ const VideoCall = ({calleeName}) => {
               styles.container,
               { height: viewportWidth > viewportHeight ? 320 : 450 },
             ]}>
+      {/* Calling message modal */}
+      <Modal animationType="fade" transparent={true} visible={isCalling}>
+        <View style={styles.modalContainer}>
+          <ActivityIndicator size="large" color="#f3b718" />
+          <Text style={styles.modalText}>Calling...</Text>
+        </View>
+      </Modal>
+
+
+      {/* Decline message modal */}
+      <Modal animationType="slide" transparent={true} visible={isDeclined}>
+        <View style={styles.modalContainer}>
+        <Image source={require('../assets/garden-loft-logo2.png')} style={styles.logo} />
+          {/* <Text style={styles.modalText}>{`${calleeName} is not available right now`}</Text> */}
+          <Text style={styles.modalText}>{`They are not available right now`}</Text>
+          <TouchableOpacity style={[styles.button, styles.dismissButton]} onPress={() => {
+          setIsDeclined(false);
+        }}>
+          <Text style={styles.buttonText}>Dismiss</Text>
+        </TouchableOpacity>
+        </View>
+      </Modal>
+      
       <Carousel
         data={userNames}
         renderItem={renderItem}
@@ -316,30 +339,6 @@ const VideoCall = ({calleeName}) => {
         scrollAnimationDuration={800}
         ref={scrollViewRef}
       />
-
-       {/* Calling message modal */}
-      <Modal animationType="fade" transparent={true} visible={isCalling}>
-        <View style={styles.modalContainer}>
-          <ActivityIndicator size="large" color="#f3b718" />
-          <Text style={styles.modalText}>Calling...</Text>
-        </View>
-      </Modal>
-
-
- {/* Decline message modal */}
-      <Modal animationType="slide" transparent={true} visible={isDeclined}>
-        <View style={styles.modalContainer}>
-        <Image source={require('../assets/garden-loft-logo2.png')} style={styles.logo} />
-          {/* <Text style={styles.modalText}>{`${calleeName} is not available right now`}</Text> */}
-          <Text style={styles.modalText}>{`They are not available right now`}</Text>
-          <TouchableOpacity style={[styles.button, styles.dismissButton]} onPress={() => {
-          setIsDeclined(false);
-        }}>
-          <Text style={styles.buttonText}>Dismiss</Text>
-        </TouchableOpacity>
-        </View>
-        
-      </Modal>
       <TouchableOpacity
         style={[
                     styles.arrowLeft,
@@ -394,9 +393,9 @@ const styles = {
     textAlign: "center",
   },
   image: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 120,
+    height: 120,
+    borderRadius: 70,
     marginBottom: 10,
   },
   modalContainer: {
