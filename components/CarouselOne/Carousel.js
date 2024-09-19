@@ -59,7 +59,7 @@ const data = [
   {
     title: "Watch Party",
     icon: "calendar-star",
-    component: <WatchParty />,
+    component: <ComingSoon />,
     prompt: "Watch Party?",
   },
   // {
@@ -125,6 +125,7 @@ const Home = () => {
       <View
         style={[
           styles.item,
+          // dark brown: "#5D4020" , light brown: "#635646"
           { backgroundColor: index === activeIndex ? "#f3b718" : "#909090",
           transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}]
            },
@@ -174,7 +175,7 @@ const Home = () => {
       <TouchableOpacity
         style={[styles.arrowLeft,
           {left: viewportWidth > viewportHeight
-            ? 10
+            ? 28
             : 18,
           top: viewportWidth > viewportHeight
             ? "12%"
@@ -185,6 +186,7 @@ const Home = () => {
           carouselRef.current?.scrollTo({ count: -1, animated: true });
         }}
       >
+        {/* change arrows back to dark grey color="rgb(45, 62, 95)"  */}
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
       <Carousel
@@ -218,14 +220,16 @@ const Home = () => {
             : 22,
           top: viewportWidth > viewportHeight
             ? "12%"
-            : "15%",}
+            : "15%",
+            }
         ]}
         // onPress={handleNext}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: 1, animated: true });
         }}
       >
-        <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
+       
+        <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)"  />
       </TouchableOpacity>
       <Text style={[styles.prompt,
         {marginBottom: viewportWidth > viewportHeight ? 30 : 50}
@@ -278,6 +282,7 @@ const styles = StyleSheet.create({
   arrowLeft: {
     position: "absolute",
     transform: [{ translateY: -10 }],
+    
   },
   arrowRight: {
     position: "absolute",
