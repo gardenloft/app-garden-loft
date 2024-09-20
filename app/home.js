@@ -235,6 +235,7 @@
 
 
 
+
 //working loading call before opening
 
 import "react-native-gesture-handler";
@@ -266,6 +267,7 @@ export default function Home() {
   const [calleeUid, setCalleeUid] = useState(params.calleeUid || "");
   const [callerName, setCallerName] = useState(params.callerName || "");
   const [meetingId, setMeetingId] = useState(params.meetingId || null);
+  const [isCallAccepted, setIsCallAccepted] = useState(false); // Track if the call is accepted
   const router = useRouter();
 
 // Function to show the CallAlertModal
@@ -341,7 +343,8 @@ export default function Home() {
 
           if (
             response.actionIdentifier === "ACCEPT_CALL") {
-            await handleAcceptCall(meetingId, callerUid, callee);
+              // Linking.openURL(`app-garden-loft://VideoSDK2?meetingId=${meetingId}&caller=${callerUid}&autoJoin=true`);
+            // await handleAcceptCall(meetingId, callerUid, callee);
           } else if (
             response.actionIdentifier === "DECLINE_CALL") {
             handleDecline();
@@ -361,6 +364,11 @@ export default function Home() {
   }, [user]);
 
   const handleAcceptCall = async (meetingId, callerUid, callee) => {
+    if (isCallAccepted) {
+      return; // Ensure that this is not triggered multiple times
+    }
+
+    setIsCallAccepted(true); // Set call as accepted to prevent multiple triggers
     console.log("work work work work");
     try {
       const callerDoc = await getDoc(doc(FIRESTORE_DB, "users", callerUid));
@@ -391,6 +399,7 @@ export default function Home() {
 
           // Close modal and route to VideoSDK screen
           setModalVisible(false);
+          // This opens VideoSDK for the callee when they press accept
           router.push({
             pathname: "/VideoSDK2",
             params: { meetingId, autoJoin: true },
@@ -401,6 +410,8 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Error accepting call or sending notification:", error);
+    } finally {
+      setIsCallAccepted(false); // Reset flag after navigation
     }
   };
 

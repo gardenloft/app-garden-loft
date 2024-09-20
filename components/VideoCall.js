@@ -195,16 +195,16 @@ import * as Notifications from "expo-notifications";
 import { callUser } from "../app/VideoSDK2"; 
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
-
-const VideoCall = ({calleeName}) => {
+const VideoCall = () => {
   const [userNames, setUserNames] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isCalling, setIsCalling] = useState(false);
-  const [isDeclined, setIsDeclined] = useState(false); 
+  const [isDeclined, setIsDeclined] = useState(false);
   const [user, setUser] = useState(null); // Track the authenticated user state
   const auth = getAuth();
   const router = useRouter();
   const scrollViewRef = useRef(null);
+  const notificationListenerRef = useRef(null); // Ref for the notification listener
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (authenticatedUser) => {
@@ -244,32 +244,39 @@ const VideoCall = ({calleeName}) => {
     }
 
     setIsCalling(true);
-    setIsDeclined(false);  // Reset the decline state when starting a new call
+    setIsDeclined(false); // Reset the decline state when starting a new call
+
     await callUser(calleeUid, user); // Pass the authenticated user
 
-    const notificationListener = Notifications.addNotificationReceivedListener((notification) => {
+    // Set up notification listener to listen for call acceptance or decline
+    notificationListenerRef.current = Notifications.addNotificationReceivedListener((notification) => {
       const { accept, decline, meetingId } = notification.request.content.data;
       if (accept) {
         setIsCalling(false);
         onCalleeAccept(meetingId);
-      } else if (decline) {;
+        removeNotificationListener(); // Ensure listener is removed after being triggered
+      } else if (decline) {
         setIsCalling(false);
-        setIsDeclined(true); 
+        setIsDeclined(true);
+        removeNotificationListener(); // Ensure listener is removed after decline
       }
     });
-
-    return () => {
-      if (notificationListener) {
-        Notifications.removeNotificationSubscription(notificationListener);
-      }
-    };
   };
 
+  // Function to handle the callee accepting the call
   const onCalleeAccept = (meetingId) => {
     router.push({
       pathname: "/VideoSDK2",
       params: { meetingId, autoJoin: true },
     });
+  };
+
+  // Function to remove the notification listener to prevent multiple triggers
+  const removeNotificationListener = () => {
+    if (notificationListenerRef.current) {
+      Notifications.removeNotificationSubscription(notificationListenerRef.current);
+      notificationListenerRef.current = null; // Reset the listener reference
+    }
   };
 
   const handleSnapToItem = (index) => {
@@ -285,9 +292,9 @@ const VideoCall = ({calleeName}) => {
           backgroundColor: index === activeIndex ? "#f09030" : "#f09030",
           transform: index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
           height:
-                      viewportWidth > viewportHeight
-                        ? Math.round(Dimensions.get("window").height * 0.3)
-                        : Math.round(Dimensions.get("window").height * 0.25),
+            viewportWidth > viewportHeight
+              ? Math.round(Dimensions.get("window").height * 0.3)
+              : Math.round(Dimensions.get("window").height * 0.25),
         },
       ]}
       onPress={() => startVideoCall(item.uid)}
@@ -299,9 +306,9 @@ const VideoCall = ({calleeName}) => {
 
   return (
     <View style={[
-              styles.container,
-              { height: viewportWidth > viewportHeight ? 320 : 450 },
-            ]}>
+      styles.container,
+      { height: viewportWidth > viewportHeight ? 320 : 450 },
+    ]}>
       {/* Calling message modal */}
       <Modal animationType="fade" transparent={true} visible={isCalling}>
         <View style={styles.modalContainer}>
@@ -310,18 +317,17 @@ const VideoCall = ({calleeName}) => {
         </View>
       </Modal>
 
-
       {/* Decline message modal */}
       <Modal animationType="slide" transparent={true} visible={isDeclined}>
         <View style={styles.modalContainer}>
-        <Image source={require('../assets/garden-loft-logo2.png')} style={styles.logo} />
-          {/* <Text style={styles.modalText}>{`${calleeName} is not available right now`}</Text> */}
-          <Text style={styles.modalText}>{`They are not available right now`}</Text>
-          <TouchableOpacity style={[styles.button, styles.dismissButton]} onPress={() => {
-          setIsDeclined(false);
-        }}>
-          <Text style={styles.buttonText}>Dismiss</Text>
-        </TouchableOpacity>
+          <Image source={require('../assets/garden-loft-logo2.png')} style={styles.logo} />
+          <Text style={styles.modalText}>They are not available right now</Text>
+          <TouchableOpacity
+            style={[styles.button, styles.dismissButton]}
+            onPress={() => setIsDeclined(false)}
+          >
+            <Text style={styles.buttonText}>Dismiss</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
       
@@ -330,29 +336,29 @@ const VideoCall = ({calleeName}) => {
         renderItem={renderItem}
         width={Math.round(viewportWidth * 0.3)}
         height={Math.round(viewportWidth * 0.3)}
-                style={{
+        style={{
           width: Math.round(viewportWidth * 0.9),
           height: Math.round(viewportWidth * 0.5),
         }}
         onSnapToItem={handleSnapToItem}
-                snapEnabled
+        snapEnabled
         scrollAnimationDuration={800}
         ref={scrollViewRef}
       />
       <TouchableOpacity
         style={[
-                    styles.arrowLeft,
-                    {
-                      left: viewportWidth > viewportHeight ? -17 : -22,
-                      top: viewportWidth > viewportHeight ? "40%" : "30%",
-                    },
-                  ]}
+          styles.arrowLeft,
+          {
+            left: viewportWidth > viewportHeight ? -17 : -22,
+            top: viewportWidth > viewportHeight ? "40%" : "30%",
+          },
+        ]}
         onPress={() => scrollViewRef.current?.scrollTo({ count: -1, animated: true })}
       >
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
       <TouchableOpacity
-                style={[
+        style={[
           styles.arrowRight,
           {
             right: viewportWidth > viewportHeight ? -25 : -22,

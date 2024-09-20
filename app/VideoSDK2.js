@@ -1149,24 +1149,24 @@ export default function VideoSDK() {
   }, []);
 
 
-  // useEffect(() => {
-  //   notificationListener.current = Notifications.addNotificationReceivedListener(
-  //     (notification) => {
-  //       const { accept, meetingId } = notification.request.content.data;
-  //       if (accept) {
-  //         // Route to VideoSDK screen when call is accepted
-  //         router.push({
-  //           pathname: "/VideoSDK2",
-  //           params: { meetingId, autoJoin: true },
-  //         });
-  //       }
-  //     }
-  //   );
+  useEffect(() => {
+    notificationListener.current = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        const { accept, meetingId } = notification.request.content.data;
+        if (accept) {
+          // Route to VideoSDK screen when call is accepted
+          router.push({
+            pathname: "/VideoSDK2",
+            params: { meetingId, autoJoin: true },
+          });
+        }
+      }
+    );
 
-  //   return () => {
-  //     Notifications.removeNotificationSubscription(notificationListener.current);
-  //   };
-  // }, []);
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener.current);
+    };
+  }, []);
 
 
 
