@@ -255,6 +255,7 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 import * as Device from "expo-device";
 import CallAlertModal from "../components/CallAlertModal";
 import { useLocalSearchParams } from "expo-router";
+import VideoCall from "../components/VideoCall"; // Import VideoCall component
 
 export default function Home() {
   const auth = getAuth();
