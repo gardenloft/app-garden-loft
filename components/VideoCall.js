@@ -279,6 +279,12 @@ const VideoCall = () => {
     }
   };
 
+    // Function to cancel the call and close the calling modal
+    const cancelCall = () => {
+      setIsCalling(false);
+      removeNotificationListener(); // Remove the notification listener
+    };
+
   const handleSnapToItem = (index) => {
     setActiveIndex(index);
   };
@@ -314,6 +320,13 @@ const VideoCall = () => {
         <View style={styles.modalContainer}>
           <ActivityIndicator size="large" color="#f3b718" />
           <Text style={styles.modalText}>Calling...</Text>
+           {/* Cancel Call Button */}
+           <TouchableOpacity
+            style={[styles.button, styles.cancelButton]}
+            onPress={cancelCall}
+          >
+            <Text style={styles.buttonText}>Cancel Call</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
 
@@ -429,6 +442,10 @@ const styles = {
   },
   dismissButton: {
     backgroundColor: 'orange',
+    marginTop: 30,
+  },
+  cancelButton: {
+    backgroundColor: 'red',
     marginTop: 30,
   },
   buttonText: {
