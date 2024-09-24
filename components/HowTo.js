@@ -92,13 +92,23 @@ const HowTo = () => {
 
   if (isLoading) {
     return (
+      <View style={[styles.container,
+        {height: viewportWidth > viewportHeight
+          ? 320
+          : 450,}
+      ]}>
       <ActivityIndicator size="large" color="orange" style={styles.loading} />
+      </View>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container,
+        {height: viewportWidth > viewportHeight
+          ? 320
+          : 450,}
+      ]}>
         <Text style={styles.errorText}>{error}</Text>
       </View>
     );
@@ -110,6 +120,23 @@ const HowTo = () => {
         ? 320
         : 450,}
     ]}>
+       <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isVideoModalVisible}
+        onRequestClose={closeVideoModal}>
+        <View style={styles.modalView}>
+          <YouTube
+            width={viewportWidth * 0.8}
+            height={viewportHeight * 0.7}
+            play={true}
+            videoId={selectedVideoId} // Pass the selected video ID here
+          />
+          <Pressable style={styles.closeButton} onPress={closeVideoModal}>
+            <FontAwesome name="close" size={24} color="black" />
+          </Pressable>
+        </View>
+      </Modal>
       <Carousel
         ref={carouselRef}
         data={videos}
@@ -149,23 +176,6 @@ const HowTo = () => {
           carouselRef.current?.scrollTo({ count: 1, animated: true });}}>
         <FontAwesome name="angle-right" size={100} color="black" />
       </Pressable>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isVideoModalVisible}
-        onRequestClose={closeVideoModal}>
-        <View style={styles.modalView}>
-          <YouTube
-            width={viewportWidth * 0.8}
-            height={viewportHeight * 0.7}
-            play={true}
-            videoId={selectedVideoId} // Pass the selected video ID here
-          />
-          <Pressable style={styles.closeButton} onPress={closeVideoModal}>
-            <FontAwesome name="close" size={24} color="black" />
-          </Pressable>
-        </View>
-      </Modal>
     </View>
   );
 };
@@ -248,3 +258,4 @@ const styles = StyleSheet.create({
 });
 
 export default HowTo;
+

@@ -1688,7 +1688,10 @@ const Activities = () => {
   };
 
   return (
-    <View style={[styles.container]}>
+    <View  style={[
+      styles.container,
+      { height: viewportWidth > viewportHeight ? 320 : 450 },
+    ]}>
       {loading ? (
         <ActivityIndicator size="large" color="orange" style={styles.loading} />
       ) : error ? (
@@ -1707,7 +1710,7 @@ const Activities = () => {
           </View>
         </View>
       ) : (
-        <>
+        
           <View
             style={[
               styles.container,
@@ -1786,7 +1789,7 @@ const Activities = () => {
               </View>
             )}
           </View>
-        </>
+        
       )}
     </View>
   );

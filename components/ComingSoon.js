@@ -6,8 +6,8 @@ const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window'
 const ComingSoon = () => {
   return (
     <View style={[styles.containercs,
-      {height: viewportWidth > viewportHeight ? viewportHeight * 0.35 : viewportHeight * 0.25,
-        marginBottom: viewportWidth > viewportHeight ? 0: 150
+      {height: viewportWidth > viewportHeight ? viewportHeight * 0.30 : viewportHeight * 0.25,
+        marginBottom: viewportWidth > viewportHeight ? 50: 150
        }
     ]}>
       <Text style={styles.text}>Coming Soon</Text>
