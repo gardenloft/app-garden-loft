@@ -15,10 +15,11 @@ import Entertainment from "../Entertainment";
 import Lights from "../Lights";
 import HowTo from "../HowTo";
 import GLClub from "../GLClub";
-import WatchParty from "../WatchParty";
+// import WatchParty from "../WatchParty";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import Logout from "../Logout";
 import ComingSoon from "../ComingSoon";
+// import Kosmi from '../Kosmi'
 
 const data = [
   {
@@ -50,10 +51,10 @@ const data = [
   //   title: "EVENTS",
   //   icon: "calendar-star",
   //   component: <ComingSoon />,
-  //   prompt: "Change Lights?",
+  //   prompt: "Join an Upcoming Event?",
   // },
   {
-    title: "Watch Party",
+    title: "WATCH PARTY",
     icon: "calendar-star",
     component: <ComingSoon />,
     prompt: "Watch Party?",
@@ -63,7 +64,7 @@ const data = [
   //   // icon: "card-account-details-star-outline",
   //   icon: "food-variant",
   //   component: <ComingSoon />,
-  //   prompt: "Change Lights?",
+  //   prompt: "Join a Course?",
   // },
   {
     title: "ACTIVITIES",
@@ -94,7 +95,7 @@ const data = [
     title: "CALENDAR",
     icon: "calendar-month",
     component: <ComingSoon/>,
-    prompt: "Change Lights?",
+    prompt: "See What's Coming Up?",
   },
 ];
 
