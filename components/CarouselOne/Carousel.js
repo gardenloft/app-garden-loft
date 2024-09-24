@@ -1,12 +1,12 @@
-// components/Carousel.js
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  useWindowDimensions
+  ActivityIndicator,
+  useWindowDimensions,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import VideoCall from "../VideoCall";
@@ -16,13 +16,9 @@ import Lights from "../Lights";
 import HowTo from "../HowTo";
 import GLClub from "../GLClub";
 import WatchParty from "../WatchParty";
-// import VideoSDK from  '../../app/VideoSDK'
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import Logout from "../Logout";
 import ComingSoon from "../ComingSoon";
-
-// const { width: viewportWidth, height: viewportHeight } =
-//   Dimensions.get("window");
 
 const data = [
   {
@@ -103,13 +99,31 @@ const data = [
 ];
 
 const Home = () => {
-  const [activeIndex, setActiveIndex] = useState(0); // Set initial active index to the yellow card (index 2)
+  const [activeIndex, setActiveIndex] = useState(0); // Set initial active index
+  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const [showPrompt, setShowPrompt] = useState(false); // Prompt visibility state
   const carouselRef = useRef(null);
   const { width: viewportWidth, height: viewportHeight } = useWindowDimensions();
 
   const handleSnapToItem = (index) => {
     setActiveIndex(index);
+    setIsLoading(true); // Set loading true when snapping to a new item
+    setShowPrompt(false); // Hide prompt while loading the new component
   };
+
+  // Simulate component loading with a timeout and show prompt 1 second after loading
+  useEffect(() => {
+    const loadTimeout = setTimeout(() => {
+      setIsLoading(false); // Set loading to false after component has "loaded"
+      const promptTimeout = setTimeout(() => {
+        setShowPrompt(true); // Show prompt 1 second after the component has loaded
+      }, 0);
+
+      return () => clearTimeout(promptTimeout); // Cleanup prompt timeout on unmount
+    }, 1000); // Simulating a 1-second load time
+
+    return () => clearTimeout(loadTimeout); // Cleanup loading timeout on unmount
+  }, [activeIndex]);
 
   const handleCardPress = (item, index) => {
     carouselRef.current.scrollTo({ index });
@@ -118,33 +132,24 @@ const Home = () => {
   const handleCardPressSnap = (item, index) => {
     handleCardPress(item, index);
     handleSnapToItem(index);
-  }
+  };
 
   const renderItem = ({ item, index }) => (
     <TouchableOpacity onPress={() => handleCardPressSnap(item, index)}>
       <View
         style={[
           styles.item,
-          // dark brown: "#5D4020" , light brown: "#635646"
-          { backgroundColor: index === activeIndex ? "#f3b718" : "#909090",
-          transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}]
-           },
-           {
+          { backgroundColor: index === activeIndex ? "#f3b718" : "#909090" },
+          {
+            transform: index === activeIndex ? [{ scale: 1 }] : [{ scale: 0.8 }],
             width: viewportWidth > viewportHeight
               ? Math.round(Dimensions.get("window").width * 0.18)
-              : Math.round(Dimensions.get("window").width  * 0.28),
-          },
-           {
+              : Math.round(Dimensions.get("window").width * 0.28),
             height: viewportWidth > viewportHeight
               ? Math.round(Dimensions.get("window").height * 0.25)
               : Math.round(Dimensions.get("window").height * 0.20),
+            marginLeft: viewportWidth > viewportHeight ? 350 : 220,
           },
-           {
-            marginLeft: viewportWidth > viewportHeight
-              ? 350
-              : 220,
-          },
-          
         ]}
       >
         <MaterialCommunityIcons
@@ -167,79 +172,81 @@ const Home = () => {
     </TouchableOpacity>
   );
 
-
   const cardsToShow = viewportWidth > viewportHeight ? 5 : 3;
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={[styles.arrowLeft,
-          {left: viewportWidth > viewportHeight
-            ? 28
-            : 18,
-          top: viewportWidth > viewportHeight
-            ? "12%"
-            : "14.5%",}
+        style={[
+          styles.arrowLeft,
+          {
+            left: viewportWidth > viewportHeight ? 28 : 18,
+            top: viewportWidth > viewportHeight ? "12%" : "14.5%",
+          },
         ]}
-        // onPress={handlePrev}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: -1, animated: true });
         }}
       >
-        {/* change arrows back to dark grey color="rgb(45, 62, 95)"  */}
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
+
       <Carousel
         ref={carouselRef}
-        // width={Math.round(viewportWidth / 5)} // Display 5 cards
-        width={Math.round(viewportWidth / cardsToShow)} // Display 5 cards
+        width={Math.round(viewportWidth / cardsToShow)}
         height={Math.round(viewportHeight * 0.3)}
         autoPlay={false}
         data={data}
         renderItem={renderItem}
         loop={true}
         onSnapToItem={handleSnapToItem}
-        style={[styles.carousel,
-          {marginTop: viewportWidth > viewportHeight
-            ? 10
-            : 70,}
+        style={[
+          styles.carousel,
+          { marginTop: viewportWidth > viewportHeight ? 10 : 70 },
         ]}
-        // autoFillData={true}
-        // defaultIndex={2} // Ensure the yellow card is centered initially
-        // mode="parallax"
-        modeConfig={{
-            // parallaxScrollingScale: 1,
-            // parallaxScrollingOffset: 20,
-            // parallaxAdjacentItemScale: 0.85,
-        }}
       />
+
       <TouchableOpacity
-        style={[styles.arrowRight,
-          {right: viewportWidth > viewportHeight
-            ? 35
-            : 22,
-          top: viewportWidth > viewportHeight
-            ? "12%"
-            : "15%",
-            }
+        style={[
+          styles.arrowRight,
+          {
+            right: viewportWidth > viewportHeight ? 35 : 22,
+            top: viewportWidth > viewportHeight ? "12%" : "15%",
+          },
         ]}
-        // onPress={handleNext}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: 1, animated: true });
         }}
       >
-       
-        <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)"  />
+        <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
-      <Text style={[styles.prompt,
-        {marginBottom: viewportWidth > viewportHeight ? 30 : 50}
-      ]}>{data[activeIndex].prompt}</Text>
-      <View style={styles.carousel2}>{data[activeIndex].component}</View>
+
+      {/* Show loading indicator while the component is loading */}
+      {isLoading ? (
+        <ActivityIndicator size="large" color="orange" style={[styles.loading,
+          {
+            marginBottom: viewportWidth > viewportHeight ? 140 : 340,
+          }
+        ]} />
+      ) : (
+        <>
+          {/* Show the prompt only when showPrompt is true */}
+          {showPrompt && (
+            <Text
+              style={[
+                styles.prompt,
+                { marginBottom: viewportWidth > viewportHeight ? 30 : 50 },
+              ]}
+            >
+              {data[activeIndex].prompt}
+            </Text>
+          )}
+          <View style={styles.carousel2}>{data[activeIndex].component}</View>
+        </>
+      )}
     </View>
   );
 };
-// const cardsSpacing = viewportWidth > viewportHeight ? 0.18 : 3;
-
 
 const styles = StyleSheet.create({
   container: {
@@ -282,13 +289,15 @@ const styles = StyleSheet.create({
   arrowLeft: {
     position: "absolute",
     transform: [{ translateY: -10 }],
-    
   },
   arrowRight: {
     position: "absolute",
     transform: [{ translateY: -10 }],
   },
   icon: {},
+  loading: {
+    
+  },
 });
 
 export default Home;
