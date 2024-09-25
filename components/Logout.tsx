@@ -13,6 +13,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import { getAuth, signOut } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import { doc, updateDoc } from "firebase/firestore"; // Import updateDoc to update Firestore
+import { FIRESTORE_DB } from "../FirebaseConfig"; // Your Firebase Firestore config
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
@@ -26,20 +28,48 @@ const Logout: React.FC = () => {
   const navigation = useNavigation();
   const correctPasskey = "112112"; // Correct passkey for example
 
-  const handleLogout = async () => {
-    const auth = getAuth();
-    try {
-      await signOut(auth);
-      await AsyncStorage.removeItem("rememberedUser");
-      console.log("User signed out!");
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "index" }],
-      });
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
+    // Function to handle user logout and remove pushToken
+    const handleLogout = async () => {
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+      
+      try {
+        if (currentUser) {
+          // Remove the user's pushToken from Firestore
+          const userDocRef = doc(FIRESTORE_DB, `users/${currentUser.uid}`);
+          await updateDoc(userDocRef, {
+            pushToken: null, // Setting the pushToken field to null or you can use deleteField() to remove it completely
+          });
+  
+          // Log the user out and remove any remembered user data
+          await signOut(auth);
+          await AsyncStorage.removeItem("rememberedUser");
+  
+          console.log("User signed out and pushToken removed!");
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "index" }],
+          });
+        }
+      } catch (error) {
+        console.error("Logout failed:", error);
+      }
+    };
+
+  // const handleLogout = async () => {
+  //   const auth = getAuth();
+  //   try {
+  //     await signOut(auth);
+  //     await AsyncStorage.removeItem("rememberedUser");
+  //     console.log("User signed out!");
+  //     navigation.reset({
+  //       index: 0,
+  //       routes: [{ name: "index" }],
+  //     });
+  //   } catch (error) {
+  //     console.error("Logout failed:", error);
+  //   }
+  // };
 
   const handlePasskeySubmit = () => {
     const enteredPasskey = digits.join("");

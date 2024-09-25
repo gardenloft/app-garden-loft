@@ -23,12 +23,14 @@ import ComingSoon from "../ComingSoon";
 
 const data = [
   {
+    id: 1,
     title: "MY FRIENDS",
     icon: "home-group-plus",
     component: <GLClub />,
     prompt: "",
   },
   {
+    id: 2,
     title: "VIDEO CALL",
     icon: "phone",
     component: <VideoCall />,
@@ -36,6 +38,7 @@ const data = [
     prompt: "Make a Video Call?",
   },
   {
+    id: 3,
     title: "ENTERTAINMENT",
     icon: "movie-open-star",
     component: <Entertainment />,
@@ -54,12 +57,14 @@ const data = [
   //   prompt: "Join an Upcoming Event?",
   // },
   {
+    id: 4,
     title: "WATCH PARTY",
     icon: "calendar-star",
     component: <ComingSoon />,
     prompt: "Watch Party?",
   },
   // {
+
   //   title: "COURSES",
   //   // icon: "card-account-details-star-outline",
   //   icon: "food-variant",
@@ -67,12 +72,14 @@ const data = [
   //   prompt: "Join a Course?",
   // },
   {
+    id: 5,
     title: "ACTIVITIES",
     icon: "weight-lifter",
     component: <Activities2 />,
     prompt: "Join an Activity?",
   },
   {
+    id: 6,
     title: "HOW-TO VIDEOS",
     component: <HowTo />,
     icon: "account-question",
@@ -86,12 +93,14 @@ const data = [
   //   prompt: "Change Lights?",
   // },
   {
+    id: 7,
     title: "LOG OUT",
     icon: "logout",
     component: <Logout />,
     prompt: "Log Out of Garden Loft App?",
   },
   {
+    id: 8,
     title: "CALENDAR",
     icon: "calendar-month",
     component: <ComingSoon/>,
@@ -127,12 +136,12 @@ const Home = () => {
   }, [activeIndex]);
 
   const handleCardPress = (item, index) => {
-    carouselRef.current.scrollTo({ index });
+    // carouselRef.current.scrollTo({ index });
   };
 
   const handleCardPressSnap = (item, index) => {
-    handleCardPress(item, index);
-    handleSnapToItem(index);
+    // carouselRef.current.scrollTo({ index, animated: true }); // Scroll to the clicked card
+    // setActiveIndex(index); // Set the clicked card as the active index
   };
 
   const renderItem = ({ item, index }) => (
@@ -269,7 +278,7 @@ const styles = StyleSheet.create({
   },
   item: {
     gap: 10,
-    marginLeft: 350,
+    // marginLeft: 350,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 30,
@@ -302,3 +311,4 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
+
