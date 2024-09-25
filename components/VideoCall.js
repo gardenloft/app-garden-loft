@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, Dimensions, Image, Modal, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+  Image,
+  Modal,
+  ActivityIndicator,
+} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Carousel from "react-native-reanimated-carousel";
 import { FIRESTORE_DB } from "../FirebaseConfig";
@@ -7,9 +15,10 @@ import { collection, getDocs } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth"; // Ensure onAuthStateChanged is imported
 import { useRouter } from "expo-router";
 import * as Notifications from "expo-notifications";
-import { callUser } from "../app/VideoSDK2"; 
+import { callUser } from "../app/VideoSDK2";
 
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
+const { width: viewportWidth, height: viewportHeight } =
+  Dimensions.get("window");
 const VideoCall = () => {
   const [userNames, setUserNames] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -37,7 +46,9 @@ const VideoCall = () => {
   // Function to fetch friends from the Firestore friends collection
   const fetchFriends = async (userId) => {
     try {
-      const querySnapshot = await getDocs(collection(FIRESTORE_DB, `users/${userId}/friends`));
+      const querySnapshot = await getDocs(
+        collection(FIRESTORE_DB, `users/${userId}/friends`)
+      );
       const fetchedUserNames = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         name: doc.data().name,
@@ -64,18 +75,20 @@ const VideoCall = () => {
     await callUser(calleeUid, user); // Pass the authenticated user
 
     // Set up notification listener to listen for call acceptance or decline
-    notificationListenerRef.current = Notifications.addNotificationReceivedListener((notification) => {
-      const { accept, decline, meetingId } = notification.request.content.data;
-      if (accept) {
-        setIsCalling(false);
-        onCalleeAccept(meetingId);
-        removeNotificationListener(); // Ensure listener is removed after being triggered
-      } else if (decline) {
-        setIsCalling(false);
-        setIsDeclined(true);
-        removeNotificationListener(); // Ensure listener is removed after decline
-      }
-    });
+    notificationListenerRef.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        const { accept, decline, meetingId } =
+          notification.request.content.data;
+        if (accept) {
+          setIsCalling(false);
+          onCalleeAccept(meetingId);
+          removeNotificationListener(); // Ensure listener is removed after being triggered
+        } else if (decline) {
+          setIsCalling(false);
+          setIsDeclined(true);
+          removeNotificationListener(); // Ensure listener is removed after decline
+        }
+      });
   };
 
   // Function to handle the callee accepting the call
@@ -89,16 +102,18 @@ const VideoCall = () => {
   // Function to remove the notification listener to prevent multiple triggers
   const removeNotificationListener = () => {
     if (notificationListenerRef.current) {
-      Notifications.removeNotificationSubscription(notificationListenerRef.current);
+      Notifications.removeNotificationSubscription(
+        notificationListenerRef.current
+      );
       notificationListenerRef.current = null; // Reset the listener reference
     }
   };
 
-    // Function to cancel the call and close the calling modal
-    const cancelCall = () => {
-      setIsCalling(false);
-      removeNotificationListener(); // Remove the notification listener
-    };
+  // Function to cancel the call and close the calling modal
+  const cancelCall = () => {
+    setIsCalling(false);
+    removeNotificationListener(); // Remove the notification listener
+  };
 
   const handleSnapToItem = (index) => {
     setActiveIndex(index);
@@ -112,35 +127,37 @@ const VideoCall = () => {
         {
           // backgroundColor: index === activeIndex ? "#f09030" : "#f09030",
           backgroundColor: "transparent",
-          transform: index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
+          transform:
+            index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
           height:
             viewportWidth > viewportHeight
               ? Math.round(Dimensions.get("window").height * 0.32)
               : Math.round(Dimensions.get("window").height * 0.25),
         },
       ]}
-      onPress={() => startVideoCall(item.uid)}
-    >
-      <Image source={item.imageUrl} style={styles.image} />
+      onPress={() => startVideoCall(item.uid)}>
+      {/* <Image source={item.imageUrl} style={styles.image} /> */}
+      <Image source={{ uri: item.imageUrl }} style={styles.image} />
+
       <Text style={styles.cardText}>{item.name}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <View style={[
-      styles.container,
-      { height: viewportWidth > viewportHeight ? 320 : 450 },
-    ]}>
+    <View
+      style={[
+        styles.container,
+        { height: viewportWidth > viewportHeight ? 320 : 450 },
+      ]}>
       {/* Calling message modal */}
       <Modal animationType="fade" transparent={true} visible={isCalling}>
         <View style={styles.modalContainer}>
           <ActivityIndicator size="large" color="#f3b718" />
           <Text style={styles.modalText}>Calling...</Text>
-           {/* Cancel Call Button */}
-           <TouchableOpacity
+          {/* Cancel Call Button */}
+          <TouchableOpacity
             style={[styles.button, styles.cancelButton]}
-            onPress={cancelCall}
-          >
+            onPress={cancelCall}>
             <Text style={styles.buttonText}>Cancel Call</Text>
           </TouchableOpacity>
         </View>
@@ -149,17 +166,19 @@ const VideoCall = () => {
       {/* Decline message modal */}
       <Modal animationType="slide" transparent={true} visible={isDeclined}>
         <View style={styles.modalContainer}>
-          <Image source={require('../assets/garden-loft-logo2.png')} style={styles.logo} />
+          <Image
+            source={require("../assets/garden-loft-logo2.png")}
+            style={styles.logo}
+          />
           <Text style={styles.modalText}>They are not available right now</Text>
           <TouchableOpacity
             style={[styles.button, styles.dismissButton]}
-            onPress={() => setIsDeclined(false)}
-          >
+            onPress={() => setIsDeclined(false)}>
             <Text style={styles.buttonText}>Dismiss</Text>
           </TouchableOpacity>
         </View>
       </Modal>
-      
+
       <Carousel
         data={userNames}
         renderItem={renderItem}
@@ -182,8 +201,9 @@ const VideoCall = () => {
             top: viewportWidth > viewportHeight ? "40%" : "30%",
           },
         ]}
-        onPress={() => scrollViewRef.current?.scrollTo({ count: -1, animated: true })}
-      >
+        onPress={() =>
+          scrollViewRef.current?.scrollTo({ count: -1, animated: true })
+        }>
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
       <TouchableOpacity
@@ -194,8 +214,9 @@ const VideoCall = () => {
             top: viewportWidth > viewportHeight ? "40%" : "30%",
           },
         ]}
-        onPress={() => scrollViewRef.current?.scrollTo({ count: 1, animated: true })}
-      >
+        onPress={() =>
+          scrollViewRef.current?.scrollTo({ count: 1, animated: true })
+        }>
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
     </View>
@@ -257,19 +278,17 @@ const styles = {
     borderRadius: 10,
   },
   dismissButton: {
-    backgroundColor: 'orange',
+    backgroundColor: "orange",
     marginTop: 30,
   },
   cancelButton: {
-    backgroundColor: 'red',
+    backgroundColor: "red",
     marginTop: 30,
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 24,
-  }
+  },
 };
 
 export default VideoCall;
-
-
