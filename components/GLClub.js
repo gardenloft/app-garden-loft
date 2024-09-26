@@ -1597,13 +1597,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   modalContent: {
-    marginTop: 70,
+    marginTop: 50,
     gap: 30,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     width: SCREEN_WIDTH * 0.95,
-    height: SCREEN_HEIGHT * 0.8,
+    height: SCREEN_HEIGHT * 0.9,
     backgroundColor: "#fff",
     borderRadius: 15,
     padding: 20,
@@ -1635,6 +1635,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     marginBottom: 10,
+    marginTop: 50,
   },
   modalText: {
     fontSize: 25,
