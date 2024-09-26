@@ -135,9 +135,20 @@ const VideoCall = () => {
               : Math.round(Dimensions.get("window").height * 0.25),
         },
       ]}
-      onPress={() => startVideoCall(item.uid)}>
+      onPress={() => startVideoCall(item.uid)}
+    >
       {/* <Image source={item.imageUrl} style={styles.image} /> */}
-      <Image source={{ uri: item.imageUrl }} style={styles.image} />
+      {/* <Image source={{ uri: item.imageUrl }} style={styles.image} /> */}
+      <Image
+        source={
+          item.imageUrl &&
+          typeof item.imageUrl === "string" &&
+          item.imageUrl.trim() !== ""
+            ? { uri: item.imageUrl }
+            : require("../assets/garden-loft-logo2.png")
+        }
+        style={styles.image}
+      />
 
       <Text style={styles.cardText}>{item.name}</Text>
     </TouchableOpacity>
@@ -148,7 +159,8 @@ const VideoCall = () => {
       style={[
         styles.container,
         { height: viewportWidth > viewportHeight ? 320 : 450 },
-      ]}>
+      ]}
+    >
       {/* Calling message modal */}
       <Modal animationType="fade" transparent={true} visible={isCalling}>
         <View style={styles.modalContainer}>
@@ -157,7 +169,8 @@ const VideoCall = () => {
           {/* Cancel Call Button */}
           <TouchableOpacity
             style={[styles.button, styles.cancelButton]}
-            onPress={cancelCall}>
+            onPress={cancelCall}
+          >
             <Text style={styles.buttonText}>Cancel Call</Text>
           </TouchableOpacity>
         </View>
@@ -173,7 +186,8 @@ const VideoCall = () => {
           <Text style={styles.modalText}>They are not available right now</Text>
           <TouchableOpacity
             style={[styles.button, styles.dismissButton]}
-            onPress={() => setIsDeclined(false)}>
+            onPress={() => setIsDeclined(false)}
+          >
             <Text style={styles.buttonText}>Dismiss</Text>
           </TouchableOpacity>
         </View>
@@ -203,7 +217,8 @@ const VideoCall = () => {
         ]}
         onPress={() =>
           scrollViewRef.current?.scrollTo({ count: -1, animated: true })
-        }>
+        }
+      >
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
       <TouchableOpacity
@@ -216,7 +231,8 @@ const VideoCall = () => {
         ]}
         onPress={() =>
           scrollViewRef.current?.scrollTo({ count: 1, animated: true })
-        }>
+        }
+      >
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
     </View>
