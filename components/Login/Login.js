@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Dimensions,
   Pressable,
+  Image,
 } from "react-native";
 import CheckBox from "expo-checkbox";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../FirebaseConfig";
@@ -101,16 +102,20 @@ const Login = () => {
 
   return (
     <View style={styles.container}>
+      <Image
+            source={require("../../assets/garden-loft-logo2.png")}
+            style={styles.logo}
+          />
       <KeyboardAvoidingView behavior="padding">
         <Text style={styles.welcome}>Welcome Garden Loft Residents</Text>
 
-        <TextInput
+        {/* <TextInput
           value={userName}
           style={styles.input}
           placeholder="Name"
           autoCapitalize="none"
           onChangeText={(text) => setUserName(text)}
-        />
+        /> */}
         <TextInput
           value={email}
           style={styles.input}
@@ -150,7 +155,7 @@ const Login = () => {
         ) : (
           <>
             <Button title="Login" onPress={signIn} />
-            <Button title="Create Account" onPress={signUp} />
+            {/* <Button title="Create Account" onPress={signUp} /> */}
           </>
         )}
       </KeyboardAvoidingView>
@@ -167,6 +172,8 @@ const styles = StyleSheet.create({
     width: viewportWidth,
     height: viewportHeight,
     alignSelf: "center",
+    alignItems: "center",
+   
   },
   input: {
     borderColor: "black",
@@ -203,7 +210,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   welcome: {
-    fontSize: 30,
+    fontSize: 40,
+    fontWeight: "300",
     color: "#f09030",
     alignSelf: "center",
     marginBottom: 30,
@@ -221,6 +229,13 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontSize: 18,
   },
+  logo: {
+    position: "relative",
+    alignItems: "center",
+    marginBottom: 20,
+    width: 450,
+    height: 220,
+  }
 });
 
 export default Login;
