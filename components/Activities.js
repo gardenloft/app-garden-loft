@@ -1503,6 +1503,7 @@ const Activities = () => {
         "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
       );
       const currentTime = new Date();
+  
       const eventData = response.data.data.signup
         .filter((item) => item.firstname === userName)
         .map((item) => ({
@@ -1523,25 +1524,74 @@ const Activities = () => {
             item.location === "Zoom Meeting"
               ? `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
               : null,
-        }));
-
+        }))
+        .filter(
+          (event) =>
+            (event.endDate && currentTime < event.endDate) || // Keep if the current time is before the event's end date
+            (!event.endDate && currentTime < event.startDate) // Or if no endDate, keep if the event hasn't started yet
+        );
+  
       eventData.sort((a, b) => a.startDate - b.startDate);
-
+  
       eventData.forEach((event) => {
         if (Platform.OS !== "web") {
           scheduleNotification(event);
         }
       });
-
+  
       setEvents(eventData);
       setLoading(false);
     } catch (error) {
-      setError(
-        "Failed to retrieve signed-up activities. Please try again later."
-      );
+      setError("Failed to retrieve signed-up activities. Please try again later.");
       setLoading(false);
     }
   }
+
+  // async function fetchEvents(userName) {
+  //   try {
+  //     const response = await axios.get(
+  //       "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
+  //     );
+  //     const currentTime = new Date();
+  //     const eventData = response.data.data.signup
+  //       .filter((item) => item.firstname === userName)
+  //       .map((item) => ({
+  //         item: item.item,
+  //         startDate: moment
+  //           .tz(item.startdatestring.replace(/-/g, "T"), "YYYY/MM/DD HH:mm", "")
+  //           .toDate(),
+  //         endDate: item.enddatestring
+  //           ? moment
+  //               .tz(
+  //                 item.enddatestring.replace(/-/g, "T"),
+  //                 "YYYY/MM/DD HH:mm:ss",
+  //                 ""
+  //               )
+  //               .toDate()
+  //           : undefined,
+  //         zoomLink:
+  //           item.location === "Zoom Meeting"
+  //             ? `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
+  //             : null,
+  //       }));
+
+  //     eventData.sort((a, b) => a.startDate - b.startDate);
+
+  //     eventData.forEach((event) => {
+  //       if (Platform.OS !== "web") {
+  //         scheduleNotification(event);
+  //       }
+  //     });
+
+  //     setEvents(eventData);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setError(
+  //       "Failed to retrieve signed-up activities. Please try again later."
+  //     );
+  //     setLoading(false);
+  //   }
+  // }
 
   async function registerForPushNotificationsAsync() {
     const settings = await Notifications.getPermissionsAsync();
@@ -1888,11 +1938,11 @@ const styles = StyleSheet.create({
   },
   webViewModal: {
     position: "absolute",
-    bottom: "-30%",
+    bottom: "10%",
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: "transparent",
   },
   webViewContainer: {
     margin: 10,
