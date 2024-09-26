@@ -816,7 +816,7 @@ function ControlsContainer({
       <IconButton
         onPress={() => toggleWebcam()}
         iconName="camera"
-        buttonText={isWebcamOn ? "Webcam On" : "Webcam Off"}
+        buttonText={isWebcamOn ? "Turn Webcam On" : "Turn Webcam Off"}
         backgroundColor={isWebcamOn ? "green" : "red"}
       />
       <IconButton
@@ -834,12 +834,12 @@ function ControlsContainer({
         buttonText="End"
         backgroundColor="red"
       />
-      <IconButton
+      {/* <IconButton
         onPress={addPeople}
         iconName="account-plus"
         buttonText="Add People"
         backgroundColor="green"
-      />
+      /> */}
     </View>
   );
 }
@@ -872,11 +872,12 @@ function ParticipantView({ participantId }) {
         style={{
           flex: 1,
           margin: 8,
-          backgroundColor: "#cccccc",
+          backgroundColor: "#DBD2CE",
           justifyContent: "center",
           alignItems: "center",
           width: viewportWidth * 0.9,
           height: viewportHeight * 0.65,
+          borderRadius: 10,
         }}
       >
         <Text style={{ fontSize: 18 }}>Webcam is off</Text>
