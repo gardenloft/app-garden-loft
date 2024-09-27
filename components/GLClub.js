@@ -863,6 +863,7 @@ import {
   setDoc,
   deleteDoc,
   onSnapshot,
+  getDoc
 } from "firebase/firestore";
 import { FIRESTORE_DB, FIREBASE_STORAGE } from "../FirebaseConfig";
 import { getAuth } from "firebase/auth";
@@ -1045,44 +1046,104 @@ const GLClub = () => {
       Alert.alert("No user signed in");
       return;
     }
-
+  
     try {
-      await setDoc(
-        doc(FIRESTORE_DB, `users/${user.uid}/friendRequests`, contact.id),
-        { status: "accepted" }
-      );
-      await setDoc(
-        doc(FIRESTORE_DB, `users/${contact.id}/friendRequests`, user.uid),
-        { status: "accepted" }
-      );
-
-      await setDoc(doc(FIRESTORE_DB, `users/${user.uid}/friends`, contact.id), {
-        name: contact.name,
-        city: contact.city,
-        hobbies: contact.hobbies,
-        clubs: contact.clubs,
-        imageUrl: contact.imageUrl,
-      });
-
-      await setDoc(doc(FIRESTORE_DB, `users/${contact.id}/friends`, user.uid), {
-        name: user.userName || user.email,
-        city: "Calgary",
-        hobbies: ["Reading", "Painting"],
-        clubs: ["Book", "Knitting"],
-        imageUrl: contact.imageUrl,
-      });
-
-      setFriendRequests((prevRequests) => ({
-        ...prevRequests,
-        [contact.id]: "accepted",
-      }));
-
-      Alert.alert("Friend request accepted");
+      // Fetch current user profile data from Firestore
+      const currentUserRef = doc(FIRESTORE_DB, "users", user.uid);
+      const currentUserSnap = await getDoc(currentUserRef);
+  
+      if (currentUserSnap.exists()) {
+        const currentUserData = currentUserSnap.data();
+        const currentUserName = currentUserData.userName || user.email;
+        const currentUserImageUrl = currentUserData.imageUrl || null;
+  
+        // Accept the friend request by updating both users' friendRequests
+        await setDoc(
+          doc(FIRESTORE_DB, `users/${user.uid}/friendRequests`, contact.id),
+          { status: "accepted" }
+        );
+        await setDoc(
+          doc(FIRESTORE_DB, `users/${contact.id}/friendRequests`, user.uid),
+          { status: "accepted" }
+        );
+  
+        // Add the contact to the current user's friends list
+        await setDoc(doc(FIRESTORE_DB, `users/${user.uid}/friends`, contact.id), {
+          name: contact.name,
+          city: contact.city,
+          hobbies: contact.hobbies,
+          clubs: contact.clubs,
+          imageUrl: contact.imageUrl,
+        });
+  
+        // Add the current user to the contact's friends list with proper userName and imageUrl
+        await setDoc(doc(FIRESTORE_DB, `users/${contact.id}/friends`, user.uid), {
+          name: currentUserName, // userName from Firestore or email
+          city: currentUserData.city || "Calgary", // Default to Calgary if not available
+          hobbies: currentUserData.hobbies || ["Reading", "Painting"], // Default hobbies
+          clubs: currentUserData.clubs || ["Book", "Knitting"], // Default clubs
+          imageUrl: currentUserImageUrl, // Use the fetched imageUrl
+        });
+  
+        setFriendRequests((prevRequests) => ({
+          ...prevRequests,
+          [contact.id]: "accepted",
+        }));
+  
+        Alert.alert("Friend request accepted");
+      } else {
+        Alert.alert("Error retrieving current user profile");
+      }
     } catch (error) {
       console.error("Error accepting friend request: ", error);
       Alert.alert("Error accepting friend request.");
     }
   };
+  
+
+  // const handleAcceptFriend = async (contact) => {
+  //   if (!user) {
+  //     Alert.alert("No user signed in");
+  //     return;
+  //   }
+
+  //   try {
+  //     await setDoc(
+  //       doc(FIRESTORE_DB, `users/${user.uid}/friendRequests`, contact.id),
+  //       { status: "accepted" }
+  //     );
+  //     await setDoc(
+  //       doc(FIRESTORE_DB, `users/${contact.id}/friendRequests`, user.uid),
+  //       { status: "accepted" }
+  //     );
+
+  //     await setDoc(doc(FIRESTORE_DB, `users/${user.uid}/friends`, contact.id), {
+  //       name: contact.name,
+  //       city: contact.city,
+  //       hobbies: contact.hobbies,
+  //       clubs: contact.clubs,
+  //       imageUrl: contact.imageUrl,
+  //     });
+
+  //     await setDoc(doc(FIRESTORE_DB, `users/${contact.id}/friends`, user.uid), {
+  //       name: user.userName || user.email,
+  //       city: "Calgary",
+  //       hobbies: ["Reading", "Painting"],
+  //       clubs: ["Book", "Knitting"],
+  //       imageUrl: user.imageUrl,
+  //     });
+
+  //     setFriendRequests((prevRequests) => ({
+  //       ...prevRequests,
+  //       [contact.id]: "accepted",
+  //     }));
+
+  //     Alert.alert("Friend request accepted");
+  //   } catch (error) {
+  //     console.error("Error accepting friend request: ", error);
+  //     Alert.alert("Error accepting friend request.");
+  //   }
+  // };
 
   const handleDeclineFriend = async (contact) => {
     if (!user) {
