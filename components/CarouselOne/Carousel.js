@@ -29,14 +29,14 @@ const data = [
     component: <GLClub />,
     prompt: "",
   },
-  {
-    id: 2,
-    title: "VIDEO CALL",
-    icon: "phone",
-    component: <VideoCall />,
-    // component: <VideoSDK />,
-    prompt: "Make a Video Call?",
-  },
+  // {
+  //   id: 2,
+  //   title: "VIDEO CALL",
+  //   icon: "phone",
+  //   component: <VideoCall />,
+  //   // component: <VideoSDK />,
+  //   prompt: "Make a Video Call?",
+  // },
   {
     id: 3,
     title: "ENTERTAINMENT",
