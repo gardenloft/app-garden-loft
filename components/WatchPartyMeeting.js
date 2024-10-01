@@ -113,96 +113,96 @@
 
 
 // WatchPartyMeeting.js
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Button, Text, StyleSheet } from 'react-native';
-import { useMeeting, usePubSub } from '@videosdk.live/react-native-sdk';
-import { YouTubeIframe } from 'react-native-youtube-iframe';
+// import React, { useEffect, useRef, useState } from 'react';
+// import { View, Button, Text, StyleSheet } from 'react-native';
+// import { useMeeting, usePubSub } from '@videosdk.live/react-native-sdk';
+// import { YouTubeIframe } from 'react-native-youtube-iframe';
 
-const WatchPartyMeeting = ({ videoId, isHost }) => {
-  const { join, leave, toggleMic, localParticipant, participants } = useMeeting();
-  const { publish, subscribe } = usePubSub('video-sync');
-  const [isPlaying, setIsPlaying] = useState(false);
-  const playerRef = useRef(null);
+// const WatchPartyMeeting = ({ videoId, isHost }) => {
+//   const { join, leave, toggleMic, localParticipant, participants } = useMeeting();
+//   const { publish, subscribe } = usePubSub('video-sync');
+//   const [isPlaying, setIsPlaying] = useState(false);
+//   const playerRef = useRef(null);
 
-  useEffect(() => {
-    join();
-    subscribe((message) => {
-      if (message.data.action === 'play') {
-        playerRef.current.seekTo(message.data.time, true);
-        setIsPlaying(true);
-      } else if (message.data.action === 'pause') {
-        playerRef.current.seekTo(message.data.time, true);
-        setIsPlaying(false);
-      }
-    });
+//   useEffect(() => {
+//     join();
+//     subscribe((message) => {
+//       if (message.data.action === 'play') {
+//         playerRef.current.seekTo(message.data.time, true);
+//         setIsPlaying(true);
+//       } else if (message.data.action === 'pause') {
+//         playerRef.current.seekTo(message.data.time, true);
+//         setIsPlaying(false);
+//       }
+//     });
 
-    return () => {
-      leave();
-    };
-  }, []);
+//     return () => {
+//       leave();
+//     };
+//   }, []);
 
-  const handlePlayPause = async () => {
-    if (!isHost) return; // Only host controls playback
-    const newPlayingState = !isPlaying;
-    const currentTime = await playerRef.current.getCurrentTime();
+//   const handlePlayPause = async () => {
+//     if (!isHost) return; // Only host controls playback
+//     const newPlayingState = !isPlaying;
+//     const currentTime = await playerRef.current.getCurrentTime();
 
-    setIsPlaying(newPlayingState);
+//     setIsPlaying(newPlayingState);
 
-    if (newPlayingState) {
-      publish({ action: 'play', time: currentTime });
-    } else {
-      publish({ action: 'pause', time: currentTime });
-    }
-  };
+//     if (newPlayingState) {
+//       publish({ action: 'play', time: currentTime });
+//     } else {
+//       publish({ action: 'pause', time: currentTime });
+//     }
+//   };
 
-  const handleToggleMic = () => {
-    if (localParticipant) {
-      toggleMic();
-    } else {
-      console.log('localParticipant is not yet available.');
-    }
-  };
+//   const handleToggleMic = () => {
+//     if (localParticipant) {
+//       toggleMic();
+//     } else {
+//       console.log('localParticipant is not yet available.');
+//     }
+//   };
 
-  return (
-    <View style={styles.meetingContainer}>
-      <YouTubeIframe
-        ref={playerRef}
-        height={300}
-        videoId={videoId}
-        play={isPlaying}
-        onReady={() => console.log('Video is ready')}
-      />
-      <View style={styles.controlsContainer}>
-        {isHost && (
-          <Button title={isPlaying ? 'Pause' : 'Play'} onPress={handlePlayPause} />
-        )}
-        <Button
-          title={localParticipant && localParticipant.micOn ? 'Mute' : 'Unmute'}
-          onPress={handleToggleMic}
-        />
-        <Button title="Leave Party" onPress={leave} />
-      </View>
-      <Text style={styles.participantsText}>Participants: {participants.size}</Text>
-    </View>
-  );
-};
+//   return (
+//     <View style={styles.meetingContainer}>
+//       <YouTubeIframe
+//         ref={playerRef}
+//         height={300}
+//         videoId={videoId}
+//         play={isPlaying}
+//         onReady={() => console.log('Video is ready')}
+//       />
+//       <View style={styles.controlsContainer}>
+//         {isHost && (
+//           <Button title={isPlaying ? 'Pause' : 'Play'} onPress={handlePlayPause} />
+//         )}
+//         <Button
+//           title={localParticipant && localParticipant.micOn ? 'Mute' : 'Unmute'}
+//           onPress={handleToggleMic}
+//         />
+//         <Button title="Leave Party" onPress={leave} />
+//       </View>
+//       <Text style={styles.participantsText}>Participants: {participants.size}</Text>
+//     </View>
+//   );
+// };
 
-// Style definitions
-const styles = StyleSheet.create({
-  meetingContainer: {
-    flex: 1,
-    width: '100%',
-  },
-  controlsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
-  },
-  participantsText: {
-    textAlign: 'center',
-    marginTop: 20,
-    fontSize: 18,
-  },
-});
+// // Style definitions
+// const styles = StyleSheet.create({
+//   meetingContainer: {
+//     flex: 1,
+//     width: '100%',
+//   },
+//   controlsContainer: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-around',
+//     marginTop: 20,
+//   },
+//   participantsText: {
+//     textAlign: 'center',
+//     marginTop: 20,
+//     fontSize: 18,
+//   },
+// });
 
-export default WatchPartyMeeting;
+// export default WatchPartyMeeting;

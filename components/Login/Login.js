@@ -90,6 +90,7 @@ const Login = () => {
       await setDoc(doc(FIRESTORE_DB, "users", user.uid), {
         email: email,
         userName: userName,
+        uid: user.uid, // Ensure the UID is saved
       });
       alert("Account created successfully! Check your email.");
     } catch (error) {
