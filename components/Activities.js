@@ -713,100 +713,204 @@ const Activities = () => {
     }
   }
 
-  async function fetchEventsAndSaveToFirestore(userName) {
-    try {
-      const response = await axios.get(
-        "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
-      );
+//   async function fetchEventsAndSaveToFirestore(userName) {
+//     try {
+//       const response = await axios.get(
+//         "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
+//       );
    
 
-      const currentTime = new Date();
+//       const currentTime = new Date();
   
-      const eventData = response.data.data.signup
-        .filter((item) => item.firstname === userName)
-        .map((item) => ({
-          item: item.item,
+//       const eventData = response.data.data.signup
+//         .filter((item) => item.firstname === userName)
+//         .map((item) => ({
+//           item: item.item,
          
-          startDate: moment
-            .tz(item.startdatestring.replace(/-/g, "T"), "YYYY/MM/DD HH:mm", "")
-            .toDate(),
-          endDate: item.enddatestring
-            ? moment
-                .tz(
-                  item.enddatestring.replace(/-/g, "T"),
-                  "YYYY/MM/DD HH:mm:ss",
-                  ""
-                )
-                .toDate()
-            : undefined,
+//           startDate: moment
+//             .tz(item.startdatestring.replace(/-/g, "T"), "YYYY/MM/DD HH:mm", "")
+//             .toDate(),
+//           endDate: item.enddatestring
+//             ? moment
+//                 .tz(
+//                   item.enddatestring.replace(/-/g, "T"),
+//                   "YYYY/MM/DD HH:mm:ss",
+//                   ""
+//                 )
+//                 .toDate()
+//             : undefined,
+//           zoomLink:
+//             item.location === "Zoom Meeting"
+//               ? `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
+//               : null,
+             
+              
+//         }))
+        
+//         .filter(
+//           (event) =>
+//             (event.endDate && currentTime < event.endDate) || // Keep if the current time is before the event's end date
+//             (!event.endDate && currentTime < event.startDate) // Or if no endDate, keep if the event hasn't started yet
+//         );
+        
+//         if (eventData.length === 0) {
+//           throw new Error("No upcoming events found.");
+//         }
+  
+//       eventData.sort((a, b) => a.startDate - b.startDate);
+
+//    // Save or update each event in Firestore
+//   for (const event of eventData) {
+//     const q = query(collection(FIRESTORE_DB, "events"), where("item", "==", event.item));
+//     const querySnapshot = await getDocs(q);
+
+//     if (querySnapshot.empty) {
+//       // Event does not exist, add it
+//       await addDoc(collection(FIRESTORE_DB, "events"), {
+//         ...event,
+//         isNew: true,
+//         imageUrl: '' // Initialize with empty string
+//       });
+//     } else {
+//       // Event exists, update it
+//       querySnapshot.forEach(async (docSnapshot) => {
+//         const existingEvent = docSnapshot.data();
+//         const eventDoc = doc(FIRESTORE_DB, "events", docSnapshot.id);
+//         await updateDoc(eventDoc, {
+//           ...event,
+//           isNew: false,
+//           imageUrl: existingEvent.imageUrl || '' // Preserve existing imageUrl if any
+//         });
+//       });
+//     }
+//   }
+
+//   // Fetch all events from Firestore to include manually added imageUrls
+//   const eventsSnapshot = await getDocs(collection(FIRESTORE_DB, "events"));
+//   const updatedEvents = eventsSnapshot.docs.map(doc => ({
+//     id: doc.id,
+//     ...doc.data()
+//   }));
+
+//   // Schedule event notifications
+//   updatedEvents.forEach((event) => {
+//     if (Platform.OS !== "web") {
+//       scheduleNotification(event);
+//     }
+//   });
+
+//   setEvents(updatedEvents);
+//   setLoading(false);
+// } catch (error) {
+//   console.error("Error fetching events: ", error.message);
+//   setError("Failed to retrieve signed-up activities. Please try again later.");
+//   setLoading(false);
+// }
+//   }
+async function fetchEventsAndSaveToFirestore(userName) {
+  try {
+    const response = await axios.get(
+      "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
+    );
+
+    const currentTime = new Date();
+
+    const eventData = response.data.data.signup
+      .filter((item) => item.firstname === userName)
+      .map((item) => {
+        // Parse dates carefully, considering AM/PM
+        let startDate, endDate;
+        try {
+          // Assuming the API returns time in 12-hour format with AM/PM indicator
+          startDate = moment.tz(item.startdatestring.replace(/-/g, "T"), "YYYY/MM/DD HH:mm", "").toDate();
+          endDate = item.enddatestring
+            ? moment.tz(item.enddatestring.replace(/-/g, "T"), "YYYY/MM/DD HH:mm:ss", "").toDate()
+            : undefined;
+          
+          
+
+          // Log parsed dates for debugging
+          console.log(`Parsed startDate: ${startDate}, endDate: ${endDate}`);
+        } catch (error) {
+          console.error("Error parsing date for item:", item, error);
+          // Set to current date if parsing fails, to avoid breaking the app
+          startDate = new Date();
+          endDate = new Date();
+        }
+
+        return {
+          item: item.item,
+          startDate,
+          endDate,
           zoomLink:
             item.location === "Zoom Meeting"
               ? `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
               : null,
-             
-              
-        }))
-        
-        .filter(
-          (event) =>
-            (event.endDate && currentTime < event.endDate) || // Keep if the current time is before the event's end date
-            (!event.endDate && currentTime < event.startDate) // Or if no endDate, keep if the event hasn't started yet
-        );
-        
-        if (eventData.length === 0) {
-          throw new Error("No upcoming events found.");
-        }
-  
-      eventData.sort((a, b) => a.startDate - b.startDate);
+        };
+      })
+      .filter(
+        (event) =>
+          (event.endDate && currentTime < event.endDate) ||
+          (!event.endDate && currentTime < event.startDate)
+      );
 
-   // Save or update each event in Firestore
-  for (const event of eventData) {
-    const q = query(collection(FIRESTORE_DB, "events"), where("item", "==", event.item));
-    const querySnapshot = await getDocs(q);
+    if (eventData.length === 0) {
+      throw new Error("No upcoming events found.");
+    }
 
-    if (querySnapshot.empty) {
-      // Event does not exist, add it
-      await addDoc(collection(FIRESTORE_DB, "events"), {
-        ...event,
-        isNew: true,
-        imageUrl: '' // Initialize with empty string
-      });
-    } else {
-      // Event exists, update it
-      querySnapshot.forEach(async (docSnapshot) => {
-        const existingEvent = docSnapshot.data();
-        const eventDoc = doc(FIRESTORE_DB, "events", docSnapshot.id);
-        await updateDoc(eventDoc, {
+    eventData.sort((a, b) => a.startDate - b.startDate);
+
+    // Save or update each event in Firestore
+    for (const event of eventData) {
+      const q = query(collection(FIRESTORE_DB, "events"), where("item", "==", event.item));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        // Event does not exist, add it
+        await addDoc(collection(FIRESTORE_DB, "events"), {
           ...event,
-          isNew: false,
-          imageUrl: existingEvent.imageUrl || '' // Preserve existing imageUrl if any
+          isNew: true,
+          imageUrl: '' // Initialize with empty string
         });
-      });
+      } else {
+        // Event exists, update it
+        querySnapshot.forEach(async (docSnapshot) => {
+          const existingEvent = docSnapshot.data();
+          const eventDoc = doc(FIRESTORE_DB, "events", docSnapshot.id);
+          await updateDoc(eventDoc, {
+            ...event,
+            isNew: false,
+            imageUrl: existingEvent.imageUrl || '' // Preserve existing imageUrl if any
+          });
+        });
+      }
     }
+
+    // Fetch all events from Firestore to include manually added imageUrls
+    const eventsSnapshot = await getDocs(collection(FIRESTORE_DB, "events"));
+    const updatedEvents = eventsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      // Ensure dates are properly converted back to Date objects
+      startDate: doc.data().startDate.toDate(),
+      endDate: doc.data().endDate ? doc.data().endDate.toDate() : undefined
+    }));
+
+    // Schedule event notifications
+    updatedEvents.forEach((event) => {
+      if (Platform.OS !== "web") {
+        scheduleNotification(event);
+      }
+    });
+
+    setEvents(updatedEvents);
+    setLoading(false);
+  } catch (error) {
+    console.error("Error fetching events: ", error.message);
+    setError("Failed to retrieve signed-up activities. Please try again later.");
+    setLoading(false);
   }
-
-  // Fetch all events from Firestore to include manually added imageUrls
-  const eventsSnapshot = await getDocs(collection(FIRESTORE_DB, "events"));
-  const updatedEvents = eventsSnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
-
-  // Schedule event notifications
-  updatedEvents.forEach((event) => {
-    if (Platform.OS !== "web") {
-      scheduleNotification(event);
-    }
-  });
-
-  setEvents(updatedEvents);
-  setLoading(false);
-} catch (error) {
-  console.error("Error fetching events: ", error.message);
-  setError("Failed to retrieve signed-up activities. Please try again later.");
-  setLoading(false);
 }
-  }
   // async function fetchEvents(userName) {
   //   try {
   //     const response = await axios.get(
