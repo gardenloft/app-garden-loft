@@ -30,7 +30,7 @@ import { useRouter } from "expo-router";
 import * as Notifications from "expo-notifications"; // Import for notifications
 import { callUser } from "../app/VideoSDK2"; // Import from VideoCall
 import { getDownloadURL, ref } from "firebase/storage"; // Firebase Storage methods
-import TextComponent from "./Text";
+import TextComponent from "./Text.js";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -56,24 +56,7 @@ const GLClub = () => {
   const [showMoreDetails, setShowMoreDetails] = useState(false); // Control for showing more details
   const [threeDotsVisible, setThreeDotsVisible] = useState(false); // Control for the three-dot modal
   const [isExpanded, setIsExpanded] = useState(false); // State to track if the box is expanded
-  // Add these states to manage the hobbies and clubs display
-  const [showFullHobbies, setShowFullHobbies] = useState(false);
-  const [chatModalVisible, setChatModalVisible] = useState(false); // For chat modal
-  const [showFullClubs, setShowFullClubs] = useState(false);
-
-  const toggleHobbies = () => setShowFullHobbies(!showFullHobbies);
-  const toggleClubs = () => setShowFullClubs(!showFullClubs);
-
-  //Showing full or half Modal Info
-  // const [showFullInfo, setShowFullInfo] = useState(false);
-
-  // const handleReadMore = () => {
-  //   setShowFullInfo(true);
-  // };
-
-  // const handleReadLess = () => {
-  //   setShowFullInfo(false);
-  // };
+  const [chatModalVisible, setChatModalVisible] = useState(false); //For Chat Modal
 
   const carouselRef = useRef(null);
   const notificationListenerRef = useRef(null); // Ref for the notification listener
@@ -102,28 +85,7 @@ const GLClub = () => {
           const data = doc.data();
           let imageUrl =
             data.imageUrl || defaultImage[data.userName] || defaultImage.john; // Using the direct URL if available
-      const fetchedContacts = querySnapshot.docs
-        .map((doc) => {
-          const data = doc.data();
-          let imageUrl =
-            data.imageUrl || defaultImage[data.userName] || defaultImage.john; // Using the direct URL if available
 
-          return {
-            id: doc.id,
-            uid: data.uid,
-            name: data.userName || "Unknown User",
-            city: data.city || "Calgary",
-            hobbies: data.hobbies
-              ? data.hobbies.split(", ")
-              : ["Reading", "Painting"], // Split hobbies into an array
-            clubs: data.clubs ? data.clubs.split(", ") : ["Book", "Knitting"],
-            meetingId: data.meetingId || "",
-            imageUrl: data.imageUrl, // Direct URL from Firestore
-          };
-        })
-        .filter(
-          (contact) => contact.uid !== user.uid // Filter out the logged-in user and null users
-        );
           return {
             id: doc.id,
             uid: data.uid,
@@ -560,38 +522,39 @@ const GLClub = () => {
                     flexDirection:
                       SCREEN_WIDTH > SCREEN_HEIGHT ? "row" : "column",
                   },
-                ]}
-              >
+                ]}>
                 <Pressable
                   style={styles.closeButton}
                   onPress={() => setModalVisible(false)}>
                   <FontAwesome name="close" size={30} color="black" />
                 </Pressable>
                 <View style={styles.modalImageButtons}>
-                <View style={styles.modalImageContainer}>
-                  <Image
-                    source={{ uri: selectedContact.imageUrl }}
-                    style={[
-                      styles.modalImage,
-                      {
-                        width: SCREEN_WIDTH > SCREEN_HEIGHT ? 400 : 350,
-                        height: SCREEN_WIDTH > SCREEN_HEIGHT ? 650 : 400,
-                        marginTop: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : 20,
-                      },
-                    ]}
-                  />
-</View>
+                  <View style={styles.modalImageContainer}>
+                    <Image
+                      source={{ uri: selectedContact.imageUrl }}
+                      style={[
+                        styles.modalImage,
+                        {
+                          width: SCREEN_WIDTH > SCREEN_HEIGHT ? 400 : 350,
+                          height: SCREEN_WIDTH > SCREEN_HEIGHT ? 650 : 400,
+                          marginTop: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : 20,
+                        },
+                      ]}
+                    />
+                  </View>
                   {/* <View
                     style={[
                       styles.actionContainer,
                       {
                         marginLeft: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : -30,
                       },
-                    ]}>
+                    ]}
+                  >
                     {!friendRequests[selectedContact.id] && (
                       <Pressable
                         onPress={() => handleAddFriend(selectedContact)}
-                        style={styles.actionButton}>
+                        style={styles.actionButton}
+                      >
                         <FontAwesome
                           name="user-plus"
                           size={24}
@@ -703,23 +666,19 @@ const GLClub = () => {
                     {
                       marginTop: SCREEN_WIDTH > SCREEN_HEIGHT ? -30 : -100,
                     },
-                  ]}
-                >
-                                    <View
+                  ]}>
+                  <View
                     style={[
                       styles.actionContainer,
                       {
                         marginLeft: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : -250,
                         marginTop: SCREEN_WIDTH > SCREEN_HEIGHT ? -220 : 120,
-
                       },
-                    ]}
-                  >
+                    ]}>
                     {!friendRequests[selectedContact.id] && (
                       <Pressable
                         onPress={() => handleAddFriend(selectedContact)}
-                        style={styles.actionButton}
-                      >
+                        style={styles.actionButton}>
                         <FontAwesome
                           name="user-plus"
                           size={24}
@@ -727,8 +686,10 @@ const GLClub = () => {
                           style={styles.modalIcon}
                         />
                         <Text
-                          style={[styles.actionButtonText, styles.unFriendText]}
-                        >
+                          style={[
+                            styles.actionButtonText,
+                            styles.unFriendText,
+                          ]}>
                           Add Friend
                         </Text>
                       </Pressable>
@@ -750,8 +711,7 @@ const GLClub = () => {
                               style={[
                                 styles.actionButtonText,
                                 styles.unFriendText,
-                              ]}
-                            >
+                              ]}>
                               Accept
                             </Text>
                           </Pressable>
@@ -768,8 +728,7 @@ const GLClub = () => {
                               style={[
                                 styles.actionButtonText,
                                 styles.unFriendText,
-                              ]}
-                            >
+                              ]}>
                               Decline
                             </Text>
                           </Pressable>
@@ -794,23 +753,25 @@ const GLClub = () => {
                             {
                               marginLeft: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : 30,
                             },
-                          ]}
-                        >
+                          ]}>
                           <FontAwesome
                             name="video-camera"
                             size={35}
                             color="white"
                             style={styles.modalIcon}
                           />
-
                           <Text style={[styles.actionButtonText]}>Call</Text>
                         </Pressable>
                         <Pressable
-                          onPress={() => handleCall(selectedContact.id)}
-                          style={[styles.actionButton, , styles.callButton, {
-                            backgroundColor: "#0266E0",
-                          }]}
-                        >
+                          onPress={handleChatPress}
+                          style={[
+                            styles.actionButton,
+                            ,
+                            styles.messageButton,
+                            {
+                              backgroundColor: "#0266E0",
+                            },
+                          ]}>
                           <FontAwesome
                             name="comment"
                             size={35}
@@ -818,189 +779,6 @@ const GLClub = () => {
                             style={styles.modalIcon}
                           />
                           <Text style={[styles.actionButtonText]}>Message</Text>
-                        </Pressable>
-                        <Pressable
-                        onPress={toggleThreeDots}
-                        style={[styles.threeDotsButton]}
-                      >
-                      <Text style={[styles.actionButtonText, {
-                        fontSize: 50,
-                      }]}>:</Text>
-                      </Pressable>
-                      </>
-                    )}
-                  </View>
-                  {threeDotsVisible && (
-                        <View style={[styles.threeDotsMenu,{
-                          right: SCREEN_WIDTH > SCREEN_HEIGHT ? 20 : -250,
-                        }]}>
-                           {friendRequests[selectedContact.id]?.status ===
-                         "accepted" && (
-                         <Pressable
-                           onPress={() => handleUnfriend(selectedContact)}
-                           style={[
-                             styles.actionButton,
-                             styles.unFriendButton,
-                           ]}
-                         >
-                           <FontAwesome
-                             name="user-times"
-                             size={35}
-                             color="red"
-                             style={styles.modalIcon}
-                           />
-                           <Text
-                             style={[
-                               styles.actionButtonText,
-                               styles.unFriendText,
-                             ]}
-                           >
-                             Unfriend
-                           </Text>
-                         </Pressable>
-                       )}
-                        </View>
-                  )}
-                  <Text style={[styles.modalName, {
-                      top: SCREEN_WIDTH > SCREEN_HEIGHT ? -75 : 250,
-                      marginLeft: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : -140,
-                  }]}>
-                    {selectedContact.name}
-                  </Text>
-
-                  {/* {!showMoreDetails ? (
-                    // Show "Read More" if the additional details are not visible
-                    <Pressable onPress={() => setShowMoreDetails(true)}>
-                      <Text style={styles.readMoreText}>Read More</Text>
-                    </Pressable>
-                  ) : ( */}
-                     {/* // Show more details when "Read More" is clicked */}
-                     <View style={[styles.moreDetailsContainer, isExpanded && [styles.moreDetailsContainerExpanded,{
-                     
-                        
-                          height: SCREEN_WIDTH > SCREEN_HEIGHT ? SCREEN_HEIGHT * 0.35 : SCREEN_HEIGHT * 0.23, // Dynamic height based on screen orientation
-                        },
-                      ], {
-                      top: SCREEN_WIDTH > SCREEN_HEIGHT ? 10 : 350,
-                      marginLeft: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : -200,
-
-                      alignItems: SCREEN_WIDTH > SCREEN_HEIGHT ? "left" : "center",
-                      justifyContent: SCREEN_WIDTH > SCREEN_HEIGHT ? "left" : "center",
-                     }]}>
-                     <ScrollView style={styles.scrollableDetails}
-                     showsVerticalScrollIndicator={true}
-                     persistentScrollbar={true}  >
-                       <Text
-                         style={[
-                           styles.modalText,
-                           {
-                             alignSelf:
-                               SCREEN_WIDTH > SCREEN_HEIGHT
-                                 ? "left "
-                                 : "center",
-                           },
-                         ]}
-                       >
-                         City: {selectedContact.city}
-                       </Text>
-
-                       <View style={styles.interestContainer}>
-                         <Text style={[styles.modalInterestsTitle, {
-                           alignSelf:
-                           SCREEN_WIDTH > SCREEN_HEIGHT
-                             ? "left "
-                             : "center",
-                         }]}>
-                           Interests:
-                         </Text>
-                         {selectedContact.hobbies.map((hobby, index) => (
-                           <Text key={index} style={[styles.modalInterests,{
-                            alignSelf:
-                            SCREEN_WIDTH > SCREEN_HEIGHT
-                              ? "left "
-                              : "center",
-                           }]}>
-                             - {hobby}
-                           </Text>
-                         ))}
-                       </View>
-
-                       <View style={styles.hobbyContainer}>
-                         <Text style={[styles.modalInterestsTitle, {
-                           alignSelf:
-                           SCREEN_WIDTH > SCREEN_HEIGHT
-                             ? "left "
-                             : "center",
-                         }]}>Clubs:</Text>
-                         {selectedContact.clubs.map((club, index) => (
-                           <Text key={index} style={[styles.modalInterests,
-                            {
-                              alignSelf:
-                              SCREEN_WIDTH > SCREEN_HEIGHT
-                                ? "left "
-                                : "center",
-                            }
-                           ]}>
-                             - {club}
-                           </Text>
-                         ))}
-                       </View>
-
-                       {/* {friendRequests[selectedContact.id]?.status ===
-                         "accepted" && (
-                         <Pressable
-                           onPress={() => handleUnfriend(selectedContact)}
-                           style={[
-                             styles.actionButton,
-                             styles.unFriendButton,
-                           ]}
-                         >
-                           <FontAwesome
-                             name="user-times"
-                             size={35}
-                             color="red"
-                             style={styles.modalIcon}
-                           />
-                           <Text
-                             style={[
-                               styles.actionButtonText,
-                               styles.unFriendText,
-                             ]}
-                           >
-                             Unfriend
-                           </Text>
-                         </Pressable>
-                       )} */}
-                     </ScrollView>
-                     <Pressable onPress={() => setIsExpanded(!isExpanded)}>
-                  <Text style={styles.readMoreText}>
-                    {isExpanded ? 'Show Less' : 'Read More'}
-                  </Text>
-                </Pressable>
-              </View>
-
-                     {/* Show "Show Less" option to hide the details */}
-                     {/* <Pressable onPress={() => setShowMoreDetails(false)}>
-                       <Text style={styles.readMoreText}>Show Less</Text>
-                     </Pressable> */}
-                   {/* </View> */}
-                 {/* )} */}
-               </View>
-             </ScrollView>
-           </View>
-         </Modal>
-                        </Pressable> */}
-                        {/* Message Button */}
-                        <Pressable
-                          onPress={handleChatPress} // Trigger chat modal
-                          style={[styles.actionButton, styles.messageButton]}>
-                          <FontAwesome
-                            name="comment"
-                            size={35}
-                            color="white"
-                            style={styles.modalIcon}
-                          />
-                          <Text style={styles.actionButtonText}>Message</Text>
                         </Pressable>
 
                         {/* Modal for Chat Component */}
@@ -1030,8 +808,34 @@ const GLClub = () => {
                         )}
 
                         <Pressable
+                          onPress={toggleThreeDots}
+                          style={[styles.threeDotsButton]}>
+                          <Text
+                            style={[
+                              styles.actionButtonText,
+                              {
+                                fontSize: 50,
+                              },
+                            ]}>
+                            :
+                          </Text>
+                        </Pressable>
+                      </>
+                    )}
+                  </View>
+                  {threeDotsVisible && (
+                    <View
+                      style={[
+                        styles.threeDotsMenu,
+                        {
+                          right: SCREEN_WIDTH > SCREEN_HEIGHT ? 20 : -250,
+                        },
+                      ]}>
+                      {friendRequests[selectedContact.id]?.status ===
+                        "accepted" && (
+                        <Pressable
                           onPress={() => handleUnfriend(selectedContact)}
-                          style={styles.actionButton}>
+                          style={[styles.actionButton, styles.unFriendButton]}>
                           <FontAwesome
                             name="user-times"
                             size={35}
@@ -1046,94 +850,78 @@ const GLClub = () => {
                             Unfriend
                           </Text>
                         </Pressable>
-                      </>
-                    )}
-                  </View>
-                </View>
-                <View
-                  style={[
-                    styles.modalInfoContainer,
-                    {
-                      marginTop: SCREEN_WIDTH > SCREEN_HEIGHT ? 200 : -100,
-                    },
-                  ]}>
-                  <Text style={[styles.modalName, {}]}>
-                    {selectedContact.name}
-                  </Text>
+                      )}
+                    </View>
+                  )}
                   <Text
                     style={[
-                      styles.modalText,
+                      styles.modalName,
                       {
-                        alignSelf:
-                          SCREEN_WIDTH > SCREEN_HEIGHT ? "left " : "center",
+                        top: SCREEN_WIDTH > SCREEN_HEIGHT ? -75 : 250,
+                        marginLeft: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : -140,
                       },
                     ]}>
-                    City: {selectedContact.city}
+                    {selectedContact.name}
                   </Text>
+
+                  {/* {!showMoreDetails ? (
+                    // Show "Read More" if the additional details are not visible
+                    <Pressable onPress={() => setShowMoreDetails(true)}>
+                      <Text style={styles.readMoreText}>Read More</Text>
+                    </Pressable>
+                  ) : ( */}
+                  {/* // Show more details when "Read More" is clicked */}
                   <View
                     style={[
-                      styles.interestHobbyContainer,
+                      styles.moreDetailsContainer,
+                      isExpanded && [
+                        styles.moreDetailsContainerExpanded,
+                        {
+                          height:
+                            SCREEN_WIDTH > SCREEN_HEIGHT
+                              ? SCREEN_HEIGHT * 0.35
+                              : SCREEN_HEIGHT * 0.23, // Dynamic height based on screen orientation
+                        },
+                      ],
                       {
-                        // flexDirection: SCREEN_WIDTH > SCREEN_HEIGHT ? "column" : "row",
-                        // gap: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : 50,
-                        // width: SCREEN_WIDTH * 0.8,
-                        // justifyContent: "space-evenly"
+                        top: SCREEN_WIDTH > SCREEN_HEIGHT ? 10 : 350,
+                        marginLeft: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : -200,
+
+                        alignItems:
+                          SCREEN_WIDTH > SCREEN_HEIGHT ? "left" : "center",
+                        justifyContent:
+                          SCREEN_WIDTH > SCREEN_HEIGHT ? "left" : "center",
                       },
                     ]}>
-                    <View style={styles.interestContainer}>
+                    <ScrollView
+                      style={styles.scrollableDetails}
+                      showsVerticalScrollIndicator={true}
+                      persistentScrollbar={true}>
                       <Text
                         style={[
-                          styles.modalInterestsTitle,
+                          styles.modalText,
                           {
                             alignSelf:
                               SCREEN_WIDTH > SCREEN_HEIGHT ? "left " : "center",
                           },
                         ]}>
-                        Interests:
+                        City: {selectedContact.city}
                       </Text>
-                      {/* {selectedContact.hobbies.map((hobby, index) => (
-                    <Text key={index} style={styles.modalInterests}>
-                      - {hobby}
-                    </Text>
-                  ))} */}
 
-                      {/* This is code to show half full info */}
-                      {/* {selectedContact.hobbies
-                  .slice(0, showFullInfo ? selectedContact.hobbies.length : 2)
-                  .map((hobby, index) => (
-                    <Text key={index} style={styles.modalInterests}>
-                      - {hobby}
-                    </Text>
-                  ))}
-
-                {selectedContact.hobbies.length > 2 && !showFullInfo && (
-                  <Pressable onPress={handleReadMore}>
-                    <Text style={styles.readMoreText}>Read more...</Text>
-                  </Pressable>
-                )}
-
-                {showFullInfo && (
-                  <>
-                    <Text style={styles.modalInterestsTitle}>Clubs:</Text>
-                    {selectedContact.clubs.map((club, index) => (
-                      <Text key={index} style={styles.modalInterests}>
-                        - {club}
-                      </Text>
-                    ))}
-
-                    <Pressable onPress={handleReadLess}>
-                      <Text style={styles.readMoreText}>Show less</Text>
-                    </Pressable>
-                  </>
-                )} */}
-
-                      {/* This is code for showing individual "Read More" */}
-                      {selectedContact.hobbies
-                        .slice(
-                          0,
-                          showFullHobbies ? selectedContact.hobbies.length : 2
-                        )
-                        .map((hobby, index) => (
+                      <View style={styles.interestContainer}>
+                        <Text
+                          style={[
+                            styles.modalInterestsTitle,
+                            {
+                              alignSelf:
+                                SCREEN_WIDTH > SCREEN_HEIGHT
+                                  ? "left "
+                                  : "center",
+                            },
+                          ]}>
+                          Interests:
+                        </Text>
+                        {selectedContact.hobbies.map((hobby, index) => (
                           <Text
                             key={index}
                             style={[
@@ -1142,55 +930,83 @@ const GLClub = () => {
                                 alignSelf:
                                   SCREEN_WIDTH > SCREEN_HEIGHT
                                     ? "left "
-                                    : "left",
+                                    : "center",
                               },
                             ]}>
                             - {hobby}
                           </Text>
                         ))}
-                      {selectedContact.hobbies.length > 2 && (
-                        <Pressable onPress={toggleHobbies}>
-                          <Text style={styles.readMoreText}>
-                            {showFullHobbies ? "Show less" : ". . . Read more"}
-                          </Text>
-                        </Pressable>
-                      )}
-                    </View>
-                    <View style={styles.hobbyContainer}>
-                      <Text
-                        style={[
-                          styles.modalInterestsTitle,
-                          {
-                            alignSelf:
-                              SCREEN_WIDTH > SCREEN_HEIGHT ? "left " : "center",
-                          },
-                        ]}>
-                        Clubs:
-                      </Text>
-                      {/* {selectedContact.clubs.map((club, index) => (
-                    <Text key={index} style={styles.modalInterests}>
-                      - {club}
-                    </Text>
-                  ))} */}
-                      {selectedContact.clubs
-                        .slice(
-                          0,
-                          showFullClubs ? selectedContact.clubs.length : 2
-                        )
-                        .map((club, index) => (
-                          <Text key={index} style={styles.modalInterests}>
+                      </View>
+
+                      <View style={styles.hobbyContainer}>
+                        <Text
+                          style={[
+                            styles.modalInterestsTitle,
+                            {
+                              alignSelf:
+                                SCREEN_WIDTH > SCREEN_HEIGHT
+                                  ? "left "
+                                  : "center",
+                            },
+                          ]}>
+                          Clubs:
+                        </Text>
+                        {selectedContact.clubs.map((club, index) => (
+                          <Text
+                            key={index}
+                            style={[
+                              styles.modalInterests,
+                              {
+                                alignSelf:
+                                  SCREEN_WIDTH > SCREEN_HEIGHT
+                                    ? "left "
+                                    : "center",
+                              },
+                            ]}>
                             - {club}
                           </Text>
                         ))}
-                      {selectedContact.clubs.length > 2 && (
-                        <Pressable onPress={toggleClubs}>
-                          <Text style={styles.readMoreText}>
-                            {showFullClubs ? "Show less" : ". . . Read more"}
-                          </Text>
-                        </Pressable>
-                      )}
-                    </View>
+                      </View>
+
+                      {/* {friendRequests[selectedContact.id]?.status ===
+                         "accepted" && (
+                         <Pressable
+                           onPress={() => handleUnfriend(selectedContact)}
+                           style={[
+                             styles.actionButton,
+                             styles.unFriendButton,
+                           ]}
+                         >
+                           <FontAwesome
+                             name="user-times"
+                             size={35}
+                             color="red"
+                             style={styles.modalIcon}
+                           />
+                           <Text
+                             style={[
+                               styles.actionButtonText,
+                               styles.unFriendText,
+                             ]}
+                           >
+                             Unfriend
+                           </Text>
+                         </Pressable>
+                       )} */}
+                    </ScrollView>
+                    <Pressable onPress={() => setIsExpanded(!isExpanded)}>
+                      <Text style={styles.readMoreText}>
+                        {isExpanded ? "Show Less" : "Read More"}
+                      </Text>
+                    </Pressable>
                   </View>
+
+                  {/* Show "Show Less" option to hide the details */}
+                  {/* <Pressable onPress={() => setShowMoreDetails(false)}>
+                       <Text style={styles.readMoreText}>Show Less</Text>
+                     </Pressable> */}
+                  {/* </View> */}
+                  {/* )} */}
                 </View>
               </ScrollView>
             </View>
@@ -1374,7 +1190,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#333",
     marginBottom: 5,
-    position: 'absolute',
+    position: "absolute",
     zIndex: 10, // Keep it above other content
   },
   modalText: {
@@ -1405,9 +1221,8 @@ const styles = StyleSheet.create({
     // marginTop: -220,
     // marginLeft: 30,
     height: "20%",
-    position: 'absolute',
+    position: "absolute",
     zIndex: 10, // Keep it above other content
-  
   },
   actionButton: {
     flexDirection: "column",
@@ -1450,8 +1265,6 @@ const styles = StyleSheet.create({
   readMoreText: {
     fontSize: 23,
     color: "#0EC2E9",
-  
-
   },
   closeButton: {
     position: "absolute",
@@ -1460,7 +1273,7 @@ const styles = StyleSheet.create({
     backgroundColor: "lightblue",
     padding: 13,
     borderRadius: 5,
-  zIndex: 1,
+    zIndex: 1,
   },
   closeButtonText: {
     fontSize: 35,
@@ -1484,26 +1297,24 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   scrollableDetails: {
-     height: SCREEN_HEIGHT * 0.40,
-     width: SCREEN_WIDTH * 0.45,
-  
+    height: SCREEN_HEIGHT * 0.4,
+    width: SCREEN_WIDTH * 0.45,
   },
   moreDetailsContainer: {
     position: "absolute",
     height: 30, // Initially collapsed
-    overflow: 'hidden', // Ensure the content is hidden when not expanded
-    transition: 'height 2s ease', // Smooth transition for height change
+    overflow: "hidden", // Ensure the content is hidden when not expanded
+    transition: "height 2s ease", // Smooth transition for height change
   },
   moreDetailsContainerExpanded: {
     height: SCREEN_HEIGHT * 0.35, // Expand downwards to desired height
-    overflow: 'visible', // Allow content to be shown
-
+    overflow: "visible", // Allow content to be shown
   },
   threeDotsButton: {
     backgroundColor: "grey",
     marginTop: 0,
     width: 45,
-    height:90,
+    height: 90,
     borderRadius: 30,
     paddingVertical: SCREEN_HEIGHT * 0.015,
     alignItems: "center",
@@ -1521,7 +1332,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 2, height: 4 },
     shadowOpacity: 0.7,
     shadowRadius: 4,
-    zIndex:100,
+    zIndex: 100,
   },
 });
 
