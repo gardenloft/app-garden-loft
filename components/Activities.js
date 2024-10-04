@@ -845,6 +845,7 @@ async function fetchEventsAndSaveToFirestore(userName) {
           zoomLink:
             item.location === "Zoom Meeting"
               ? `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
+              
               : null,
         };
       })
