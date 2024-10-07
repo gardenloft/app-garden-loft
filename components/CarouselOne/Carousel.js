@@ -39,7 +39,7 @@ const data = [
   // },
   {
     id: 3,
-    title: "ENTERTAINMENT",
+    title: "MY ENTERTAINMENT",
     icon: "movie-open-star",
     component: <Entertainment />,
     prompt: "Watch Entertainment?",
@@ -73,7 +73,7 @@ const data = [
   // },
   {
     id: 5,
-    title: "ACTIVITIES",
+    title: "MY ACTIVITIES",
     icon: "weight-lifter",
     component: <Activities2 />,
     prompt: "Join an Activity?",
@@ -101,7 +101,7 @@ const data = [
   },
   {
     id: 8,
-    title: "CALENDAR",
+    title: "MY CALENDAR",
     icon: "calendar-month",
     component: <ComingSoon/>,
     prompt: "See What's Coming Up?",
@@ -295,6 +295,10 @@ const styles = StyleSheet.create({
     fontSize: 19,
     fontWeight: "bold",
     color: "#f3b718",
+    alignItems: "center",
+    alignContent: "center",
+    justifyContent: "center",
+    alignSelf: "center",
   },
   arrowLeft: {
     position: "absolute",

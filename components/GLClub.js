@@ -31,6 +31,7 @@ import * as Notifications from "expo-notifications"; // Import for notifications
 import { callUser } from "../app/VideoSDK2"; // Import from VideoCall
 import { getDownloadURL, ref } from "firebase/storage"; // Firebase Storage methods
 import TextComponent from "./Text.js";
+import ComingSoon from "./ComingSoon";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -542,123 +543,6 @@ const GLClub = () => {
                       ]}
                     />
                   </View>
-                  {/* <View
-                    style={[
-                      styles.actionContainer,
-                      {
-                        marginLeft: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : -30,
-                      },
-                    ]}
-                  >
-                    {!friendRequests[selectedContact.id] && (
-                      <Pressable
-                        onPress={() => handleAddFriend(selectedContact)}
-                        style={styles.actionButton}
-                      >
-                        <FontAwesome
-                          name="user-plus"
-                          size={24}
-                          color="#4169E1"
-                          style={styles.modalIcon}
-                        />
-                        <Text
-                          style={[styles.actionButtonText, styles.unFriendText]}
-                        >
-                          Add Friend
-                        </Text>
-                      </Pressable>
-                    )}
-                    {friendRequests[selectedContact.id]?.role === "receiver" &&
-                      friendRequests[selectedContact.id].status ===
-                        "pending" && (
-                        <>
-                          <Pressable
-                            onPress={() => handleAcceptFriend(selectedContact)}
-                            style={styles.actionButton}
-                          >
-                            <FontAwesome
-                              name="check-circle"
-                              size={35}
-                              color="green"
-                              style={styles.modalIcon}
-                            />
-                            <Text
-                              style={[
-                                styles.actionButtonText,
-                                styles.unFriendText,
-                              ]}
-                            >
-                              Accept
-                            </Text>
-                          </Pressable>
-                          <Pressable
-                            onPress={() => handleDeclineFriend(selectedContact)}
-                            style={styles.actionButton}
-                          >
-                            <FontAwesome
-                              name="times-circle"
-                              size={35}
-                              color="red"
-                              style={styles.modalIcon}
-                            />
-                            <Text
-                              style={[
-                                styles.actionButtonText,
-                                styles.unFriendText,
-                              ]}
-                            >
-                              Decline
-                            </Text>
-                          </Pressable>
-                        </>
-                      )}
-                    {friendRequests[selectedContact.id]?.role === "sender" &&
-                      friendRequests[selectedContact.id].status ===
-                        "pending" && (
-                        <Text style={styles.pendingText}>
-                          Friend request sent
-                        </Text>
-                      )}
-                    {friendRequests[selectedContact.id]?.status ===
-                      "accepted" && (
-                      <>
-                        <Pressable
-                          onPress={() => handleCall(selectedContact.id)}
-                          style={[
-                            styles.actionButton,
-                            ,
-                            styles.callButton,
-                            {
-                              marginLeft: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : 30,
-                            },
-                          ]}
-                        >
-                          <FontAwesome
-                            name="video-camera"
-                            size={35}
-                            color="white"
-                            style={styles.modalIcon}
-                          />
-                          <Text style={[styles.actionButtonText]}>Call</Text>
-                        </Pressable>
-                        <Pressable
-                          onPress={() => handleCall(selectedContact.id)}
-                          style={[styles.actionButton, , styles.callButton, {
-                            backgroundColor: "#0266E0",
-                          }]}
-                        >
-                          <FontAwesome
-                            name="comment"
-                            size={35}
-                            color="white"
-                            style={styles.modalIcon}
-                          />
-                          <Text style={[styles.actionButtonText]}>Message</Text>
-                        </Pressable>
-                      
-                      </>
-                    )}
-                  </View> */}
                 </View>
                 <View
                   style={[
@@ -786,7 +670,7 @@ const GLClub = () => {
                           <Modal
                             visible={chatModalVisible}
                             animationType="slide"
-                            transparent={false}
+                            transparent={true}
                             onRequestClose={closeChatModal}>
                             <SafeAreaView style={styles.chatContainer}>
                               <Pressable
@@ -798,11 +682,13 @@ const GLClub = () => {
                                   color="black"
                                 />
                               </Pressable>
-                              <TextComponent
+                              <ComingSoon />
+                              {/* below id the Text Component */}
+                              {/* <TextComponent
                                 friendId={selectedContact.id}
                                 friendName={selectedContact.name}
                                 currentUser={user}
-                              />
+                              /> */}
                             </SafeAreaView>
                           </Modal>
                         )}
@@ -863,14 +749,6 @@ const GLClub = () => {
                     ]}>
                     {selectedContact.name}
                   </Text>
-
-                  {/* {!showMoreDetails ? (
-                    // Show "Read More" if the additional details are not visible
-                    <Pressable onPress={() => setShowMoreDetails(true)}>
-                      <Text style={styles.readMoreText}>Read More</Text>
-                    </Pressable>
-                  ) : ( */}
-                  {/* // Show more details when "Read More" is clicked */}
                   <View
                     style={[
                       styles.moreDetailsContainer,
@@ -967,32 +845,6 @@ const GLClub = () => {
                           </Text>
                         ))}
                       </View>
-
-                      {/* {friendRequests[selectedContact.id]?.status ===
-                         "accepted" && (
-                         <Pressable
-                           onPress={() => handleUnfriend(selectedContact)}
-                           style={[
-                             styles.actionButton,
-                             styles.unFriendButton,
-                           ]}
-                         >
-                           <FontAwesome
-                             name="user-times"
-                             size={35}
-                             color="red"
-                             style={styles.modalIcon}
-                           />
-                           <Text
-                             style={[
-                               styles.actionButtonText,
-                               styles.unFriendText,
-                             ]}
-                           >
-                             Unfriend
-                           </Text>
-                         </Pressable>
-                       )} */}
                     </ScrollView>
                     <Pressable onPress={() => setIsExpanded(!isExpanded)}>
                       <Text style={styles.readMoreText}>
@@ -1000,13 +852,6 @@ const GLClub = () => {
                       </Text>
                     </Pressable>
                   </View>
-
-                  {/* Show "Show Less" option to hide the details */}
-                  {/* <Pressable onPress={() => setShowMoreDetails(false)}>
-                       <Text style={styles.readMoreText}>Show Less</Text>
-                     </Pressable> */}
-                  {/* </View> */}
-                  {/* )} */}
                 </View>
               </ScrollView>
             </View>
@@ -1334,6 +1179,22 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     zIndex: 100,
   },
+  chatContainer: {
+    // flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    width: SCREEN_WIDTH * 0.95,
+    height: SCREEN_HEIGHT * 0.90,
+    backgroundColor: "#fff",
+    borderRadius: 35,
+    marginLeft: 20,
+    marginTop: 40,
+    shadowColor: "#000",
+    shadowOffset: { width: 5, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+  }
 });
 
 export default GLClub;
