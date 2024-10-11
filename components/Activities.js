@@ -635,6 +635,7 @@ const ZoomMeetingWebView = ({ zoomLink, onMeetingLeave }) => {
 
   return (
     <WebView
+    originWhitelist={['http://', 'https://', 'about:']}
       source={{ uri: zoomLink }}
       style={styles.webViewStyle}
       javaScriptEnabled={true}
@@ -844,7 +845,9 @@ async function fetchEventsAndSaveToFirestore(userName) {
           endDate,
           zoomLink:
             item.location === "Zoom Meeting"
-              ? `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
+              ? 
+              // `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
+              `https://us02web.zoom.us/wc/join/2548196535?omn=81709607895`
               
               : null,
         };
@@ -1120,6 +1123,7 @@ async function fetchEventsAndSaveToFirestore(userName) {
         <View style={styles.webViewModal}>
           <View style={styles.webViewContainer}>
             <ZoomMeetingWebView
+             
               zoomLink={selectedEvent.zoomLink}
               onMeetingLeave={closeWebView}
             />
@@ -1310,7 +1314,7 @@ const styles = StyleSheet.create({
   },
   webViewStyle: {
     flex: 1,
-    width: viewportWidth * 0.9,
+    width: viewportWidth,
     height: viewportHeight * 0.7,
   },
   webViewModal: {
@@ -1324,7 +1328,7 @@ const styles = StyleSheet.create({
   webViewContainer: {
     margin: 10,
     height: viewportHeight * 0.9,
-    width: viewportWidth * 0.95,
+    width: viewportWidth,
     marginTop: 50,
     backgroundColor: "white",
     borderRadius: 20,
