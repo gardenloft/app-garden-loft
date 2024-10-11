@@ -19,7 +19,7 @@ import GLClub from "../GLClub";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import Logout from "../Logout";
 import ComingSoon from "../ComingSoon";
-// import Kosmi from '../Kosmi'
+import Kosmi from '../Kosmi'
 
 const data = [
   {
@@ -60,7 +60,7 @@ const data = [
     id: 4,
     title: "WATCH PARTY",
     icon: "calendar-star",
-    component: <ComingSoon />,
+    component: <Kosmi />,
     prompt: "Watch Party?",
   },
   // {
