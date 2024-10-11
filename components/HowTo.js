@@ -39,7 +39,8 @@ const HowTo = () => {
           videosData.push({
             id: doc.id,
             name: data.name,
-            videoId: data.videoId,
+            // videoId: data.videoId,  // for YouTube Videos
+            videoUrl: data.videoUrl   // for FireStore Storage Vids
           });
         });
         setVideos(videosData);
@@ -57,9 +58,15 @@ const HowTo = () => {
     fetchVideos();
   }, []);
 
-  const openVideoModal = (videoId) => {
-    console.log("Opening Video Modal with Video ID: ", videoId);
-    setSelectedVideoId(videoId);
+  // const openVideoModal = (videoId) => {
+  //   console.log("Opening Video Modal with Video ID: ", videoId);
+  //   setSelectedVideoId(videoId);
+  //   setIsVideoModalVisible(true);
+  // };
+
+  const openVideoModal = (videoUrl) => {
+    console.log("Opening Video Modal with Video URL: ", videoUrl);
+    setSelectedVideoId(videoUrl); // videoUrl should be the Firebase Storage link
     setIsVideoModalVisible(true);
   };
 
@@ -83,7 +90,7 @@ const HowTo = () => {
             : Math.round(Dimensions.get("window").height * 0.25),
         },
       ]}
-      onPress={() => openVideoModal(item.videoId)}>
+      onPress={() => openVideoModal(item.videoUrl)}>
       <MaterialCommunityIcons name="television-play" size={94} color="white" />
       <Text style={styles.cardText}>{item.name}</Text>
     </Pressable>
@@ -126,12 +133,37 @@ const HowTo = () => {
         visible={isVideoModalVisible}
         onRequestClose={closeVideoModal}>
         <View style={styles.modalView}>
-          <YouTube
+          {/* <YouTube
             width={viewportWidth * 0.8}
             height={viewportHeight * 0.7}
             play={true}
             videoId={selectedVideoId} // Pass the selected video ID here
-          />
+          /> */}
+           <WebView
+      source={{ uri: selectedVideoId }} // Firebase Storage video link
+      // source={{
+      //   html: `
+      //     <html>
+      //       <body style="margin:0;padding:0;">
+      //         <iframe
+      //           src="${selectedVideoId}"
+      //           width="100%"
+      //           height="100%"
+      //           style="border: none;"
+      //           allow="autoplay; fullscreen"
+      //           allowfullscreen>
+      //         </iframe>
+      //       </body>
+      //     </html>
+      //   `,
+      // }}
+      style={{ width: viewportWidth * 0.8, height: viewportHeight * 0.7, zIndex: 100 }}
+      javaScriptEnabled={true}
+      allowsFullscreenVideo={false} // Allow fullscreen video playback
+      mediaPlaybackRequiresUserAction={true} // Allow autoplay
+      startInLoadingState={true} // Show loading indicator while video is loading
+      onError={(e) => console.log("Error loading video", e)} // Handle any errors
+    />
           <Pressable style={styles.closeButton} onPress={closeVideoModal}>
             <FontAwesome name="close" size={24} color="black" />
           </Pressable>
