@@ -1357,7 +1357,6 @@ import {
   Dimensions,
   Alert,
   ActivityIndicator,
-  Button,
   Image
 } from "react-native";
 import axios from "axios";
@@ -1365,7 +1364,6 @@ import Carousel from "react-native-reanimated-carousel";
 import moment from "moment-timezone";
 import { FontAwesome } from "@expo/vector-icons";
 import { getAuth } from "firebase/auth";
-import * as Notifications from "expo-notifications";
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import { getDoc, collection, query, where, getDocs, updateDoc, addDoc, doc } from "firebase/firestore";
 import { WebView } from "react-native-webview";
@@ -1386,7 +1384,7 @@ const ZoomMeetingWebView = ({ zoomLink, onMeetingLeave }) => {
 
   return (
     <WebView
-    originWhitelist={['http://', 'https://', 'about:']}
+      originWhitelist={['http://', 'https://', 'about:']}
       source={{ uri: zoomLink }}
       style={styles.webViewStyle}
       javaScriptEnabled={true}
@@ -1408,10 +1406,9 @@ const Activities = () => {
   const [error, setError] = useState(null);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [showWebView, setShowWebView] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [filter, setFilter] = useState("all"); // Added state for filter
+  const [filter, setFilter] = useState("all");
 
   const auth = getAuth();
   const user = auth.currentUser;
@@ -1467,90 +1464,12 @@ const Activities = () => {
             endDate = new Date();
           }
 
-    if (querySnapshot.empty) {
-      // Event does not exist, add it
-      await addDoc(collection(FIRESTORE_DB, "events"), {
-        ...event,
-        isNew: true,
-        imageUrl: '' // Initialize with empty string
-      });
-    } else {
-      // Event exists, update it
-      querySnapshot.forEach(async (docSnapshot) => {
-        const existingEvent = docSnapshot.data();
-        const eventDoc = doc(FIRESTORE_DB, "events", docSnapshot.id);
-        await updateDoc(eventDoc, {
-          ...event,
-          isNew: false,
-          imageUrl: existingEvent.imageUrl || '' // Preserve existing imageUrl if any
-        });
-      });
-    }
-  }
-
-  // Fetch all events from Firestore to include manually added imageUrls
-  const eventsSnapshot = await getDocs(collection(FIRESTORE_DB, "events"));
-  const updatedEvents = eventsSnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
-
-  // Schedule event notifications
-  updatedEvents.forEach((event) => {
-    if (Platform.OS !== "web") {
-      scheduleNotification(event);
-    }
-  });
-
-  setEvents(updatedEvents);
-  setLoading(false);
-} catch (error) {
-  console.error("Error fetching events: ", error.message);
-  setError("Failed to retrieve signed-up activities. Please try again later.");
-  setLoading(false);
-}
-  }
-async function fetchEventsAndSaveToFirestore(userName) {
-  try {
-    const response = await axios.get(
-      "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
-    );
-
-    const currentTime = new Date();
-
-    const eventData = response.data.data.signup
-      .filter((item) => item.firstname === userName)
-      .map((item) => {
-        // Parse dates carefully, considering AM/PM
-        let startDate, endDate;
-        try {
-          // Assuming the API returns time in 12-hour format with AM/PM indicator
-          startDate = moment.tz(item.startdatestring.replace(/-/g, "T"), "YYYY/MM/DD HH:mm", "").toDate();
-          endDate = item.enddatestring
-            ? moment.tz(item.enddatestring.replace(/-/g, "T"), "YYYY/MM/DD HH:mm:ss", "").toDate()
-            : undefined;
-          
-          
-
-          // Log parsed dates for debugging
-          console.log(`Parsed startDate: ${startDate}, endDate: ${endDate}`);
-        } catch (error) {
-          console.error("Error parsing date for item:", item, error);
-          // Set to current date if parsing fails, to avoid breaking the app
-          startDate = new Date();
-          endDate = new Date();
-        }
-
-        return {
-          item: item.item,
-          startDate,
-          endDate,
-          zoomLink:
-            item.location === "Zoom Meeting"
-              ? 
-              // `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
-              `https://us02web.zoom.us/wc/join/2548196535?omn=81709607895`
-              
+          return {
+            item: item.item,
+            startDate,
+            endDate,
+            zoomLink: item.location === "Zoom Meeting" 
+              ? `https://us02web.zoom.us/wc/join/2548196535?omn=81709607895`
               : null,
           };
         })
@@ -1633,23 +1552,28 @@ async function fetchEventsAndSaveToFirestore(userName) {
     setActiveIndex(newIndex);
   };
 
+  const closeWebView = () => {
+    setShowWebView(false);
+    setSelectedEvent(null);
+  };
+
   const renderItem = ({ item, index }) => (
     <Pressable
       key={index}
       style={[
         styles.cardContainer,
         {
-          backgroundColor: index === activeIndex ? "transparent" : "transparent",
-          transform: index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
+          backgroundColor: "transparent",
+          transform: [{ scale: 0.85 }],
         },
         {
-          height:
-            viewportWidth > viewportHeight
-              ? Math.round(Dimensions.get("window").height * 0.3)
-              : Math.round(Dimensions.get("window").height * 0.25),
+          height: viewportWidth > viewportHeight
+            ? Math.round(viewportHeight * 0.3)
+            : Math.round(viewportHeight * 0.25),
         },
       ]}
-      onPress={() => navigateToZoomLink(item)}>
+      onPress={() => setSelectedEvent(item)}
+    >
       <Image
         source={item.imageUrl ? { uri: item.imageUrl } : require("../assets/images/garden-loft-logo-outline.png")}
         style={styles.cardImage}
@@ -1662,10 +1586,6 @@ async function fetchEventsAndSaveToFirestore(userName) {
     </Pressable>
   );
 
-  const handleSnapToItem = (index) => {
-    setActiveIndex(index);
-  };
-
   return (
     <View style={styles.container}>
       {loading ? (
@@ -1675,13 +1595,8 @@ async function fetchEventsAndSaveToFirestore(userName) {
       ) : showWebView && selectedEvent ? (
         <View style={styles.webViewModal}>
           <View style={styles.webViewContainer}>
-            <ZoomMeetingWebView
-             
-              zoomLink={selectedEvent.zoomLink}
-              onMeetingLeave={closeWebView}
-            />
+            <ZoomMeetingWebView zoomLink={selectedEvent.zoomLink} onMeetingLeave={closeWebView} />
             <Pressable style={styles.closeButton1} onPress={closeWebView}>
-              {/* <Text style={styles.closeButtonText}>Close</Text> */}
               <FontAwesome name="close" size={24} color="black" />
             </Pressable>
           </View>
@@ -1786,8 +1701,8 @@ const styles = StyleSheet.create({
   filterButtonsContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginBottom: 70, // Lowered filter buttons
-    marginTop: 50,    // Lowered top margin for buttons
+    marginBottom: 70, 
+    marginTop: 50,    
   },
   filterButton: {
     paddingHorizontal: 20,
@@ -1817,29 +1732,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     fontSize: 44,
   },
-  modalContainer: {
-    position: "absolute",
-    bottom: "70%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    padding: 20,
-    borderRadius: 10,
-  },
-  modal: {
-    backgroundColor: "beige",
-    padding: 60,
-    borderRadius: 10,
-  },
-  modalJoinNow: {
-    backgroundColor: "blue",
-    fontSize: 20,
-  },
-  closeButton: {
-    marginTop: 10,
-    backgroundColor: "gray",
-    paddingVertical: 10,
-    paddingHorizontal: 200,
-    borderRadius: 5,
-  },
   closeButton1: {
     position: "absolute",
     top: 30,
@@ -1847,10 +1739,6 @@ const styles = StyleSheet.create({
     backgroundColor: "lightblue",
     padding: 13,
     borderRadius: 5,
-  },
-  closeButtonText: {
-    fontWeight: "bold",
-    color: "#fff",
   },
   webViewStyle: {
     flex: 1,
@@ -1889,3 +1777,4 @@ const styles = StyleSheet.create({
 });
 
 export default Activities;
+
