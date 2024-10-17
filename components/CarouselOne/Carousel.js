@@ -13,6 +13,7 @@ import VideoCall from "../VideoCall";
 import Activities2 from "../Activities";
 import Entertainment from "../Entertainment";
 import Lights from "../Lights";
+import Games from "../Games"; 
 import HowTo from "../HowTo";
 import GLClub from "../GLClub";
 // import WatchParty from "../WatchParty";
@@ -105,6 +106,14 @@ const data = [
     icon: "calendar-month",
     component: <ComingSoon/>,
     prompt: "See What's Coming Up?",
+  },
+  {
+    id: 9,
+    title: "Games",
+    // icon: "card-account-details-star-outline",
+    icon: "gamepad",
+    component: <Games />,
+    prompt: "Lets play Games?",
   },
 ];
 
