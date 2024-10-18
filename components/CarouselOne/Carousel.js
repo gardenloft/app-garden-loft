@@ -77,7 +77,7 @@ const data = [
     title: "MY ACTIVITIES",
     icon: "weight-lifter",
     component: <Activities2 />,
-    prompt: "Join an Activity?",
+    prompt: "",
   },
   {
     id: 6,
@@ -112,7 +112,7 @@ const data = [
     title: "Games",
     // icon: "card-account-details-star-outline",
     icon: "gamepad",
-    component: <Games />,
+    component: <Games/>,
     prompt: "Lets play Games?",
   },
 ];
@@ -304,10 +304,7 @@ const styles = StyleSheet.create({
     fontSize: 19,
     fontWeight: "bold",
     color: "#f3b718",
-    alignItems: "center",
-    alignContent: "center",
-    justifyContent: "center",
-    alignSelf: "center",
+    textAlign: "center",
   },
   arrowLeft: {
     position: "absolute",
