@@ -29,7 +29,7 @@ const HelpButton = () => {
           console.log("User data: this user name logged in ");
           setUserInfo(userSnap.data());
         } else {
-          console.log("No such document!");
+          console.log("No such document");
         }
       }
     };
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginTop: 45,
-    marginBottom: 20,
+    marginBottom: 25,
     paddingTop: 12,
     padding: 20,
     alignSelf: "center",
