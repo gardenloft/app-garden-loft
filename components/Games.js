@@ -25,6 +25,7 @@ const gamesData = [
   { id: '7', name: 'UNO' },  // Added UNO game
   { id: '8', name: 'Chess' },
   { id: '9', name: 'Connect 4' },
+  { id: '10', name: 'Battleship' },
 ];
 
 // Game URLs based on game names
@@ -38,7 +39,8 @@ const gameUrls = {
   "UNO": "https://buddyboardgames.com/uno", // Added UNO game URL
   "Chess": "https://buddyboardgames.com/chess",
   "Connect 4": "https://buddyboardgames.com/connect4",
-   
+  "Battleship": "https://buddyboardgames.com/batleship"
+
 };
 
 const Games = () => {
