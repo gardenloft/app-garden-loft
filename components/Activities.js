@@ -1070,7 +1070,15 @@ const Activities = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View 
+    style={[
+      styles.container,
+      {
+        height: viewportWidth > viewportHeight ? 920 : 850,
+        marginTop: viewportWidth > viewportHeight ? 0 : 45,
+      },
+    ]}
+    >
       {loading ? (
         <ActivityIndicator size="large" color="orange" style={styles.loading} />
       ) : error ? (
@@ -1217,8 +1225,9 @@ const styles = StyleSheet.create({
   filterButtonsContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginBottom: 70, // Lowered filter buttons
-    marginTop: 50, // Lowered top margin for buttons
+
+    marginBottom: viewportHeight * 0.04,
+    marginTop: viewportHeight * 0.22,
   },
   filterButton: {
     paddingHorizontal: 20,
@@ -1231,7 +1240,7 @@ const styles = StyleSheet.create({
     backgroundColor: "orange",
   },
   filterButtonText: {
-    fontSize: 16,
+    fontSize: 20,
     color: "white",
     fontWeight: "bold",
   },
@@ -1251,6 +1260,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     position: "absolute",
     bottom: "70%",
+    left: viewportWidth > viewportHeight ? 180 : 45,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 20,
     borderRadius: 10,
@@ -1262,7 +1272,7 @@ const styles = StyleSheet.create({
   },
   modalJoinNow: {
     backgroundColor: "blue",
-    fontSize: 20,
+    fontSize: 50,
   },
   closeButton: {
     marginTop: 10,
