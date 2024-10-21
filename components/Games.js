@@ -250,7 +250,7 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import Carousel from "react-native-reanimated-carousel";
 import { WebView } from "react-native-webview";
-import { FIRESTORE_DB } from "../FirebaseConfig"; // Assuming you have FirebaseConfig set up
+import { FIRESTORE_DB } from "../FirebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
@@ -269,7 +269,7 @@ const gameUrls = {
   "Battleship": "https://buddyboardgames.com/battleship",
 };
 
-// Multiplayer games that require instructions
+// Multiplayer games requiring instruction modal
 const multiplayerGames = ["UNO", "Chess", "Connect 4", "Battleship"];
 
 const Games = () => {
@@ -282,15 +282,15 @@ const Games = () => {
 
   const carouselRef = useRef(null);
 
-  // Function to fetch games data from Firestore
+  // Fetching games data from Firestore
   const fetchGamesData = async () => {
     try {
-      const gamesCollection = collection(FIRESTORE_DB, "games"); // Make sure you have a "games" collection
+      const gamesCollection = collection(FIRESTORE_DB, "games");
       const gamesSnapshot = await getDocs(gamesCollection);
       const gamesList = gamesSnapshot.docs.map((doc) => ({
         id: doc.id,
-        name: doc.data().name,      // Fetch the 'name' field
-        imageUrl: doc.data().imageUrl, // Fetch the 'imageurl' field
+        name: doc.data().name,
+        imageUrl: doc.data().imageUrl,
       }));
       setGamesData(gamesList);
     } catch (error) {
@@ -302,56 +302,66 @@ const Games = () => {
     fetchGamesData();
   }, []);
 
-  // Function to open modal when a game is selected
+  // Open game modal
   const openGameModal = (game) => {
     if (multiplayerGames.includes(game.name)) {
-      setSelectedGame(game); // Set selected game
-      setIsInstructionModalVisible(true); // Show instructions for multiplayer games
-    } else {
-      setIsLoading(true); // Simulate loading time
+      // Show instruction modal for multiplayer games
       setSelectedGame(game);
+      setIsInstructionModalVisible(true);
+    } else {
+      // Directly open WebView for single-player games
+      setSelectedGame(game);
+      setIsLoading(true);
       setIsGameModalVisible(true);
-      setTimeout(() => setIsLoading(false), 1000); // Loading effect for 1 second
+      setTimeout(() => setIsLoading(false), 1000); // Simulate loading effect
     }
   };
 
-  // Function to open the game after closing the instruction modal
+  // Proceed to game after the instructional modal
   const proceedToGame = () => {
     setIsInstructionModalVisible(false);
     setIsLoading(true);
-    setIsGameModalVisible(true); // Open the game modal
-    setTimeout(() => setIsLoading(false), 1000); // Simulate loading time
+    setIsGameModalVisible(true);
+    setTimeout(() => setIsLoading(false), 1000); // Simulate loading effect
   };
 
-  // Function to close the game modal
+  // Close game modal
   const closeGameModal = () => {
     setIsGameModalVisible(false);
     setSelectedGame(null);
   };
 
-  // Function to render each game in the carousel
+  // Render each game in the carousel
   const renderItem = ({ item, index }) => (
-    <Pressable
-      key={item.id}
-      style={[
-        styles.cardContainer,
-        { backgroundColor: index === activeIndex ? "transparent" : "transparent" },
-        { transform: index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }] },
-        {
-          height: viewportWidth > viewportHeight
-            ? Math.round(viewportHeight * 0.3)
-            : Math.round(viewportHeight * 0.25),
-        },
-      ]}
-      onPress={() => openGameModal(item)}
-    >
-      <Image
-        source={{ uri: item.imageUrl }} // Load the image from Firestore
-        style={styles.gameImage}
-        resizeMode="contain"
-      />
+    <View key={item.id} style={styles.itemContainer}>
+      <Pressable
+        style={[
+          styles.cardContainer,
+          {
+            backgroundColor: index === activeIndex ? "transparent" : "transparent",
+            transform: index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
+          },
+          {
+            height:
+              viewportWidth > viewportHeight
+                ? Math.round(Dimensions.get("window").height * 0.3)
+                : Math.round(Dimensions.get("window").height * 0.25),
+          },
+        ]}
+        onPress={() => openGameModal(item)}
+      >
+        {item.imageUrl ? (
+          <Image
+            source={{ uri: item.imageUrl }}
+            style={styles.cardImage}
+            resizeMode="cover" // Ensures the image covers the card size
+          />
+        ) : (
+          <FontAwesome name="gamepad" size={94} color="white" />
+        )}
+      </Pressable>
       <Text style={styles.cardText}>{item.name}</Text>
-    </Pressable>
+    </View>
   );
 
   return (
@@ -363,7 +373,7 @@ const Games = () => {
         },
       ]}
     >
-      {/* Instructional Modal for Multiplayer Games */}
+      {/* Instructional Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -371,14 +381,16 @@ const Games = () => {
         onRequestClose={() => setIsInstructionModalVisible(false)}
       >
         <View style={styles.modalView}>
-          <Text style={styles.modalText}>Please enter your name in the game and use "gardenloft" as the room name.</Text>
+          <Text style={styles.modalText}>
+            Please enter your name in the game and use "gardenloft" as the room name.
+          </Text>
           <Pressable style={styles.proceedButton} onPress={proceedToGame}>
             <Text style={styles.proceedButtonText}>Proceed to Game</Text>
           </Pressable>
         </View>
       </Modal>
 
-      {/* Modal for displaying game content */}
+      {/* Game WebView Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -390,7 +402,7 @@ const Games = () => {
             <ActivityIndicator size="large" color="orange" />
           ) : (
             <WebView
-              source={{ uri: gameUrls[selectedGame?.name] }} // Use the URL from hardcoded data
+              source={{ uri: gameUrls[selectedGame?.name] }}
               style={{ width: viewportWidth * 0.95, height: viewportHeight * 0.7 }}
             />
           )}
@@ -403,7 +415,7 @@ const Games = () => {
       {/* Carousel for displaying game options */}
       <Carousel
         ref={carouselRef}
-        data={gamesData} // Use the games data from Firestore
+        data={gamesData}
         renderItem={renderItem}
         width={Math.round(viewportWidth * 0.3)}
         height={Math.round(viewportWidth * 0.3)}
@@ -413,32 +425,16 @@ const Games = () => {
         scrollAnimationDuration={800}
         snapEnabled
       />
-
-      {/* Left navigation arrow */}
       <Pressable
-        style={[
-          styles.arrowLeft,
-          {
-            left: viewportWidth > viewportHeight ? -17 : -22,
-            top: viewportWidth > viewportHeight ? "40%" : "30%",
-          },
-        ]}
+        style={[styles.arrowLeft, { left: viewportWidth > viewportHeight ? -17 : -22, top: "40%" }]}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: -1, animated: true });
         }}
       >
         <FontAwesome name="angle-left" size={100} color="black" />
       </Pressable>
-
-      {/* Right navigation arrow */}
       <Pressable
-        style={[
-          styles.arrowRight,
-          {
-            right: viewportWidth > viewportHeight ? -25 : -22,
-            top: viewportWidth > viewportHeight ? "40%" : "30%",
-          },
-        ]}
+        style={[styles.arrowRight, { right: viewportWidth > viewportHeight ? -25 : -22, top: "40%" }]}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: 1, animated: true });
         }}
@@ -449,11 +445,14 @@ const Games = () => {
   );
 };
 
-// Styles for the component
 const styles = StyleSheet.create({
   container: {
     position: "relative",
     alignItems: "center",
+  },
+  itemContainer: {
+    alignItems: "center",
+    marginBottom: 20,
   },
   cardContainer: {
     width: viewportWidth * 0.3,
@@ -461,25 +460,25 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 0,
-    padding: 20,
-    height: viewportHeight * 0.2,
+    marginHorizontal: 10,
+    marginLeft: 0,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.22,
     shadowRadius: 9.22,
     elevation: 12,
+    overflow: "hidden",
   },
-  gameImage: {
-    width: viewportWidth * 0.3,
-    height: viewportWidth * 0.3,
-    borderRadius: 15, // Optional: rounded corners
+  cardImage: {
+    width: "100%",
+    height: "100%",
   },
   cardText: {
-    fontSize: 18,
-    color: "black",
-    fontWeight: "bold",
+    fontSize: 20,
+    color: "#393939",
+    fontWeight: "700",
     textAlign: "center",
+    marginTop: 10,
   },
   arrowLeft: {
     position: "absolute",
@@ -493,8 +492,8 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 10,
-    height: viewportHeight * 0.8, // Adjusted height for tablets
-    width: viewportWidth * 0.95,  // Adjusted width for tablets
+    height: viewportHeight * 0.7, // Adjusted for tablets
+    width: viewportWidth * 0.95, // Adjusted for tablets
     marginTop: 50,
     backgroundColor: "white",
     borderRadius: 20,
@@ -511,31 +510,30 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   modalText: {
-    fontSize: 20,  // Larger text for tablets
+    fontSize: 20,
     textAlign: "center",
     marginBottom: 20,
   },
   proceedButton: {
     backgroundColor: "#f09030",
-    padding: 15,  // Adjusted padding for a better touch target
+    padding: 15,
     borderRadius: 10,
   },
   proceedButtonText: {
-    fontSize: 20,  // Larger text for tablets
+    fontSize: 20,
     color: "white",
     fontWeight: "bold",
   },
   closeButton: {
     position: "absolute",
-    top: 30,
+    top: 10,
     right: 30,
     backgroundColor: "lightblue",
-    padding: 10,
+    padding: 13,
     borderRadius: 5,
   },
 });
 
 export default Games;
-
 
 
