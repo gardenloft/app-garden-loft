@@ -234,8 +234,6 @@
 
 // export default Games;
 
-
-
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -253,20 +251,25 @@ import { WebView } from "react-native-webview";
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
 
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
+const { width: viewportWidth, height: viewportHeight } =
+  Dimensions.get("window");
 
 // Game URLs based on game names
 const gameUrls = {
-  "Crossword": "https://www.seniorsonline.vic.gov.au/services-information/crossword",
-  "Word Search": "https://www.seniorsonline.vic.gov.au/services-information/word-search",
-  "Sudoku": "https://www.seniorsonline.vic.gov.au/services-information/sudoku",
-  "Trivia": "https://www.seniorsonline.vic.gov.au/services-information/trivia",
-  "Code Cracker": "https://www.seniorsonline.vic.gov.au/services-information/code-cracker",
-  "Memory Game": "https://www.memozor.com/memory-games/for-seniors-or-elderly/black-and-white",
-  "UNO": "https://buddyboardgames.com/uno",
-  "Chess": "https://buddyboardgames.com/chess",
+  Crossword:
+    "https://www.seniorsonline.vic.gov.au/services-information/crossword",
+  "Word Search":
+    "https://www.seniorsonline.vic.gov.au/services-information/word-search",
+  Sudoku: "https://www.seniorsonline.vic.gov.au/services-information/sudoku",
+  Trivia: "https://www.seniorsonline.vic.gov.au/services-information/trivia",
+  "Code Cracker":
+    "https://www.seniorsonline.vic.gov.au/services-information/code-cracker",
+  "Memory Game":
+    "https://www.memozor.com/memory-games/for-seniors-or-elderly/black-and-white",
+  UNO: "https://buddyboardgames.com/uno",
+  Chess: "https://buddyboardgames.com/chess",
   "Connect 4": "https://buddyboardgames.com/connect4",
-  "Battleship": "https://buddyboardgames.com/battleship",
+  Battleship: "https://buddyboardgames.com/battleship",
 };
 
 // Multiplayer games requiring instruction modal
@@ -276,7 +279,8 @@ const Games = () => {
   const [gamesData, setGamesData] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isGameModalVisible, setIsGameModalVisible] = useState(false);
-  const [isInstructionModalVisible, setIsInstructionModalVisible] = useState(false);
+  const [isInstructionModalVisible, setIsInstructionModalVisible] =
+    useState(false);
   const [selectedGame, setSelectedGame] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -338,8 +342,10 @@ const Games = () => {
         style={[
           styles.cardContainer,
           {
-            backgroundColor: index === activeIndex ? "transparent" : "transparent",
-            transform: index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
+            backgroundColor:
+              index === activeIndex ? "transparent" : "transparent",
+            transform:
+              index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
           },
           {
             height:
@@ -348,8 +354,7 @@ const Games = () => {
                 : Math.round(Dimensions.get("window").height * 0.25),
           },
         ]}
-        onPress={() => openGameModal(item)}
-      >
+        onPress={() => openGameModal(item)}>
         {item.imageUrl ? (
           <Image
             source={{ uri: item.imageUrl }}
@@ -371,18 +376,17 @@ const Games = () => {
         {
           height: viewportWidth > viewportHeight ? 320 : 450,
         },
-      ]}
-    >
+      ]}>
       {/* Instructional Modal */}
       <Modal
         animationType="slide"
         transparent={true}
         visible={isInstructionModalVisible}
-        onRequestClose={() => setIsInstructionModalVisible(false)}
-      >
+        onRequestClose={() => setIsInstructionModalVisible(false)}>
         <View style={styles.modalView}>
           <Text style={styles.modalText}>
-            Please enter your name in the game and use "gardenloft" as the room name.
+            Please enter your name in the game and use "gardenloft" as the room
+            name.
           </Text>
           <Pressable style={styles.proceedButton} onPress={proceedToGame}>
             <Text style={styles.proceedButtonText}>Proceed to Game</Text>
@@ -395,15 +399,17 @@ const Games = () => {
         animationType="slide"
         transparent={true}
         visible={isGameModalVisible}
-        onRequestClose={closeGameModal}
-      >
+        onRequestClose={closeGameModal}>
         <View style={styles.modalView}>
           {isLoading ? (
             <ActivityIndicator size="large" color="orange" />
           ) : (
             <WebView
               source={{ uri: gameUrls[selectedGame?.name] }}
-              style={{ width: viewportWidth * 0.95, height: viewportHeight * 0.7 }}
+              style={{
+                width: viewportWidth * 0.95,
+                height: viewportHeight * 0.7,
+              }}
             />
           )}
           <Pressable style={styles.closeButton} onPress={closeGameModal}>
@@ -420,25 +426,32 @@ const Games = () => {
         width={Math.round(viewportWidth * 0.3)}
         height={Math.round(viewportWidth * 0.3)}
         loop={true}
-        style={{ width: Math.round(viewportWidth * 0.9), height: Math.round(viewportWidth * 0.5) }}
+        style={{
+          width: Math.round(viewportWidth * 0.9),
+          height: Math.round(viewportWidth * 0.5),
+        }}
         onSnapToItem={(index) => setActiveIndex(index)}
         scrollAnimationDuration={800}
         snapEnabled
       />
       <Pressable
-        style={[styles.arrowLeft, { left: viewportWidth > viewportHeight ? -17 : -22, top: "40%" }]}
+        style={[
+          styles.arrowLeft,
+          { left: viewportWidth > viewportHeight ? -17 : -22, top: "40%" },
+        ]}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: -1, animated: true });
-        }}
-      >
+        }}>
         <FontAwesome name="angle-left" size={100} color="black" />
       </Pressable>
       <Pressable
-        style={[styles.arrowRight, { right: viewportWidth > viewportHeight ? -25 : -22, top: "40%" }]}
+        style={[
+          styles.arrowRight,
+          { right: viewportWidth > viewportHeight ? -25 : -22, top: "40%" },
+        ]}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: 1, animated: true });
-        }}
-      >
+        }}>
         <FontAwesome name="angle-right" size={100} color="black" />
       </Pressable>
     </View>
@@ -492,7 +505,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 10,
-    height: viewportHeight * 0.7, // Adjusted for tablets
+    height: viewportHeight * 0.88, // Adjusted for tablets
     width: viewportWidth * 0.95, // Adjusted for tablets
     marginTop: 50,
     backgroundColor: "white",
@@ -535,5 +548,3 @@ const styles = StyleSheet.create({
 });
 
 export default Games;
-
-
