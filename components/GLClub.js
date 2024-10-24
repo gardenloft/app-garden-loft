@@ -1184,7 +1184,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: SCREEN_WIDTH * 0.95,
-    height: SCREEN_HEIGHT * 0.90,
+    height: SCREEN_HEIGHT * 0.9,
     backgroundColor: "#fff",
     borderRadius: 35,
     marginLeft: 20,
@@ -1194,7 +1194,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 2,
-  }
+  },
 });
 
 export default GLClub;
