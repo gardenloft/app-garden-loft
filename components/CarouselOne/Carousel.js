@@ -9,18 +9,18 @@ import {
   useWindowDimensions,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import VideoCall from "../VideoCall";
+// import VideoCall from "../VideoCall";
 import Activities2 from "../Activities";
 import Entertainment from "../Entertainment";
-import Lights from "../Lights";
-import Games from "../Games"; 
+// import Lights from "../Lights";
+import Games from "../Games";
 import HowTo from "../HowTo";
 import GLClub from "../GLClub";
 // import WatchParty from "../WatchParty";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
-import Logout from "../Logout";
+// import Logout from "../Logout";
 import ComingSoon from "../ComingSoon";
-import Kosmi from '../Kosmi'
+import Kosmi from "../Kosmi";
 
 const data = [
   {
@@ -93,18 +93,18 @@ const data = [
   //   component: <ComingSoon/>,
   //   prompt: "Change Lights?",
   // },
-  {
-    id: 7,
-    title: "LOG OUT",
-    icon: "logout",
-    component: <Logout />,
-    prompt: "Log Out of Garden Loft App?",
-  },
+  // {
+  //   id: 7,
+  //   title: "LOG OUT",
+  //   icon: "logout",
+  //   component: <Logout />,
+  //   prompt: "Log Out of Garden Loft App?",
+  // },
   {
     id: 8,
     title: "MY CALENDAR",
     icon: "calendar-month",
-    component: <ComingSoon/>,
+    component: <ComingSoon />,
     prompt: "See What's Coming Up?",
   },
   {
@@ -112,7 +112,7 @@ const data = [
     title: "Games",
     // icon: "card-account-details-star-outline",
     icon: "gamepad",
-    component: <Games/>,
+    component: <Games />,
     prompt: "Lets play Games?",
   },
 ];
@@ -122,7 +122,8 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true); // Loading state
   const [showPrompt, setShowPrompt] = useState(false); // Prompt visibility state
   const carouselRef = useRef(null);
-  const { width: viewportWidth, height: viewportHeight } = useWindowDimensions();
+  const { width: viewportWidth, height: viewportHeight } =
+    useWindowDimensions();
 
   const handleSnapToItem = (index) => {
     setActiveIndex(index);
@@ -160,17 +161,19 @@ const Home = () => {
           styles.item,
           { backgroundColor: index === activeIndex ? "#f3b718" : "#909090" },
           {
-            transform: index === activeIndex ? [{ scale: 1 }] : [{ scale: 0.8 }],
-            width: viewportWidth > viewportHeight
-              ? Math.round(Dimensions.get("window").width * 0.18)
-              : Math.round(Dimensions.get("window").width * 0.28),
-            height: viewportWidth > viewportHeight
-              ? Math.round(Dimensions.get("window").height * 0.25)
-              : Math.round(Dimensions.get("window").height * 0.20),
+            transform:
+              index === activeIndex ? [{ scale: 1 }] : [{ scale: 0.8 }],
+            width:
+              viewportWidth > viewportHeight
+                ? Math.round(Dimensions.get("window").width * 0.18)
+                : Math.round(Dimensions.get("window").width * 0.28),
+            height:
+              viewportWidth > viewportHeight
+                ? Math.round(Dimensions.get("window").height * 0.25)
+                : Math.round(Dimensions.get("window").height * 0.2),
             marginLeft: viewportWidth > viewportHeight ? 350 : 220,
           },
-        ]}
-      >
+        ]}>
         <MaterialCommunityIcons
           style={[
             styles.icon,
@@ -183,8 +186,7 @@ const Home = () => {
           style={[
             styles.title,
             { color: index === activeIndex ? "black" : "#f3b718" },
-          ]}
-        >
+          ]}>
           {item.title}
         </Text>
       </View>
@@ -205,8 +207,7 @@ const Home = () => {
         ]}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: -1, animated: true });
-        }}
-      >
+        }}>
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
 
@@ -235,18 +236,22 @@ const Home = () => {
         ]}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: 1, animated: true });
-        }}
-      >
+        }}>
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
 
       {/* Show loading indicator while the component is loading */}
       {isLoading ? (
-        <ActivityIndicator size="large" color="orange" style={[styles.loading,
-          {
-            marginBottom: viewportWidth > viewportHeight ? 140 : 340,
-          }
-        ]} />
+        <ActivityIndicator
+          size="large"
+          color="orange"
+          style={[
+            styles.loading,
+            {
+              marginBottom: viewportWidth > viewportHeight ? 140 : 340,
+            },
+          ]}
+        />
       ) : (
         <>
           {/* Show the prompt only when showPrompt is true */}
@@ -255,8 +260,7 @@ const Home = () => {
               style={[
                 styles.prompt,
                 { marginBottom: viewportWidth > viewportHeight ? 30 : 50 },
-              ]}
-            >
+              ]}>
               {data[activeIndex].prompt}
             </Text>
           )}
@@ -315,10 +319,7 @@ const styles = StyleSheet.create({
     transform: [{ translateY: -10 }],
   },
   icon: {},
-  loading: {
-    
-  },
+  loading: {},
 });
 
 export default Home;
-
