@@ -104,13 +104,13 @@ const Logout: React.FC = () => {
             {
               width:
                 viewportWidth > viewportHeight
-                  ? Math.round(Dimensions.get("window").width * 0.3)
-                  : Math.round(Dimensions.get("window").width * 0.45),
+                  ? Math.round(Dimensions.get("window").width * 0.1)
+                  : Math.round(Dimensions.get("window").width * 0.55),
             },
             { marginTop: viewportWidth > viewportHeight ? -30 : -80 },
           ]}
         >
-          <FontAwesome name="sign-out" size={80} color="black" />
+          <FontAwesome name="sign-out" size={40} color="black" />
           <Text style={styles.buttonText}>Logout</Text>
         </View>
       </Pressable>
@@ -172,15 +172,16 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     flexDirection: "row",
+    
     height: viewportHeight * 0.25,
     alignItems: "center",
     textAlign: "center",
     backgroundColor: "#f09030",
-    padding: 50,
+    padding: 10,
     borderRadius: 20,
   },
   buttonText: {
-    fontSize: 38,
+    fontSize: 28,
     fontFamily: "Arial",
     color: "black",
     marginLeft: 25,
