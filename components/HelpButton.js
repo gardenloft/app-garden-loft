@@ -348,7 +348,6 @@
 // });
 
 // export default HelpButton;
-
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -496,7 +495,6 @@ const HelpButton = () => {
 const styles = StyleSheet.create({
   container: {
     width: SCREEN_WIDTH * 0.92,
-
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -561,12 +559,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
   modalContent: {
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
-    width: SCREEN_WIDTH * 0.9,
-    height: SCREEN_WIDTH * 1.6,
+    marginTop: 20,
+    width: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.8, // Adapts width to the smaller dimension
+    height: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.8, // Adapts height for consistent sizing
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -574,6 +579,18 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 10,
   },
+  logoutContainer: {
+    marginTop: -80,
+    alignSelf: "center",
+    width: SCREEN_WIDTH * 0.7, // Aadjusted width for better fit
+    paddingVertical: 12, // Consistent padding for touch area
+    backgroundColor: "#f09030",
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    transform: [{ scale: SCREEN_WIDTH < 400 ? 0.9 : 1.1 }], // Scale based on width for consistent size
+  },
+
   closeButton: {
     alignSelf: "flex-end",
   },

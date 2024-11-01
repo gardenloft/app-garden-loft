@@ -122,7 +122,7 @@ const Games = () => {
       <Modal visible={isInstructionModalVisible} transparent onRequestClose={() => setIsInstructionModalVisible(false)}>
         <View style={styles.modalContainer}>
           <Text style={styles.modalText}>
-            Enter your name and use "Gardenloft" as the room name.
+            Enter your name and use "gardenloft" as the room name.
           </Text>
           <Pressable style={styles.proceedButton} onPress={proceedToGame}>
             <Text style={styles.proceedButtonText}>Proceed to Game</Text>
