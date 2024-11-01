@@ -104,7 +104,7 @@ const Logout: React.FC = () => {
             {
               width:
                 viewportWidth > viewportHeight
-                  ? Math.round(Dimensions.get("window").width * 0.1)
+                  ? Math.round(Dimensions.get("window").width * 0.2)
                   : Math.round(Dimensions.get("window").width * 0.55),
             },
             { marginTop: viewportWidth > viewportHeight ? -30 : -80 },
@@ -166,25 +166,28 @@ const Logout: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
-    marginTop: -40,
+    marginTop: -20,
     position: "relative",
     alignItems: "center",
   },
   logoutButton: {
     flexDirection: "row",
-    
-    height: viewportHeight * 0.25,
+    width: viewportWidth * 0.4, // Increase this value for a wider button
+    height: viewportHeight * 0.15,
     alignItems: "center",
-    textAlign: "center",
+    justifyContent: "center", // Centers content within the button
     backgroundColor: "#f09030",
-    padding: 10,
+    paddingHorizontal: 16, // Adjust padding to give extra space
+    paddingVertical: 10,
     borderRadius: 20,
+    textAlign: "center",
   },
+
   buttonText: {
     fontSize: 28,
     fontFamily: "Arial",
     color: "black",
-    marginLeft: 25,
+    marginLeft: 30,
     alignItems: "center",
     textAlign: "center",
   },
