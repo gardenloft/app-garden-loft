@@ -112,8 +112,8 @@ const data = [
     title: "Games",
     // icon: "card-account-details-star-outline",
     icon: "gamepad",
-    component: <Games />,
-    prompt: "Lets play Games?",
+    component: <Games/>,
+    // prompt: "Lets play Games?",
   },
 ];
 
@@ -289,6 +289,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: "rgb(45, 62, 95)",
   },
+ 
   item: {
     gap: 10,
     // marginLeft: 350,
