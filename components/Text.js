@@ -422,7 +422,7 @@ const TextComponent = ({ friendId, friendName }) => {
       const message = {
         to: pushToken,
         sound: "default",
-        title: `New message from ${friendName}`,
+        title: `New message from ${senderName}`,
         body: messageText,
         data: { someData: "goes here" },
       };

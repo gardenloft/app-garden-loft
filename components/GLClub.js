@@ -682,13 +682,13 @@ const GLClub = () => {
                                   color="black"
                                 />
                               </Pressable>
-                              <ComingSoon />
+                              {/* <ComingSoon /> */}
                               {/* below id the Text Component */}
-                              {/* <TextComponent
+                              <TextComponent
                                 friendId={selectedContact.id}
                                 friendName={selectedContact.name}
                                 currentUser={user}
-                              /> */}
+                              />
                             </SafeAreaView>
                           </Modal>
                         )}
