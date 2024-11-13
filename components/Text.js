@@ -42,6 +42,7 @@ const TextComponent = ({ friendId, friendName }) => {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const auth = getAuth();
   const user = auth.currentUser;
+  const [isSpeaking, setIsSpeaking] = useState(false); // Track speaking state
 
   const flatListRef = useRef(null);
 
@@ -178,26 +179,64 @@ const TextComponent = ({ friendId, friendName }) => {
     }
   };
 
-  const renderMessage = ({ item }) => {
+  const renderMessage = ({ item, index }) => {
     const isOwnMessage = item.senderId === user.uid;
 
+    // Check if the current message is the first of a new day
+    const currentDate = moment(item.timestamp.toDate()).format("DD MMM YYYY");
+    const previousDate =
+      index > 0
+        ? moment(messages[index - 1].timestamp.toDate()).format("DD MMM YYYY")
+        : null;
+
+    const showDateHeader = currentDate !== previousDate;
+
+    const handleSpeechToggle = async (text) => {
+      const speaking = await Speech.isSpeakingAsync();
+      if (speaking) {
+        Speech.stop(); // Stop speech if currently speaking
+        setIsSpeaking(false);
+      } else {
+        Speech.speak(text, {
+          pitch: 1.0,
+          rate: 1.0,
+          onStart: () => setIsSpeaking(true),
+          onDone: () => setIsSpeaking(false),
+          onStopped: () => setIsSpeaking(false), // Handle stop event
+        });
+      }
+    };
+
     return (
-      <View style={styles.messageWrapper}>
-        <View
+      <View>
+        {/* Display date header if it's the first message of a new day */}
+        {showDateHeader && (
+          <View style={styles.dateHeader}>
+            <Text style={styles.dateHeaderText}>{currentDate}</Text>
+          </View>
+        )}
+
+        <Pressable
           style={[
             styles.messageContainer,
             isOwnMessage ? styles.ownMessage : styles.friendMessage,
-          ]}>
-          <Text style={styles.messageText}>{item.text}</Text>
+          ]}
+          onPress={() => handleSpeechToggle(item.text)}>
+          <View style={styles.messageContent}>
+            <Text style={styles.messageText}>{item.text}</Text>
+            <TouchableOpacity
+              onPress={(e) => {
+                e.stopPropagation(); // Prevent triggering the parent Pressable
+                handleSpeechToggle(item.text);
+              }}
+              style={styles.speakerIcon}>
+              <FontAwesome name="volume-up" size={16} color="gray" />
+            </TouchableOpacity>
+          </View>
           <Text style={styles.timestampText}>
             {moment(item.timestamp.toDate()).format("h:mm a")}
           </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => Speech.speak(item.text)}
-          style={styles.speakerIcon}>
-          <FontAwesome name="volume-up" size={18} color="gray" />
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   };
@@ -267,18 +306,147 @@ const TextComponent = ({ friendId, friendName }) => {
   );
 };
 
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     padding: SCREEN_WIDTH > 400 ? 80 : 60,
+//     paddingTop: SCREEN_HEIGHT > 800 ? 20 : 5,
+//     marginBottom: SCREEN_HEIGHT > 800 ? 5 : 5,
+//     backgroundColor: "#f0f0f0",
+//   },
+//   inputContainer: {
+//     flexDirection: "row",
+//     padding: 10,
+//     marginHorizontal: SCREEN_WIDTH > 400 ? -10 : -30,
+//     backgroundColor: "white",
+//     borderRadius: 25,
+//     marginBottom: 10,
+//     alignItems: "center",
+//   },
+//   input: {
+//     flex: 1,
+//     fontSize: SCREEN_WIDTH > 400 ? 18 : 16,
+//     paddingHorizontal: 15,
+//   },
+//   sendButton: {
+//     backgroundColor: "#f3b718",
+//     padding: 10,
+//     borderRadius: 50,
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   messageContainer: {
+//     padding: 10,
+//     marginVertical: 5,
+//     borderRadius: 15,
+//   },
+//   messageContent: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     justifyContent: "space-between",
+//   },
+//   speakerIcon: {
+//     marginLeft: 10,
+//   },
+//   ownMessage: {
+//     backgroundColor: "#e1ffc7",
+//     alignSelf: "flex-end",
+//     marginLeft: SCREEN_WIDTH > 400 ? 200 : 100,
+//   },
+//   friendMessage: {
+//     backgroundColor: "#ffffff",
+//     alignSelf: "flex-start",
+//     marginRight: 100,
+//   },
+//   messageText: {
+//     fontSize: SCREEN_WIDTH > 400 ? 18 : 16,
+//   },
+//   timestampText: {
+//     fontSize: SCREEN_WIDTH > 400 ? 12 : 10,
+//     color: "#888",
+//     marginTop: 5,
+//     alignSelf: "flex-end",
+//   },
+//   deleteButton: {
+//     backgroundColor: "#f0f0f0",
+//     borderWidth: 1,
+//     borderColor: "grey",
+//     padding: 10,
+//     borderRadius: 25,
+//     marginTop: 10,
+//     alignItems: "center",
+//     justifyContent: "center",
+//   },
+//   deleteButtonText: {
+//     color: "grey",
+//     fontSize: SCREEN_WIDTH > 400 ? 16 : 14,
+//     marginLeft: 10,
+//   },
+//   chatHeader: {
+//     padding: 20,
+//     backgroundColor: "#f3b718",
+//     borderRadius: 10,
+//     marginBottom: 20,
+//     alignItems: "center",
+//   },
+//   messageWrapper: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     marginVertical: 5,
+//     justifyContent: "flex-end", // Align the speaker icon to the right
+//   },
+//   speakerIcon: {
+//     marginLeft: 10, // Space between the message and the icon
+//   },
+
+//   chatHeaderText: {
+//     fontSize: SCREEN_WIDTH > 400 ? 22 : 20,
+//     color: "grey",
+//     fontWeight: "bold",
+//   },
+// });
+
+// export default TextComponent;
+
+const { width, height } = Dimensions.get("window");
+const isLandscape = width > height;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: SCREEN_WIDTH > 400 ? 80 : 60,
-    paddingTop: SCREEN_HEIGHT > 800 ? 20 : 5,
-    marginBottom: SCREEN_HEIGHT > 800 ? 5 : 5,
+    padding: isLandscape ? 40 : 20,
+    paddingTop: isLandscape ? 10 : 20,
+    marginBottom: isLandscape ? 10 : 5,
     backgroundColor: "#f0f0f0",
+  },
+  chatHeader: {
+    padding: isLandscape ? 10 : 20,
+    backgroundColor: "#f3b718",
+    borderRadius: 10,
+    marginBottom: isLandscape ? 10 : 20,
+    alignItems: "center",
+  },
+  chatHeaderText: {
+    fontSize: isLandscape ? 20 : 24,
+    color: "grey",
+    fontWeight: "bold",
+  },
+  dateHeader: {
+    alignSelf: "center",
+    backgroundColor: "#e0e0e0",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginVertical: 10,
+  },
+  dateHeaderText: {
+    fontSize: 14,
+    color: "#555",
   },
   inputContainer: {
     flexDirection: "row",
-    padding: 10,
-    marginHorizontal: SCREEN_WIDTH > 400 ? -10 : -30,
+    padding: isLandscape ? 5 : 10,
+    marginHorizontal: isLandscape ? -5 : -10,
     backgroundColor: "white",
     borderRadius: 25,
     marginBottom: 10,
@@ -286,84 +454,63 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: SCREEN_WIDTH > 400 ? 18 : 16,
+    fontSize: isLandscape ? 14 : 18,
     paddingHorizontal: 15,
   },
   sendButton: {
     backgroundColor: "#f3b718",
-    padding: 10,
+    padding: isLandscape ? 8 : 10,
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
-  },
-  messageContainer: {
-    padding: 10,
-    marginVertical: 5,
-    borderRadius: 15,
-  },
-  messageContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  speakerIcon: {
-    marginLeft: 10,
-  },
-  ownMessage: {
-    backgroundColor: "#e1ffc7",
-    alignSelf: "flex-end",
-    marginLeft: SCREEN_WIDTH > 400 ? 200 : 100,
-  },
-  friendMessage: {
-    backgroundColor: "#ffffff",
-    alignSelf: "flex-start",
-    marginRight: 100,
-  },
-  messageText: {
-    fontSize: SCREEN_WIDTH > 400 ? 18 : 16,
-  },
-  timestampText: {
-    fontSize: SCREEN_WIDTH > 400 ? 12 : 10,
-    color: "#888",
-    marginTop: 5,
-    alignSelf: "flex-end",
   },
   deleteButton: {
     backgroundColor: "#f0f0f0",
     borderWidth: 1,
     borderColor: "grey",
-    padding: 10,
+    padding: isLandscape ? 8 : 10,
     borderRadius: 25,
-    marginTop: 10,
+    marginTop: isLandscape ? 5 : 10,
     alignItems: "center",
     justifyContent: "center",
   },
   deleteButtonText: {
     color: "grey",
-    fontSize: SCREEN_WIDTH > 400 ? 16 : 14,
+    fontSize: isLandscape ? 14 : 16,
     marginLeft: 10,
-  },
-  chatHeader: {
-    padding: 20,
-    backgroundColor: "#f3b718",
-    borderRadius: 10,
-    marginBottom: 20,
-    alignItems: "center",
   },
   messageWrapper: {
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 5,
-    justifyContent: "flex-end", // Align the speaker icon to the right
+    justifyContent: "flex-end",
+  },
+  messageContainer: {
+    padding: isLandscape ? 8 : 12,
+    marginVertical: 5,
+    borderRadius: 15,
+  },
+  ownMessage: {
+    backgroundColor: "#e1ffc7",
+    alignSelf: "flex-end",
+    marginLeft: isLandscape ? 120 : 200,
+  },
+  friendMessage: {
+    backgroundColor: "#ffffff",
+    alignSelf: "flex-start",
+    marginRight: isLandscape ? 120 : 200,
+  },
+  messageText: {
+    fontSize: isLandscape ? 14 : 18,
+  },
+  timestampText: {
+    fontSize: isLandscape ? 10 : 12,
+    color: "#888",
+    marginTop: 5,
+    alignSelf: "flex-end",
   },
   speakerIcon: {
-    marginLeft: 10, // Space between the message and the icon
-  },
-
-  chatHeaderText: {
-    fontSize: SCREEN_WIDTH > 400 ? 22 : 20,
-    color: "grey",
-    fontWeight: "bold",
+    marginLeft: 10,
   },
 });
 
