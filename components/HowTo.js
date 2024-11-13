@@ -18,6 +18,32 @@ import YouTube from 'react-native-youtube-iframe';
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
 
+
+  // Define phone-specific styles
+const phoneStyles = viewportWidth <= 413 ? {
+  container: {
+    height: 400,
+    marginTop: 200, // Increase this value to move the cards lower on the screen
+  },
+  cardContainer: {
+    width: viewportWidth * 0.32,
+    height: viewportHeight * 0.2,
+    padding:15,
+    marginHorizontal: 10, // Add margin to create gap between cards
+    shadowOpacity: 0, // Remove shadow opacity on phones
+    elevation: 0,
+  },
+  cardText: {
+    fontSize: 16,
+  }, icon: {
+    size: 60, // Reduce icon size for phone
+  },
+  modalView: {
+    width: viewportWidth * 0.9,
+  },
+ 
+} : {};
+
 const HowTo = () => {
   const [videos, setVideos] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -91,11 +117,10 @@ const HowTo = () => {
         },
       ]}
       onPress={() => openVideoModal(item.videoUrl)}>
-      <MaterialCommunityIcons name="television-play" size={94} color="white" />
+      <MaterialCommunityIcons name="television-play" size={phoneStyles.icon?.size || 94} color="white" />
       <Text style={styles.cardText}>{item.name}</Text>
     </Pressable>
   );
-
 
   if (isLoading) {
     return (
@@ -183,6 +208,36 @@ const HowTo = () => {
 
       />
       <Pressable
+  style={[
+    styles.arrowLeft,
+    {
+      left: viewportWidth > viewportHeight ? -17 : -22,
+      top: viewportWidth <= 413 ? "25%" : viewportWidth > viewportHeight ? "40%" : "30%", // Adjust top for phone
+    }
+  ]}
+  onPress={() => {
+    carouselRef.current?.scrollTo({ count: -1, animated: true });
+  }}
+>
+  <FontAwesome name="angle-left" size={viewportWidth <= 413 ? 70 :100} color="black" />
+</Pressable>
+
+<Pressable
+  style={[
+    styles.arrowRight,
+    {
+      right: viewportWidth > viewportHeight ? -25 : -22,
+      top: viewportWidth <= 413 ? "25%" : viewportWidth > viewportHeight ? "40%" : "30%", // Adjust top for phone
+    }
+  ]}
+  onPress={() => {
+    carouselRef.current?.scrollTo({ count: 1, animated: true });
+  }}
+>
+  <FontAwesome name="angle-right" size={viewportWidth <= 413 ? 70 :100} color="black" />
+</Pressable>
+
+      {/* <Pressable
         style={[styles.arrowLeft,
           {left: viewportWidth > viewportHeight
             ? -17
@@ -207,7 +262,7 @@ const HowTo = () => {
         onPress={() => {
           carouselRef.current?.scrollTo({ count: 1, animated: true });}}>
         <FontAwesome name="angle-right" size={100} color="black" />
-      </Pressable>
+      </Pressable> */}
     </View>
   );
 };
@@ -216,6 +271,8 @@ const styles = StyleSheet.create({
   container: {
     position: "relative",
     alignItems: "center",
+    marginTop: 150, // Moves carousel lower on the screen
+    ...phoneStyles.container,
   },
   cardContainer: {
     width: viewportWidth * 0.3, //changes width of carousel cards
@@ -231,12 +288,16 @@ const styles = StyleSheet.create({
     shadowRadius: 9.22,
     elevation: 12,
     padding: 20,
+    overflow: "hidden",
+    ...phoneStyles.cardContainer,
   },
   cardText: {
     fontSize: 25,
     color: "#393939",
     fontWeight: "700",
-    textAlign: "center"
+    textAlign: "center",
+    marginTop: 10,
+    ...phoneStyles.cardText,
   },
   loading: {
     flex: 1,
@@ -273,6 +334,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 3,
     alignSelf: "center",
+    ...phoneStyles.modalView,
   },
   closeButton: {
     position: "absolute",
