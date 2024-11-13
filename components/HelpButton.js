@@ -348,6 +348,295 @@
 // });
 
 // export default HelpButton;
+// import React, { useState, useEffect } from "react";
+// import {
+//   View,
+//   Text,
+//   TouchableOpacity,
+//   Image,
+//   Modal,
+//   StyleSheet,
+//   Dimensions,
+//   ScrollView,
+// } from "react-native";
+// import { MaterialCommunityIcons } from "@expo/vector-icons";
+// import { FIREBASE_AUTH, FIRESTORE_DB } from "../FirebaseConfig"; // Ensure this path is correct
+// import { doc, getDoc } from "firebase/firestore";
+// import Logout from "./Logout"; // Ensure this path is correct
+
+// const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+// const HelpButton = () => {
+//   const [userInfo, setUserInfo] = useState(null);
+//   const [bioModalVisible, setBioModalVisible] = useState(false);
+
+//   // Fetch user data from Firestore
+//   useEffect(() => {
+//     const fetchUserData = async () => {
+//       const user = FIREBASE_AUTH.currentUser;
+//       if (user) {
+//         const userRef = doc(FIRESTORE_DB, "users", user.uid);
+//         const userSnap = await getDoc(userRef);
+//         if (userSnap.exists()) {
+//           setUserInfo(userSnap.data());
+//         } else {
+//           console.log("User document not found");
+//         }
+//       }
+//     };
+//     fetchUserData();
+//   }, []);
+
+//   const handleProfilePress = () => {
+//     setBioModalVisible(true); // Open bio modal when profile is pressed
+//   };
+
+//   return (
+//     <View style={styles.container}>
+//       {/* Profile Picture */}
+//       <TouchableOpacity
+//         onPress={handleProfilePress}
+//         style={styles.profileContainer}>
+//         {userInfo?.imageUrl ? (
+//           <Image
+//             source={{ uri: userInfo.imageUrl }}
+//             style={styles.profileImage}
+//           />
+//         ) : (
+//           <MaterialCommunityIcons
+//             name="account-circle"
+//             size={60}
+//             color="#f3b718"
+//           />
+//         )}
+//       </TouchableOpacity>
+
+//       {/* Emergency call button */}
+//       <TouchableOpacity style={styles.callButton}>
+//         <Text style={styles.EmergencyButton}>Call Emergency</Text>
+//         <MaterialCommunityIcons
+//           name="hospital-box-outline"
+//           style={styles.iconStyle}
+//           size={50}
+//           color="#f3b718"
+//         />
+//       </TouchableOpacity>
+
+//       {/* Logo */}
+//       <View style={styles.logoContainer}>
+//         <Image
+//           source={require("../assets/garden-loft-logo2.png")}
+//           style={styles.logoImage}
+//         />
+//       </View>
+
+//       {/* Bio Modal */}
+//       <Modal
+//         visible={bioModalVisible}
+//         animationType="slide"
+//         transparent={true}
+//         onRequestClose={() => setBioModalVisible(false)}>
+//         <View style={styles.modalContainer}>
+//           <ScrollView contentContainerStyle={styles.modalContent}>
+//             <TouchableOpacity
+//               onPress={() => setBioModalVisible(false)}
+//               style={styles.closeButton}>
+//               <MaterialCommunityIcons name="close" size={30} color="black" />
+//             </TouchableOpacity>
+
+//             {/* Profile Image in Bio Card */}
+//             {userInfo?.imageUrl ? (
+//               <Image
+//                 source={{ uri: userInfo.imageUrl }}
+//                 style={styles.modalProfileImage}
+//               />
+//             ) : (
+//               <MaterialCommunityIcons
+//                 name="account-circle"
+//                 size={100}
+//                 color="#f3b718"
+//               />
+//             )}
+
+//             {/* User Information */}
+//             <Text style={styles.userName}>{userInfo?.userName || "User"}</Text>
+//             <Text style={styles.userDetails}>
+//               City: {userInfo?.city || "N/A"}
+//             </Text>
+
+//             <View style={styles.infoSection}>
+//               <Text style={styles.sectionTitle}>Hobbies</Text>
+//               {userInfo?.hobbies?.split(", ").map((hobby, index) => (
+//                 <Text key={index} style={styles.sectionContent}>
+//                   - {hobby}
+//                 </Text>
+//               ))}
+//             </View>
+//             <View style={styles.infoSection}>
+//               <Text style={styles.sectionTitle}>Clubs</Text>
+//               {userInfo?.clubs?.split(", ").map((club, index) => (
+//                 <Text key={index} style={styles.sectionContent}>
+//                   - {club}
+//                 </Text>
+//               ))}
+//             </View>
+
+//             {/* Embedded Logout Component */}
+//             <View style={styles.logoutContainer}>
+//               <Logout />
+//             </View>
+//           </ScrollView>
+//         </View>
+//       </Modal>
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     width: SCREEN_WIDTH * 0.92,
+//     flexDirection: "row",
+//     alignItems: "center",
+//     justifyContent: "space-between",
+//     marginTop: 45,
+//     marginBottom: 25,
+//     paddingTop: 12,
+//     padding: 20,
+//     alignSelf: "center",
+//     backgroundColor: "#FCF8E3",
+//     borderRadius: 10,
+//     shadowColor: "#000",
+//     shadowOffset: { width: 3, height: 7 },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 6,
+//     elevation: 8,
+//   },
+//   profileContainer: {
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   profileImage: {
+//     width: 60,
+//     height: 60,
+//     borderRadius: 30,
+//     borderWidth: 2,
+//     borderColor: "#f3b718",
+//   },
+//   callButton: {
+//     backgroundColor: "#59ACCE",
+//     padding: 10,
+//     borderRadius: 15,
+//     flexDirection: "row",
+//     alignItems: "center",
+//     shadowColor: "#000",
+//     shadowOffset: { width: 8, height: 7 },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 6,
+//     elevation: 8,
+//     marginLeft: 60,
+//   },
+//   EmergencyButton: {
+//     color: "#2E3E5E",
+//     fontSize: 20,
+//     paddingRight: 10,
+//     paddingLeft: 20,
+//   },
+//   iconStyle: {
+//     marginRight: 7,
+//     paddingTop: 3,
+//   },
+//   logoContainer: {
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   logoImage: {
+//     width: SCREEN_WIDTH < 380 ? 100 : 130,
+//     height: SCREEN_WIDTH < 380 ? 48 : 62,
+//   },
+//   modalContainer: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     backgroundColor: "rgba(0, 0, 0, 0.5)",
+//   },
+//   modalContainer: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     backgroundColor: "rgba(0, 0, 0, 0.5)",
+//   },
+//   modalContent: {
+//     backgroundColor: "#fff",
+//     borderRadius: 20,
+//     padding: 20,
+//     marginTop: 20,
+//     width: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.8, // Adapts width to the smaller dimension
+//     height: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.8, // Adapts height for consistent sizing
+//     alignItems: "center",
+//     shadowColor: "#000",
+//     shadowOffset: { width: 0, height: 4 },
+//     shadowOpacity: 0.3,
+//     shadowRadius: 5,
+//     elevation: 10,
+//   },
+//   logoutContainer: {
+//     marginTop: -80,
+//     alignSelf: "center",
+//     width: SCREEN_WIDTH * 0.7, // Aadjusted width for better fit
+//     paddingVertical: 12, // Consistent padding for touch area
+//     backgroundColor: "#f09030",
+//     borderRadius: 20,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     transform: [{ scale: SCREEN_WIDTH < 400 ? 0.9 : 1.1 }], // Scale based on width for consistent size
+//   },
+
+//   closeButton: {
+//     alignSelf: "flex-end",
+//   },
+//   modalProfileImage: {
+//     width: 100,
+//     height: 100,
+//     borderRadius: 60,
+//     borderWidth: 2,
+//     borderColor: "#f3b718",
+//     marginBottom: 10,
+//   },
+//   userName: {
+//     fontSize: 30,
+//     fontWeight: "bold",
+//     color: "#333",
+//     textAlign: "center",
+//   },
+//   userDetails: {
+//     fontSize: 18,
+//     color: "#555",
+//     // marginVertical: 5,
+//   },
+//   infoSection: {
+//     width: "100%",
+//     marginTop: 10,
+//   },
+//   sectionTitle: {
+//     fontSize: 21,
+//     fontWeight: "600",
+//     color: "#333",
+//     marginVertical: 5,
+//   },
+//   sectionContent: {
+//     fontSize: 18,
+//     color: "#666",
+//     marginLeft: 10,
+//   },
+//   logoutContainer: {
+//     marginTop: -80,
+//     width: SCREEN_WIDTH * 0.8,
+//     alignSelf: "center",
+//     transform: [{ scale: SCREEN_WIDTH < 400 ? 0.8 : 1.2 }],
+//   },
+// });
+
+// export default HelpButton;
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -360,9 +649,9 @@ import {
   ScrollView,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { FIREBASE_AUTH, FIRESTORE_DB } from "../FirebaseConfig"; // Ensure this path is correct
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../FirebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
-import Logout from "./Logout"; // Ensure this path is correct
+import Logout from "./Logout";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -370,7 +659,6 @@ const HelpButton = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [bioModalVisible, setBioModalVisible] = useState(false);
 
-  // Fetch user data from Firestore
   useEffect(() => {
     const fetchUserData = async () => {
       const user = FIREBASE_AUTH.currentUser;
@@ -388,100 +676,74 @@ const HelpButton = () => {
   }, []);
 
   const handleProfilePress = () => {
-    setBioModalVisible(true); // Open bio modal when profile is pressed
+    setBioModalVisible(true);
   };
 
   return (
     <View style={styles.container}>
-      {/* Profile Picture */}
       <TouchableOpacity
         onPress={handleProfilePress}
-        style={styles.profileContainer}>
+        style={styles.profileContainer}
+      >
         {userInfo?.imageUrl ? (
-          <Image
-            source={{ uri: userInfo.imageUrl }}
-            style={styles.profileImage}
-          />
+          <Image source={{ uri: userInfo.imageUrl }} style={styles.profileImage} />
         ) : (
-          <MaterialCommunityIcons
-            name="account-circle"
-            size={60}
-            color="#f3b718"
-          />
+          <MaterialCommunityIcons name="account-circle" size={50} color="#f3b718" />
         )}
       </TouchableOpacity>
 
-      {/* Emergency call button */}
       <TouchableOpacity style={styles.callButton}>
-        <Text style={styles.EmergencyButton}>Call Emergency</Text>
+        <Text style={styles.emergencyButtonText}>Call Emergency</Text>
         <MaterialCommunityIcons
           name="hospital-box-outline"
           style={styles.iconStyle}
-          size={50}
+          size={SCREEN_WIDTH < 375 ? 30 : SCREEN_WIDTH < 430 ? 40 : 50}
           color="#f3b718"
         />
       </TouchableOpacity>
 
-      {/* Logo */}
       <View style={styles.logoContainer}>
-        <Image
-          source={require("../assets/garden-loft-logo2.png")}
-          style={styles.logoImage}
-        />
+        <Image source={require("../assets/garden-loft-logo2.png")} style={styles.logoImage} />
       </View>
 
-      {/* Bio Modal */}
       <Modal
         visible={bioModalVisible}
         animationType="slide"
         transparent={true}
-        onRequestClose={() => setBioModalVisible(false)}>
+        onRequestClose={() => setBioModalVisible(false)}
+      >
         <View style={styles.modalContainer}>
           <ScrollView contentContainerStyle={styles.modalContent}>
             <TouchableOpacity
               onPress={() => setBioModalVisible(false)}
-              style={styles.closeButton}>
+              style={styles.closeButton}
+            >
               <MaterialCommunityIcons name="close" size={30} color="black" />
             </TouchableOpacity>
 
-            {/* Profile Image in Bio Card */}
             {userInfo?.imageUrl ? (
-              <Image
-                source={{ uri: userInfo.imageUrl }}
-                style={styles.modalProfileImage}
-              />
+              <Image source={{ uri: userInfo.imageUrl }} style={styles.modalProfileImage} />
             ) : (
-              <MaterialCommunityIcons
-                name="account-circle"
-                size={100}
-                color="#f3b718"
-              />
+              <MaterialCommunityIcons name="account-circle" size={100} color="#f3b718" />
             )}
 
-            {/* User Information */}
             <Text style={styles.userName}>{userInfo?.userName || "User"}</Text>
-            <Text style={styles.userDetails}>
-              City: {userInfo?.city || "N/A"}
-            </Text>
+            <Text style={styles.userDetails}>City: {userInfo?.city || "N/A"}</Text>
 
             <View style={styles.infoSection}>
               <Text style={styles.sectionTitle}>Hobbies</Text>
               {userInfo?.hobbies?.split(", ").map((hobby, index) => (
-                <Text key={index} style={styles.sectionContent}>
-                  - {hobby}
-                </Text>
-              ))}
-            </View>
-            <View style={styles.infoSection}>
-              <Text style={styles.sectionTitle}>Clubs</Text>
-              {userInfo?.clubs?.split(", ").map((club, index) => (
-                <Text key={index} style={styles.sectionContent}>
-                  - {club}
-                </Text>
+                <Text key={index} style={styles.sectionContent}>- {hobby}</Text>
               ))}
             </View>
 
-            {/* Embedded Logout Component */}
+            <View style={styles.infoSection}>
+              <Text style={styles.sectionTitle}>Clubs</Text>
+              {userInfo?.clubs?.split(", ").map((club, index) => (
+                <Text key={index} style={styles.sectionContent}>- {club}</Text>
+              ))}
+            </View>
+
             <View style={styles.logoutContainer}>
               <Logout />
             </View>
@@ -516,33 +778,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profileImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     borderWidth: 2,
     borderColor: "#f3b718",
   },
   callButton: {
     backgroundColor: "#59ACCE",
-    padding: 10,
+    paddingHorizontal: SCREEN_WIDTH < 375 ? 8 : SCREEN_WIDTH < 430 ? 10 : 12,
+    paddingVertical: 8,
     borderRadius: 15,
     flexDirection: "row",
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 8, height: 7 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 8,
-    marginLeft: 60,
+    shadowOffset: { width: 4, height: 5 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 6,
+    maxWidth: SCREEN_WIDTH < 375 ? 160 : SCREEN_WIDTH < 430 ? 180 : 200,
   },
-  EmergencyButton: {
+  emergencyButtonText: {
     color: "#2E3E5E",
-    fontSize: 20,
-    paddingRight: 10,
-    paddingLeft: 20,
+    fontSize: SCREEN_WIDTH < 375 ? 14 : SCREEN_WIDTH < 430 ? 16 : 18,
+    paddingRight: SCREEN_WIDTH < 375 ? 4 : 6,
+    paddingLeft: SCREEN_WIDTH < 375 ? 6 : 10,
   },
   iconStyle: {
-    marginRight: 7,
+    marginRight: 5,
     paddingTop: 3,
   },
   logoContainer: {
@@ -550,14 +813,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logoImage: {
-    width: SCREEN_WIDTH < 380 ? 100 : 130,
-    height: SCREEN_WIDTH < 380 ? 48 : 62,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    width: SCREEN_WIDTH < 375 ? 90 : SCREEN_WIDTH < 430 ? 110 : 130,
+    height: SCREEN_WIDTH < 375 ? 40 : SCREEN_WIDTH < 430 ? 50 : 60,
   },
   modalContainer: {
     flex: 1,
@@ -570,8 +827,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 20,
     marginTop: 20,
-    width: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.8, // Adapts width to the smaller dimension
-    height: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.8, // Adapts height for consistent sizing
+    width: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.8,
+    height: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.8,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -582,15 +839,14 @@ const styles = StyleSheet.create({
   logoutContainer: {
     marginTop: -80,
     alignSelf: "center",
-    width: SCREEN_WIDTH * 0.7, // Aadjusted width for better fit
-    paddingVertical: 12, // Consistent padding for touch area
+    width: SCREEN_WIDTH * 0.7,
+    paddingVertical: 12,
     backgroundColor: "#f09030",
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    transform: [{ scale: SCREEN_WIDTH < 400 ? 0.9 : 1.1 }], // Scale based on width for consistent size
+    transform: [{ scale: SCREEN_WIDTH < 400 ? 0.9 : 1.1 }],
   },
-
   closeButton: {
     alignSelf: "flex-end",
   },
@@ -611,7 +867,6 @@ const styles = StyleSheet.create({
   userDetails: {
     fontSize: 18,
     color: "#555",
-    // marginVertical: 5,
   },
   infoSection: {
     width: "100%",
@@ -627,12 +882,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#666",
     marginLeft: 10,
-  },
-  logoutContainer: {
-    marginTop: -80,
-    width: SCREEN_WIDTH * 0.8,
-    alignSelf: "center",
-    transform: [{ scale: SCREEN_WIDTH < 400 ? 0.8 : 1.2 }],
   },
 });
 
