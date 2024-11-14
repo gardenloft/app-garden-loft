@@ -876,28 +876,31 @@
 // });
 
 // export default CalendarComponent;
+
 import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  SectionList,
   ActivityIndicator,
   Alert,
+  FlatList,
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 import axios from "axios";
-import moment from "moment-timezone";
 import { getAuth } from "firebase/auth";
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
+import moment from "moment";
 
 const CalendarComponent = () => {
   const [signedUpActivities, setSignedUpActivities] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [markedDates, setMarkedDates] = useState({});
   const [selectedDate, setSelectedDate] = useState(
     moment().format("YYYY-MM-DD")
   );
+  const [loading, setLoading] = useState(true);
+
   const auth = getAuth();
   const user = auth.currentUser;
 
@@ -906,11 +909,18 @@ const CalendarComponent = () => {
       fetchSignedUpActivities(user);
     } else {
       Alert.alert("Error", "User not signed in");
+      setLoading(false);
     }
   }, [user]);
 
   const fetchSignedUpActivities = async (user) => {
     try {
+      const response = await axios.get(
+        "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
+      );
+
+      const activitiesData = response.data.data?.signup || []; // Handle missing or invalid data
+
       const userRef = doc(FIRESTORE_DB, "users", user.uid);
       const userSnap = await getDoc(userRef);
 
@@ -921,13 +931,11 @@ const CalendarComponent = () => {
       const userData = userSnap.data();
       const userName = userData.userName;
 
-      const response = await axios.get(
-        "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
-      );
-
-      const activities = response.data.data.signup
+      const activities = activitiesData
         .filter((item) =>
-          item.signups.some((signup) => signup.firstname === userName)
+          Array.isArray(item.signups)
+            ? item.signups.some((signup) => signup.firstname === userName)
+            : false
         )
         .map((item) => ({
           id: item.id || `${item.item}-${item.startdatestring}`,
@@ -936,12 +944,19 @@ const CalendarComponent = () => {
           endDate: item.enddatestring
             ? moment(item.enddatestring).toDate()
             : null,
-          participants: item.signups
-            .map((signup) => signup.firstname)
-            .join(", "),
+          dateString: moment(item.startdatestring).format("YYYY-MM-DD"),
         }));
 
+      const dates = activities.reduce((acc, activity) => {
+        acc[activity.dateString] = {
+          marked: true,
+          dotColor: "blue",
+        };
+        return acc;
+      }, {});
+
       setSignedUpActivities(activities);
+      setMarkedDates(dates);
     } catch (error) {
       console.error("Error fetching signed-up activities:", error);
       Alert.alert(
@@ -953,24 +968,6 @@ const CalendarComponent = () => {
     }
   };
 
-  const mergeAndGroupActivities = () => {
-    const grouped = signedUpActivities.reduce((acc, activity) => {
-      const date = moment(activity.startDate).format("YYYY-MM-DD");
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-      acc[date].push(activity);
-      return acc;
-    }, {});
-
-    return Object.keys(grouped)
-      .sort()
-      .map((date) => ({
-        title: date,
-        data: grouped[date],
-      }));
-  };
-
   const handleDatePress = (date) => {
     setSelectedDate(date.dateString);
   };
@@ -980,13 +977,14 @@ const CalendarComponent = () => {
       <Text style={styles.activityTitle}>{item.title}</Text>
       <Text style={styles.activityTime}>
         {moment(item.startDate).format("h:mm a")} -{" "}
-        {item.endDate ? moment(item.endDate).format("h:mm a") : "Ongoing"}
+        {item.endDate ? moment(item.endDate).format("h:mm a") : "N/A"}
       </Text>
-      <Text style={styles.participants}>Participants: {item.participants}</Text>
     </View>
   );
 
-  const groupedActivities = mergeAndGroupActivities();
+  const activitiesForSelectedDate = signedUpActivities.filter(
+    (activity) => activity.dateString === selectedDate
+  );
 
   return (
     <View style={styles.container}>
@@ -997,31 +995,24 @@ const CalendarComponent = () => {
           <Calendar
             onDayPress={handleDatePress}
             markedDates={{
-              [selectedDate]: { selected: true, selectedColor: "blue" },
-              ...groupedActivities.reduce((acc, group) => {
-                const date = group.title;
-                acc[date] = { marked: true, dotColor: "green" };
-                return acc;
-              }, {}),
+              [selectedDate]: { selected: true, selectedColor: "green" },
+              ...markedDates,
             }}
           />
-
-          <Text style={styles.sectionTitle}>Signed-Up Activities</Text>
-          <SectionList
-            sections={groupedActivities}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderActivity}
-            renderSectionHeader={({ section: { title } }) => (
-              <Text style={styles.dateHeader}>
-                {moment(title).format("dddd, MMMM Do YYYY")}
-              </Text>
-            )}
-            ListEmptyComponent={
-              <Text style={styles.noActivitiesText}>
-                No signed-up activities found.
-              </Text>
-            }
-          />
+          <Text style={styles.selectedDateText}>
+            Activities for {moment(selectedDate).format("MMMM Do YYYY")}
+          </Text>
+          {activitiesForSelectedDate.length > 0 ? (
+            <FlatList
+              data={activitiesForSelectedDate}
+              keyExtractor={(item) => item.id}
+              renderItem={renderActivity}
+            />
+          ) : (
+            <Text style={styles.noActivitiesText}>
+              No activities for this date.
+            </Text>
+          )}
         </>
       )}
     </View>
@@ -1031,23 +1022,14 @@ const CalendarComponent = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 20,
     backgroundColor: "#fff",
   },
-  sectionTitle: {
+  selectedDateText: {
     fontSize: 18,
     fontWeight: "bold",
-    marginVertical: 10,
-    color: "gray",
-  },
-  dateHeader: {
-    fontSize: 16,
-    fontWeight: "bold",
-    backgroundColor: "#f4f4f4",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
     marginTop: 10,
+    textAlign: "center",
   },
   activityCard: {
     backgroundColor: "#f9f9f9",
@@ -1066,11 +1048,6 @@ const styles = StyleSheet.create({
   activityTime: {
     fontSize: 14,
     color: "gray",
-    marginTop: 5,
-  },
-  participants: {
-    fontSize: 14,
-    color: "blue",
     marginTop: 5,
   },
   noActivitiesText: {
