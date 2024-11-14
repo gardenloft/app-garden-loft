@@ -386,7 +386,7 @@ const data = [
     id: 8,
     title: "MY CALENDAR",
     icon: "calendar-month",
-    component: <ComingSoon />,
+    component: <CalendarComponent />,
     prompt: "See What's Coming Up?",
   },
   { id: 9, title: "Games", icon: "gamepad", component: <Games /> },
