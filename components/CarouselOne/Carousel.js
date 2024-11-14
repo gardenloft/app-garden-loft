@@ -289,7 +289,7 @@
 //     fontSize: 30,
 //     color: "rgb(45, 62, 95)",
 //   },
- 
+
 //   item: {
 //     gap: 10,
 //     // marginLeft: 350,
@@ -340,18 +340,55 @@ import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import Activities2 from "../Activities";
 import Entertainment from "../Entertainment";
 import Games from "../Games";
+import CalendarComponent from "../Calender";
 import HowTo from "../HowTo";
 import GLClub from "../GLClub";
 import ComingSoon from "../ComingSoon";
 import Kosmi from "../Kosmi";
 
 const data = [
-  { id: 1, title: "MY FRIENDS", icon: "home-group-plus", component: <GLClub />, prompt: "" },
-  { id: 3, title: "MY ENTERTAINMENT", icon: "movie-open-star", component: <Entertainment />, prompt: "Watch Entertainment?" },
-  { id: 4, title: "WATCH PARTY", icon: "calendar-star", component: <Kosmi />, prompt: "Watch Party?" },
-  { id: 5, title: "MY ACTIVITIES", icon: "weight-lifter", component: <Activities2 />, prompt: "" },
-  { id: 6, title: "HOW-TO VIDEOS", component: <HowTo />, icon: "account-question", prompt: "Need Help With Your Garden Loft?" },
-  { id: 8, title: "MY CALENDAR", icon: "calendar-month", component: <ComingSoon />, prompt: "See What's Coming Up?" },
+  {
+    id: 1,
+    title: "MY FRIENDS",
+    icon: "home-group-plus",
+    component: <GLClub />,
+    prompt: "",
+  },
+  {
+    id: 3,
+    title: "MY ENTERTAINMENT",
+    icon: "movie-open-star",
+    component: <Entertainment />,
+    prompt: "Watch Entertainment?",
+  },
+  {
+    id: 4,
+    title: "WATCH PARTY",
+    icon: "calendar-star",
+    component: <Kosmi />,
+    prompt: "Watch Party?",
+  },
+  {
+    id: 5,
+    title: "MY ACTIVITIES",
+    icon: "weight-lifter",
+    component: <Activities2 />,
+    prompt: "",
+  },
+  {
+    id: 6,
+    title: "HOW-TO VIDEOS",
+    component: <HowTo />,
+    icon: "account-question",
+    prompt: "Need Help With Your Garden Loft?",
+  },
+  {
+    id: 8,
+    title: "MY CALENDAR",
+    icon: "calendar-month",
+    component: <ComingSoon />,
+    prompt: "See What's Coming Up?",
+  },
   { id: 9, title: "Games", icon: "gamepad", component: <Games /> },
 ];
 
@@ -360,7 +397,8 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showPrompt, setShowPrompt] = useState(false);
   const carouselRef = useRef(null);
-  const { width: viewportWidth, height: viewportHeight } = useWindowDimensions();
+  const { width: viewportWidth, height: viewportHeight } =
+    useWindowDimensions();
 
   const handleSnapToItem = (index) => {
     setActiveIndex(index);
@@ -388,24 +426,33 @@ const Home = () => {
           styles.item,
           { backgroundColor: index === activeIndex ? "#f3b718" : "#909090" },
           {
-            transform: index === activeIndex ? [{ scale: 1 }] : [{ scale: 0.8 }],
-            width: viewportWidth > viewportHeight
-              ? Math.round(Dimensions.get("window").width * 0.18)
-              : Math.round(Dimensions.get("window").width * 0.28),
-            height: viewportWidth > viewportHeight
-              ? Math.round(Dimensions.get("window").height * 0.25)
-              : Math.round(Dimensions.get("window").height * 0.2),
+            transform:
+              index === activeIndex ? [{ scale: 1 }] : [{ scale: 0.8 }],
+            width:
+              viewportWidth > viewportHeight
+                ? Math.round(Dimensions.get("window").width * 0.18)
+                : Math.round(Dimensions.get("window").width * 0.28),
+            height:
+              viewportWidth > viewportHeight
+                ? Math.round(Dimensions.get("window").height * 0.25)
+                : Math.round(Dimensions.get("window").height * 0.2),
             marginLeft: viewportWidth > viewportHeight ? 350 : 220,
           },
           viewportWidth <= 413 && phoneStyles.item,
-        ]}
-      >
+        ]}>
         <MaterialCommunityIcons
-          style={[styles.icon, { color: index === activeIndex ? "black" : "#f3b718" }]}
+          style={[
+            styles.icon,
+            { color: index === activeIndex ? "black" : "#f3b718" },
+          ]}
           name={item.icon}
           size={82}
         />
-        <Text style={[styles.title, { color: index === activeIndex ? "black" : "#f3b718" }]}>
+        <Text
+          style={[
+            styles.title,
+            { color: index === activeIndex ? "black" : "#f3b718" },
+          ]}>
           {item.title}
         </Text>
       </View>
@@ -419,47 +466,77 @@ const Home = () => {
       <TouchableOpacity
         style={[
           styles.arrowLeft,
-          { left: viewportWidth > viewportHeight ? 28 : 18, top: viewportWidth > viewportHeight ? "12%" : "14.5%" },
+          {
+            left: viewportWidth > viewportHeight ? 28 : 18,
+            top: viewportWidth > viewportHeight ? "12%" : "14.5%",
+          },
           viewportWidth <= 413 && phoneStyles.arrowLeft,
         ]}
-        onPress={() => carouselRef.current?.scrollTo({ count: -1, animated: true })}
-      >
-        <FontAwesome name="angle-left" size={viewportWidth <= 413 ? 60 : 100} color="rgb(45, 62, 95)" />
+        onPress={() =>
+          carouselRef.current?.scrollTo({ count: -1, animated: true })
+        }>
+        <FontAwesome
+          name="angle-left"
+          size={viewportWidth <= 413 ? 60 : 100}
+          color="rgb(45, 62, 95)"
+        />
       </TouchableOpacity>
 
       <Carousel
         ref={carouselRef}
-        width={viewportWidth <= 413 ? viewportWidth * 0.8 : Math.round(viewportWidth / cardsToShow)}
+        width={
+          viewportWidth <= 413
+            ? viewportWidth * 0.8
+            : Math.round(viewportWidth / cardsToShow)
+        }
         height={Math.round(viewportHeight * 0.3)}
         autoPlay={false}
         data={data}
         renderItem={renderItem}
         loop={true}
         onSnapToItem={handleSnapToItem}
-        style={[styles.carousel, { marginTop: viewportWidth > viewportHeight ? 10 : 70 }]}
+        style={[
+          styles.carousel,
+          { marginTop: viewportWidth > viewportHeight ? 10 : 70 },
+        ]}
       />
 
       <TouchableOpacity
         style={[
           styles.arrowRight,
-          { right: viewportWidth > viewportHeight ? 35 : 22, top: viewportWidth > viewportHeight ? "12%" : "15%" },
+          {
+            right: viewportWidth > viewportHeight ? 35 : 22,
+            top: viewportWidth > viewportHeight ? "12%" : "15%",
+          },
           viewportWidth <= 413 && phoneStyles.arrowRight,
         ]}
-        onPress={() => carouselRef.current?.scrollTo({ count: 1, animated: true })}
-      >
-        <FontAwesome name="angle-right" size={viewportWidth <= 413 ? 60 : 100} color="rgb(45, 62, 95)" />
+        onPress={() =>
+          carouselRef.current?.scrollTo({ count: 1, animated: true })
+        }>
+        <FontAwesome
+          name="angle-right"
+          size={viewportWidth <= 413 ? 60 : 100}
+          color="rgb(45, 62, 95)"
+        />
       </TouchableOpacity>
 
       {isLoading ? (
         <ActivityIndicator
           size="large"
           color="orange"
-          style={[styles.loading, { marginBottom: viewportWidth > viewportHeight ? 140 : 340 }]}
+          style={[
+            styles.loading,
+            { marginBottom: viewportWidth > viewportHeight ? 140 : 340 },
+          ]}
         />
       ) : (
         <>
           {showPrompt && (
-            <Text style={[styles.prompt, { marginBottom: viewportWidth > viewportHeight ? 30 : 50 }]}>
+            <Text
+              style={[
+                styles.prompt,
+                { marginBottom: viewportWidth > viewportHeight ? 30 : 50 },
+              ]}>
               {data[activeIndex].prompt}
             </Text>
           )}
@@ -477,7 +554,7 @@ const phoneStyles = {
     height: Dimensions.get("window").height * 0.25,
     alignSelf: "center",
     marginLeft: 0,
-    marginRight:1,
+    marginRight: 1,
   },
   arrowLeft: {
     left: 10,
@@ -542,7 +619,6 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
-
 
 // import React, { useState, useRef, useEffect } from "react";
 // import {
@@ -745,4 +821,3 @@ export default Home;
 // });
 
 // export default Home;
-
