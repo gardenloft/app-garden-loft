@@ -27,6 +27,79 @@ import YouTubeVideoPlayer from "../components/YouTubeVideoPlayer.js";
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
 
+    // Define phone-specific styles
+    const phoneStyles = viewportWidth <= 413 ? {
+      container: {
+        height: 400,
+        marginTop: 200, 
+        flexDirection: "row",       // Arrange cards in rows
+    flexWrap: "wrap",           // Wrap to the next line after three cards
+    justifyContent: "center",
+    alignItems: "center",
+    width: viewportWidth,
+      },
+      cardContainer: {
+        width: viewportWidth * 0.3,
+        height: viewportHeight * 0.2, // Adjust height to ensure space for text
+      padding: 15,
+      marginHorizontal: 5,
+      marginVertical:10,
+      paddingBottom: 10,
+      shadowOpacity: 0,
+      elevation: 0,
+      borderRadius: 20,
+      overflow: "hidden",
+      },
+      cardText: {
+        fontSize: 16,
+        color: "#393939", // Ensure visible text color
+        fontWeight: "700",
+        marginTop: 10,
+        paddingHorizontal: 5,
+        textAlign: "center",
+        height: 40,           // Fixed height for consistency on phones
+        overflow: "hidden",   // Hide overflow text
+      }, 
+      imageUrl: {
+        width: viewportWidth * 0.28,
+        height: viewportWidth * 0.28,
+        margin: 10,
+        resizeMode: "cover",
+        borderRadius: 10,
+      },
+      icon: {
+        size: 50, // Reduce icon size for phone
+      },
+      modalView: {
+        width: viewportWidth * 0.9,
+        height: viewportHeight * 0.85,
+        paddingTop: 60,
+      },
+      seasonButton: {
+        width: (viewportWidth * 0.85) / 2 - 10,
+        height: 200,
+        borderRadius: 10,
+      },
+      seasonButtonText: {
+        fontSize: 18,
+        fontWeight: "600",
+      },
+      arrowLeft: {
+        position: "absolute",
+        left: 5,                 // Align arrow to the far left
+        top: "40%",               // Center arrow vertically with cards
+        zIndex: 10,
+      },
+      arrowRight: {
+        position: "absolute",
+        right: 5,                // Align arrow to the far right
+        top: "40%",               // Center arrow vertically with cards
+        zIndex: 10,
+      },
+    
+     
+    } : {};
+
 const Entertainment = ({ videoId, onClose }) => {
   const [categories, setCategories] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -309,6 +382,39 @@ const Entertainment = ({ videoId, onClose }) => {
   };
 
   const renderItem = ({ item }) => {
+    const isPhone = viewportWidth <= 413;
+      // Conditionally apply margins only for "Surprise Me" and "Favorites" on phones
+  const cardStyle = [
+    styles.cardContainer,
+    phoneStyles.cardContainer,
+    {
+      backgroundColor: item.id === "surprise" || item.id === "favorites" ? "#f3b718" : "transparent",
+      transform: [{ scale: 0.8 }],
+      // Add spacing only on phone screens for specific cards
+      ...(isPhone && item.id === "surprise" ? { marginRight: 10 } : {}),
+      ...(isPhone && item.id === "favorites" ? { marginLeft: 10 } : {}),
+    },
+  ];
+
+  const iconProps = {
+    size: isPhone ? phoneStyles.icon.size : 104,
+    color: item.id === "surprise" ? "yellow" : "red",
+  };
+
+  if (item.id === "surprise" || item.id === "favorites") {
+    return (
+      <Pressable key={item.id} style={cardStyle} onPress={item.id === "surprise" ? handleSurpriseMe : handleFavorites}>
+        <MaterialCommunityIcons name={item.id === "surprise" ? "star" : "heart"} {...iconProps} />
+        <Text
+          style={[styles.cardText, phoneStyles.cardText]}
+          numberOfLines={isPhone ? 2 : undefined}
+          ellipsizeMode={isPhone ? "tail" : undefined}
+        >
+          {item.name}
+        </Text>
+      </Pressable>
+    );
+  }
     if (item.id === "surprise") {
       return (
         <Pressable
@@ -329,10 +435,14 @@ const Entertainment = ({ videoId, onClose }) => {
                   ? Math.round(Dimensions.get("window").height * 0.3)
                   : Math.round(Dimensions.get("window").height * 0.25),
             },
+            phoneStyles.cardContainer,
           ]}
           onPress={handleSurpriseMe}>
-          <MaterialCommunityIcons name="star" size={104} color="yellow" />
-          <Text style={styles.cardText}>{item.name}</Text>
+          <MaterialCommunityIcons name="star" size={isPhone ? phoneStyles.icon.size : 104} color="yellow" />
+          <Text  style={[styles.cardText, phoneStyles.cardText]}
+          numberOfLines={isPhone ? 2 : undefined}
+          ellipsizeMode={isPhone ? "tail" : undefined}
+        >{item.name}</Text>
         </Pressable>
       );
     } else if (item.id === "favorites") {
@@ -355,10 +465,14 @@ const Entertainment = ({ videoId, onClose }) => {
                   ? Math.round(Dimensions.get("window").height * 0.3)
                   : Math.round(Dimensions.get("window").height * 0.25),
             },
+            phoneStyles.cardContainer,
           ]}
           onPress={handleFavorites}>
-          <MaterialCommunityIcons name="heart" size={104} color="red" />
-          <Text style={styles.cardText}>{item.name}</Text>
+          <MaterialCommunityIcons name="heart" size={isPhone ? phoneStyles.icon.size : 104} color="red" />
+          <Text       style={[styles.cardText, phoneStyles.cardText]}
+          numberOfLines={isPhone ? 2 : undefined}
+          ellipsizeMode={isPhone ? "tail" : undefined}
+        >{item.name}</Text>
         </Pressable>
       );
     } else {
@@ -367,6 +481,7 @@ const Entertainment = ({ videoId, onClose }) => {
           key={item.id}
           style={[
             styles.cardContainer,
+            phoneStyles.cardContainer,
             {
               backgroundColor:
                 item.id === categories[activeIndex]?.id
@@ -387,9 +502,9 @@ const Entertainment = ({ videoId, onClose }) => {
           onPress={() => openCategoryModal(item)}>
           <Image
             source={{ uri: item.imageUrl, cache: "force-cache" }}
-            style={styles.imageUrl}
+            style={[styles.imageUrl, phoneStyles.imageUrl]}
           />
-          <Text style={styles.cardText}>{item.name}</Text>
+          <Text style={[styles.cardText, phoneStyles.cardText]}>{item.name}</Text>
         </Pressable>
       );
     }
@@ -420,7 +535,7 @@ const Entertainment = ({ videoId, onClose }) => {
             width={Math.round(viewportWidth * 0.3)}
             height={Math.round(viewportWidth * 0.3)}
             style={{
-              width: Math.round(viewportWidth * 0.9),
+            width: Math.round(viewportWidth * 0.9),
               height: Math.round(viewportWidth * 0.5),
             }}
             snapEnabled
@@ -428,6 +543,35 @@ const Entertainment = ({ videoId, onClose }) => {
             onSnapToItem={(index) => setActiveIndex(index)}
           />
           <Pressable
+  style={[
+    styles.arrowLeft,
+    {
+      left: viewportWidth > viewportHeight ? -25 : -22,
+      top: viewportWidth <= 413 ? "20%" : viewportWidth > viewportHeight ? "42%" : "32%", // Adjust top for phone
+    }
+  ]}
+  onPress={() => {
+    carouselRef.current?.scrollTo({ count: -1, animated: true });
+  }}
+>
+  <FontAwesome name="angle-left" size={viewportWidth <= 413 ? 70 :100} color="black" />
+</Pressable>
+
+<Pressable
+  style={[
+    styles.arrowRight,
+    {
+      right: viewportWidth > viewportHeight ? -25 : -22,
+      top: viewportWidth <= 413 ? "20%" : viewportWidth > viewportHeight ? "42%" : "32%", // Adjust top for phone
+    }
+  ]}
+  onPress={() => {
+    carouselRef.current?.scrollTo({ count: 1, animated: true });
+  }}
+>
+  <FontAwesome name="angle-right" size={viewportWidth <= 413 ? 70 :100} color="black" />
+</Pressable>
+          {/* <Pressable
             style={[
               styles.arrowLeft,
               {
@@ -452,7 +596,7 @@ const Entertainment = ({ videoId, onClose }) => {
               carouselRef.current?.scrollTo({ count: 1, animated: true });
             }}>
             <FontAwesome name="angle-right" size={100} color="black" />
-          </Pressable>
+          </Pressable> */}
         </>
       )}
 
@@ -462,7 +606,7 @@ const Entertainment = ({ videoId, onClose }) => {
         transparent={true}
         visible={isCategoryModalVisible}
         onRequestClose={() => setIsCategoryModalVisible(false)}>
-        <View style={styles.modalView}>
+        <View style={[styles.modalView, phoneStyles.modalView]}>
           <Pressable
             style={styles.backButton}
             onPress={() =>
@@ -475,7 +619,7 @@ const Entertainment = ({ videoId, onClose }) => {
               {selectedSubcategories.map((subcategory, index) => (
                 <Pressable
                   key={index}
-                  style={styles.seasonButton}
+                  style={[styles.seasonButton, phoneStyles.seasonButton]}
                   onPress={() => {
                     openSubcategoryModal(subcategory);
                     setIsCategoryModalVisible(false);
@@ -490,7 +634,7 @@ const Entertainment = ({ videoId, onClose }) => {
                         subcategory.imageUrl ||
                         "https://via.placeholder.com/150",
                     }}
-                    style={styles.imageUrl}
+                    style={[styles.imageUrl, phoneStyles.imageUrl]}
                     onError={(e) => {
                       console.error(
                         `Failed to load image for ${subcategory.name}: `,
@@ -499,7 +643,7 @@ const Entertainment = ({ videoId, onClose }) => {
                     }}
                   />
 
-                  <Text style={styles.seasonButtonText}>
+                  <Text style={[styles.seasonButtonText, phoneStyles.seasonButtonText]}>
                     {subcategory.name}
                   </Text>
                 </Pressable>
@@ -696,6 +840,7 @@ const styles = StyleSheet.create({
   container: {
     position: "relative",
     alignItems: "center",
+    ...phoneStyles.container,
   },
   cardContainer: {
     width: viewportWidth * 0.3,
@@ -711,12 +856,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.22,
     shadowRadius: 9.22,
     elevation: 12,
+    ...phoneStyles.cardContainer,
   },
   cardText: {
     fontSize: 28,
     color: "#393939",
     fontWeight: "700",
     textAlign: "center",
+    ...phoneStyles.cardText,
   },
   seasonButtonContainer: {
     flexDirection: "row",
@@ -787,6 +934,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     alignSelf: "center",
+    ...phoneStyles.modalView,
   },
   closeButton: {
     position: "absolute",
@@ -818,6 +966,7 @@ const styles = StyleSheet.create({
     margin: 10,
     resizeMode: "cover",
     borderRadius: 10,
+    ...phoneStyles.imageUrl,
   },
 });
 
