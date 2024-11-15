@@ -506,7 +506,9 @@ const Entertainment = ({ videoId, onClose }) => {
             source={{ uri: item.imageUrl, cache: "force-cache" }}
             style={[styles.imageUrl, phoneStyles.imageUrl]}
           />
-          <Text style={[styles.cardText, phoneStyles.cardText]}>{item.name}</Text>
+          <Text style={[styles.cardText, phoneStyles.cardText]}
+           numberOfLines={1} // Restrict to 1 line
+           ellipsizeMode="tail" >{item.name}</Text>
         </Pressable>
       );
     }
@@ -537,8 +539,8 @@ const Entertainment = ({ videoId, onClose }) => {
             width={Math.round(viewportWidth * 0.3)}
             height={Math.round(viewportWidth * 0.3)}
             style={{
-            width: Math.round(viewportWidth * 0.9),
-              height: Math.round(viewportWidth * 0.5),
+            width: Math.round(viewportWidth * 0.92),
+              height: Math.round(viewportWidth * 0.9),
             }}
             snapEnabled
             scrollAnimationDuration={800}
