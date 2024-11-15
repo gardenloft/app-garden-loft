@@ -17,6 +17,59 @@ import { collection, getDocs } from "firebase/firestore";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
+const phoneStyles = SCREEN_WIDTH <= 413 ? {
+  container: {
+    marginTop: SCREEN_HEIGHT * 0.17, // Adjust margin for spacing
+  },
+  filterButtons: {
+    marginTop: SCREEN_HEIGHT * 0.1,
+    marginBottom: SCREEN_HEIGHT * 0.03,
+  },
+  cardContainer: {
+    width: SCREEN_WIDTH * 0.26,
+    height: SCREEN_HEIGHT * 0.25,
+    marginHorizontal: SCREEN_WIDTH * 0.02,
+    borderRadius: 20,
+    elevation: 0, // Dim the shadow for cards on phones
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+  },
+  cardImage: {
+    width: "120%",
+    height: "70%",
+    width: SCREEN_WIDTH * 0.29,
+    height: SCREEN_HEIGHT * 0.2,
+    borderRadius: 20,
+  },
+  cardText: {
+    fontSize: 16,
+    textAlign: "center",
+    numberOfLines: 2, // Truncate text to one line
+    ellipsizeMode: "tail",
+  },
+  carousel: {
+    width: Math.round(SCREEN_WIDTH * 0.9), // Adjust carousel width for phone
+  },
+  filterButton: {
+    paddingHorizontal: SCREEN_WIDTH * 0.04,
+    paddingVertical: SCREEN_HEIGHT * 0.012,
+  },
+  filterButtonText: {
+    fontSize: 20,
+  },
+  arrowLeft: {
+    top: "50%",
+    left: -17,
+  },
+  arrowRight: {
+    top: "50%",
+    right: -17,
+  },
+} : {};
+
+
 // Define URLs and multiplayer games
 const gameUrls = {
   Crossword: "https://www.seniorsonline.vic.gov.au/services-information/crossword",
@@ -98,7 +151,9 @@ const Games = () => {
   const renderItem = ({ item, index }) => (
     <Pressable key={item.id} style={styles.cardContainer} onPress={() => openGameModal(item)}>
       <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
-      <Text style={styles.cardText}>{item.name}</Text>
+      <Text style={styles.cardText}
+      numberOfLines={1} // Ensure text is limited to one line
+      ellipsizeMode="tail" >{item.name}</Text>
     </Pressable>
   );
 
@@ -147,16 +202,16 @@ const Games = () => {
         ref={carouselRef}
         data={filteredGames}
         renderItem={renderItem}
-        width={SCREEN_WIDTH * 0.3}
-        height={SCREEN_WIDTH * 0.3}
+        width={SCREEN_WIDTH * 0.28 + SCREEN_WIDTH * 0.02}
+        height={SCREEN_HEIGHT * 0.3}
         loop
         style={styles.carousel}
       />
       <Pressable style={styles.arrowLeft} onPress={() => carouselRef.current?.scrollTo({ count: -1 })}>
-        <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
+        <FontAwesome name="angle-left" size={SCREEN_WIDTH <= 413 ? 70 :100} color="rgb(45, 62, 95)" />
       </Pressable>
       <Pressable style={styles.arrowRight} onPress={() => carouselRef.current?.scrollTo({ count: 1 })}>
-        <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
+        <FontAwesome name="angle-right" size={SCREEN_WIDTH <= 413 ? 70 :100} color="rgb(45, 62, 95)" />
       </Pressable>
     </View>
   );
@@ -166,12 +221,14 @@ const styles = StyleSheet.create({
   container: {
     position: "relative",
     alignItems: "center",
+    ...phoneStyles.container,
   },
   filterButtons: {
     flexDirection: "row",
     justifyContent: "center",
     marginBottom: SCREEN_HEIGHT * 0.05,
     marginTop:SCREEN_HEIGHT * 0.22,
+    ...phoneStyles.filterButtons,
   },
   filterButton: {
     paddingHorizontal: SCREEN_WIDTH * 0.05,
@@ -184,6 +241,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    ...phoneStyles.filterButton,
   },
   activeFilterButton: {
     backgroundColor: "orange",
@@ -192,6 +250,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "bold",
     color: "white",
+    ...phoneStyles.filterButtonText,
   },
   cardContainer: {
     width: SCREEN_WIDTH * 0.25,
@@ -204,6 +263,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.22,
     shadowRadius: 9.22,
     elevation: 12,
+    ...phoneStyles.cardContainer,
   },
   cardImage: {
     width: SCREEN_WIDTH * 0.25,
@@ -211,23 +271,27 @@ const styles = StyleSheet.create({
     margin: 10,
     resizeMode: "cover",
     borderRadius: 10,
+    ...phoneStyles.cardImage,
   },
   cardText: {
     fontSize: 30,
     color: "black",
     fontWeight: "700",
+    ...phoneStyles.cardText,
   },
   arrowLeft: {
     position: "absolute",
     left: -25,
     top: "60%",
     transform: [{ translateY: -50 }],
+    ...phoneStyles.arrowLeft,
   },
   arrowRight: {
     position: "absolute",
     right: -22,
     top: "60%",
     transform: [{ translateY: -50 }],
+    ...phoneStyles.arrowRight,
   },
   modalContainer: {
     flex: 1,
@@ -266,6 +330,7 @@ const styles = StyleSheet.create({
   carousel: {
     width: Math.round(SCREEN_WIDTH * 0.9),
     height: Math.round(SCREEN_HEIGHT * 0.5),
+    ...phoneStyles.carousel,
   },
 });
 
