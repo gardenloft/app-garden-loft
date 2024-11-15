@@ -489,6 +489,13 @@ const phoneStyles = {
     top: "30%",
     transform: [{ translateY: -30 }],
   },
+  prompt: {
+    fontSize: 22, // Smaller font for phones
+    textAlign: "center", // Center the prompt text
+    marginHorizontal: Dimensions.get("window").width * 0.1, // Add horizontal margin
+    marginTop: 2, // Space above the prompt
+    color: "rgb(45, 62, 95)",
+  },
 };
 
 const styles = StyleSheet.create({
@@ -508,6 +515,8 @@ const styles = StyleSheet.create({
   prompt: {
     fontSize: 30,
     color: "rgb(45, 62, 95)",
+    // marginHorizontal: Dimensions.get("window").width * 0.15, // More horizontal margin
+    ...phoneStyles.prompt,
   },
   item: {
     gap: 10,
