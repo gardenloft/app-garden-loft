@@ -786,7 +786,7 @@ const styles = StyleSheet.create({
   },
   callButton: {
     backgroundColor: "#59ACCE",
-    paddingHorizontal: SCREEN_WIDTH < 375 ? 8 : SCREEN_WIDTH < 430 ? 10 : 12,
+    paddingHorizontal: SCREEN_WIDTH < 375 ? 8 : SCREEN_WIDTH < 430 ? 10 : 20,
     paddingVertical: 8,
     borderRadius: 15,
     flexDirection: "row",
@@ -796,7 +796,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 6,
-    maxWidth: SCREEN_WIDTH < 375 ? 160 : SCREEN_WIDTH < 430 ? 180 : 200,
+    maxWidth: SCREEN_WIDTH < 375 ? 160 : SCREEN_WIDTH < 430 ? 180 : 250,
   },
   emergencyButtonText: {
     color: "#2E3E5E",
