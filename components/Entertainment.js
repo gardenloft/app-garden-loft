@@ -54,7 +54,7 @@ const { width: viewportWidth, height: viewportHeight } =
         fontSize: 16,
         color: "#393939", // Ensure visible text color
         fontWeight: "700",
-        marginTop: 10,
+        marginTop: 5,
         paddingHorizontal: 5,
         textAlign: "center",
         height: 40,           // Fixed height for consistency on phones
@@ -62,8 +62,8 @@ const { width: viewportWidth, height: viewportHeight } =
       }, 
       imageUrl: {
         width: viewportWidth * 0.28,
-        height: viewportWidth * 0.28,
-        margin: 10,
+        height: viewportWidth * 0.35,
+        margin: 5,
         resizeMode: "cover",
         borderRadius: 10,
       },
@@ -81,20 +81,22 @@ const { width: viewportWidth, height: viewportHeight } =
         borderRadius: 10,
       },
       seasonButtonText: {
-        fontSize: 18,
+        fontSize: 14, // Smaller font for phone screens
         fontWeight: "600",
+        textAlign: "center",
+        marginTop: 5, // Add slight margin to prevent overlap
       },
       arrowLeft: {
         position: "absolute",
-        left: 5,                 // Align arrow to the far left
+        left: 15,                 // Align arrow to the far left
         top: "40%",               // Center arrow vertically with cards
         zIndex: 10,
       },
       arrowRight: {
         position: "absolute",
-        right: 5,                // Align arrow to the far right
+        right: 15,                // Align arrow to the far right
         top: "40%",               // Center arrow vertically with cards
-        zIndex: 10,
+        zIndex: 5,
       },
     
      
@@ -554,14 +556,14 @@ const Entertainment = ({ videoId, onClose }) => {
     carouselRef.current?.scrollTo({ count: -1, animated: true });
   }}
 >
-  <FontAwesome name="angle-left" size={viewportWidth <= 413 ? 70 :100} color="black" />
+  <FontAwesome name="angle-left" size={viewportWidth <= 413 ? 90:100} color="black" />
 </Pressable>
 
 <Pressable
   style={[
     styles.arrowRight,
     {
-      right: viewportWidth > viewportHeight ? -25 : -22,
+      right: viewportWidth > viewportHeight ? -25 : -20,
       top: viewportWidth <= 413 ? "20%" : viewportWidth > viewportHeight ? "42%" : "32%", // Adjust top for phone
     }
   ]}
@@ -569,7 +571,7 @@ const Entertainment = ({ videoId, onClose }) => {
     carouselRef.current?.scrollTo({ count: 1, animated: true });
   }}
 >
-  <FontAwesome name="angle-right" size={viewportWidth <= 413 ? 70 :100} color="black" />
+  <FontAwesome name="angle-right" size={viewportWidth <= 413 ? 90 :100} color="black" />
 </Pressable>
           {/* <Pressable
             style={[
