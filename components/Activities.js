@@ -1016,7 +1016,8 @@ const Activities = () => {
         style={styles.cardImage}
         resizeMode="contain"
       />
-      <Text style={styles.cardText}>{item.item}</Text>
+      <Text style={styles.cardText}
+    > {item.item}</Text>
       <Text style={styles.cardTextTime}>
         {moment(item.startDate).format("dddd MMMM Do, h:mm a")}
       </Text>
@@ -1143,8 +1144,42 @@ const Activities = () => {
             onSnapToItem={(index) => setActiveIndex(index)}
           />
 
+          
           {/* Left and Right Arrow Buttons */}
-          <Pressable
+<Pressable
+  style={[
+    styles.arrowLeft,
+    {
+      left: viewportWidth <= 413 ? 0 : -22, // Adjust left position for phones
+      top: viewportWidth <= 413 ? "35%" : "50%", // Align arrows vertically with carousel
+    },
+  ]}
+  onPress={() => handleArrowPress("left")}
+>
+  <FontAwesome
+    name="angle-left"
+    size={viewportWidth <= 413 ? 65 : 80} // Adjust size for phones
+    color="rgb(45, 62, 95)"
+  />
+</Pressable>
+<Pressable
+  style={[
+    styles.arrowRight,
+    {
+      right: viewportWidth <= 413 ? 0 : -22, // Adjust right position for phones
+      top: viewportWidth <= 413 ? "35%" : "50%", // Align arrows vertically with carousel
+    },
+  ]}
+  onPress={() => handleArrowPress("right")}
+>
+  <FontAwesome
+    name="angle-right"
+    size={viewportWidth <= 413 ? 65 : 80} // Adjust size for phones
+    color="rgb(45, 62, 95)"
+  />
+</Pressable>
+
+          {/* <Pressable
             style={[styles.arrowLeft, { left: -22, top: "50%" }]}
             onPress={() => handleArrowPress("left")}
           >
@@ -1155,7 +1190,7 @@ const Activities = () => {
             onPress={() => handleArrowPress("right")}
           >
             <FontAwesome name="angle-right" size={80} color="rgb(45, 62, 95)" />
-          </Pressable>
+          </Pressable> */}
 
           {/* Modal for Event Details */}
           {isModalOpen && selectedEvent && (
@@ -1182,11 +1217,144 @@ const Activities = () => {
     </View>
   );
 };
+const phoneStyles = viewportWidth <= 413 ? {
+  container: {
+    marginTop: viewportHeight * 0.23, // Adjust spacing for phones
+  },
+  cardContainer: {
+    width: viewportWidth * 0.38,
+    height: viewportHeight * 0.25,
+    marginHorizontal: viewportWidth * 0.04,
+    borderRadius: 12,
+    elevation: 0,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    alignItems: "center", // Center content horizontally
+    paddingVertical: viewportHeight * 0.02,
+    
+  },
+  cardImage: {
+    width: "95%",
+    height: "70%",
+    borderRadius: 8,
+    alignSelf: "center",
+    marginVertical: viewportHeight * 0.01,
+  
+  },
+  cardText: {
+    fontSize: 15,
+    textAlign: "center",
+    color: "#333",
+    marginTop: viewportHeight * 0.005,
+    overflow: "hidden", // Prevent overflowing
+    numberOfLines: 1, // Shorten text
+    ellipsizeMode: "tail",
+  },
+  cardTextTime: {
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
+  },
+  arrowLeft: {
+    position: "absolute",
+    left: 0, // Position the arrow flush to the left edge
+    top: "50%", // Center the arrow vertically relative to the carousel
+    transform: [{ translateY: -50 }], // Ensure proper vertical alignment
+    zIndex: 10, // Place above other elements
+  },
+  arrowRight: {
+    position: "absolute",
+    right: 0, // Position the arrow flush to the right edge
+    top: "50%", // Center the arrow vertically relative to the carousel
+    transform: [{ translateY: -50 }], // Ensure proper vertical alignment
+    zIndex: 10, // Place above other elements
+  },
+  filterButtonsContainer: {
+    marginTop: viewportHeight * 0.2,
+    marginBottom: viewportHeight * 0.02,
+  },
+  filterButton: {
+    paddingHorizontal: viewportWidth * 0.04,
+    paddingVertical: viewportHeight * 0.02,
+    marginHorizontal: viewportWidth * 0.02,
+    marginTop: viewportHeight * 0.01,
+    borderRadius: 15,
+  },
+  filterButtonText: {
+    fontSize: 16,
+  },
+  modalContainer: {
+    bottom: "40%", // Adjust modal positioning for phones
+    padding: viewportWidth * 0.04,
+    borderRadius: 10,
+    top: "25%",
+    left: "5%", // Center horizontally by defining a margin from the left
+    right: "5%", // Ensure even spacing on the right
+    justifyContent: "center", // Center content within the modal
+    alignItems: "center", // Center the modal on the screen
+  
+  },
+  modal: {
+    width: viewportWidth * 0.7, // Make the modal width responsive
+    padding: viewportWidth * 0.05,
+    borderRadius: 10,
+    backgroundColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalText: {
+    fontSize: 16,
+  },
+  modalJoinNow: {
+    fontSize: 14,
+    padding: viewportWidth * 0.03,
+  },
+  closeButton: {
+    paddingHorizontal: viewportWidth * 0.2,
+    paddingVertical: viewportHeight * 0.015,
+  },
+  webViewStyle: {
+    width: viewportWidth * 0.9, // Slightly smaller width for phones
+    height: viewportHeight * 0.75, // Adjust height for phones
+    borderRadius: 10, // Rounded corners for better appearance
+    backgroundColor: "white",
+  },
+  webViewModal: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Dim background for better focus
+  },
+  webViewContainer: {
+    margin: 15,
+    width: viewportWidth * 0.95, // Slightly smaller width for phones
+    height: viewportHeight * 0.8, // Fit container to phone height
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 8,
+  },
+  carousel: {
+    width: viewportWidth * 0.9,
+  },
+} : {};
 
 const styles = StyleSheet.create({
   container: {
     position: "relative",
     alignItems: "center",
+    ...phoneStyles.container,
   },
   cardContainer: {
     width: viewportWidth * 0.3,
@@ -1203,6 +1371,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.22,
     shadowRadius: 9.22,
     elevation: 12,
+    ...phoneStyles.cardContainer,
   },
   cardImage: {
     width: viewportWidth * 0.25,
@@ -1210,17 +1379,20 @@ const styles = StyleSheet.create({
     margin: 10,
     resizeMode: "cover",
     borderRadius: 10,
+    ...phoneStyles.cardImage,
   },
   cardText: {
     fontSize: 30,
     fontWeight: "700",
     textAlign: "center",
+    ...phoneStyles.cardText,
   },
   cardTextTime: {
     fontSize: 25,
     color: "#393939",
     fontWeight: "600",
     textAlign: "center",
+    ...phoneStyles.cardTextTime,
   },
   filterButtonsContainer: {
     flexDirection: "row",
@@ -1228,6 +1400,7 @@ const styles = StyleSheet.create({
 
     marginBottom: viewportHeight * 0.04,
     marginTop: viewportHeight * 0.22,
+    ...phoneStyles.filterButtonsContainer,
   },
   filterButton: {
     paddingHorizontal: 20,
@@ -1235,6 +1408,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     borderRadius: 20,
     backgroundColor: "grey",
+    ...phoneStyles.filterButton,
   },
   activeFilterButton: {
     backgroundColor: "orange",
@@ -1243,14 +1417,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "white",
     fontWeight: "bold",
+    ...phoneStyles.filterButtonText,
   },
   arrowLeft: {
     position: "absolute",
     transform: [{ translateY: -50 }],
+    ...phoneStyles.arrowLeft,
   },
   arrowRight: {
     position: "absolute",
     transform: [{ translateY: -50 }],
+    ...phoneStyles.arrowRight,
   },
   loading: {
     flex: 1,
@@ -1264,15 +1441,18 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 20,
     borderRadius: 10,
+    ...phoneStyles.modalContainer,
   },
   modal: {
     backgroundColor: "beige",
     padding: 60,
     borderRadius: 10,
+    ...phoneStyles.modal,
   },
   modalJoinNow: {
     backgroundColor: "blue",
     fontSize: 50,
+    ...phoneStyles.modalJoinNow,
   },
   closeButton: {
     marginTop: 10,
@@ -1280,6 +1460,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 200,
     borderRadius: 5,
+    ...phoneStyles.closeButton,
   },
   closeButton1: {
     position: "absolute",
@@ -1297,6 +1478,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: viewportWidth,
     height: viewportHeight * 0.7,
+    ...phoneStyles.webViewStyle,
   },
   webViewModal: {
     position: "absolute",
@@ -1305,6 +1487,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "transparent",
+    ...phoneStyles.webViewModal,
   },
   webViewContainer: {
     margin: 10,
@@ -1326,6 +1509,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     alignSelf: "center",
+    ...phoneStyles.webViewContainer,
   },
 });
 
