@@ -787,7 +787,7 @@ const styles = StyleSheet.create({
   callButton: {
     backgroundColor: "#59ACCE",
     paddingHorizontal: SCREEN_WIDTH < 375 ? 8 : SCREEN_WIDTH < 430 ? 10 : 20,
-    paddingVertical: 8,
+    paddingVertical: 9,
     borderRadius: 15,
     flexDirection: "row",
     alignItems: "center",
@@ -818,6 +818,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
+   
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -828,7 +829,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: 20,
     width: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.8,
-    height: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.8,
+    height: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.98,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -837,15 +838,22 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   logoutContainer: {
-    marginTop: -80,
+    marginTop: 20,
     alignSelf: "center",
-    width: SCREEN_WIDTH * 0.7,
+    width: SCREEN_WIDTH * 0.9,
+    height: SCREEN_HEIGHT * 0.5,
     paddingVertical: 12,
     backgroundColor: "#f09030",
-    borderRadius: 20,
+    borderRadius: 9,
     justifyContent: "center",
     alignItems: "center",
-    transform: [{ scale: SCREEN_WIDTH < 400 ? 0.9 : 1.1 }],
+    transform: [{ scale: SCREEN_WIDTH < 413 ? 0.9 : 2}],
+  },
+
+  logoutButton: {
+    fontSize: SCREEN_WIDTH < 375 ? 16 : 18, // Smaller font size
+    color: "white",
+    fontWeight: "bold",
   },
   closeButton: {
     alignSelf: "flex-end",
