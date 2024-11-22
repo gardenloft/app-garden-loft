@@ -403,13 +403,13 @@ const GLClub = () => {
         },
       ]}
       onPress={() => handleCardPress(item)}>
-      <Image source={{ uri: item.imageUrl }} style={styles.image} />
-      <Text style={styles.cardText}>
+      <Image source={{ uri: item.imageUrl }} style={[styles.image, phoneStyles.image]} />
+      <Text style={[styles.cardText, phoneStyles.cardText]}>
         {item.name}
         {friendRequests[item.id]?.status === "accepted" && (
           <FontAwesome
             name="check-circle"
-            size={40} // Bigger tick mark
+            size={SCREEN_WIDTH <= 413 ? 20: 40} // Bigger tick mark
             color="green"
             style={styles.nameIconStyle}
           />
@@ -417,7 +417,7 @@ const GLClub = () => {
         {friendRequests[item.id]?.status === "pending" && (
           <FontAwesome
             name="question-circle"
-            size={40} // Bigger pending icon
+            size={SCREEN_WIDTH <= 413 ? 20: 40} // Bigger pending icon
             color="orange"
             style={styles.nameIconStyle}
           />
@@ -431,6 +431,7 @@ const GLClub = () => {
       <View
         style={[
           styles.container,
+          phoneStyles.container,
           {
             height: SCREEN_WIDTH > SCREEN_HEIGHT ? 920 : 450,
             marginTop: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : 45,
@@ -476,13 +477,38 @@ const GLClub = () => {
           style={{
             width: Math.round(SCREEN_WIDTH * 0.9),
             height: Math.round(SCREEN_HEIGHT * 0.5),
+            ...phoneStyles.carousel,
           }}
           loop
           onSnapToItem={(index) => setActiveIndex(index)}
           pagingEnabled
         />
 
-        <Pressable
+<Pressable
+  style={[styles.arrowLeft, phoneStyles.arrowLeft]}
+  onPress={() => carouselRef.current?.scrollTo({ count: -1, animated: true })}
+>
+  <FontAwesome
+    name="angle-left"
+    size={SCREEN_WIDTH <= 413 ? 65 : 100}
+    color="rgb(45, 62, 95)"
+  />
+</Pressable>
+
+<Pressable
+  style={[styles.arrowRight, phoneStyles.arrowRight]}
+  onPress={() => carouselRef.current?.scrollTo({ count: 1, animated: true })}
+>
+  <FontAwesome
+    name="angle-right"
+    size={SCREEN_WIDTH <= 413 ? 65 : 100}
+    color="rgb(45, 62, 95)"
+  />
+</Pressable>
+
+
+
+        {/* <Pressable
           style={[
             styles.arrowLeft,
             {
@@ -507,7 +533,7 @@ const GLClub = () => {
             carouselRef.current?.scrollTo({ count: 1, animated: true });
           }}>
           <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
-        </Pressable>
+        </Pressable> */}
 
         {selectedContact && (
           <Modal
@@ -515,26 +541,28 @@ const GLClub = () => {
             animationType="slide"
             transparent={true}
             onRequestClose={() => setModalVisible(false)}>
-            <View style={styles.modalContainer}>
+            <View style={[styles.modalContainer, phoneStyles.modalContainer]}>
               <ScrollView
                 contentContainerStyle={[
                   styles.modalContent,
+                  phoneStyles.modalContent,
                   {
                     flexDirection:
                       SCREEN_WIDTH > SCREEN_HEIGHT ? "row" : "column",
                   },
                 ]}>
                 <Pressable
-                  style={styles.closeButton}
+                  style={[styles.closeButton, phoneStyles.closeButton]}
                   onPress={() => setModalVisible(false)}>
                   <FontAwesome name="close" size={30} color="black" />
                 </Pressable>
-                <View style={styles.modalImageButtons}>
+                <View style={[styles.modalImageButtons, phoneStyles.modalImageButtons]}>
                   <View style={styles.modalImageContainer}>
                     <Image
                       source={{ uri: selectedContact.imageUrl }}
                       style={[
                         styles.modalImage,
+                        phoneStyles.modalImage,
                         {
                           width: SCREEN_WIDTH > SCREEN_HEIGHT ? 400 : 350,
                           height: SCREEN_WIDTH > SCREEN_HEIGHT ? 650 : 400,
@@ -554,6 +582,7 @@ const GLClub = () => {
                   <View
                     style={[
                       styles.actionContainer,
+                      phoneStyles.actionContainer,
                       {
                         marginLeft: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : -250,
                         marginTop: SCREEN_WIDTH > SCREEN_HEIGHT ? -220 : 120,
@@ -562,7 +591,7 @@ const GLClub = () => {
                     {!friendRequests[selectedContact.id] && (
                       <Pressable
                         onPress={() => handleAddFriend(selectedContact)}
-                        style={styles.actionButton}>
+                        style={[styles.actionButton, phoneStyles.actionButton]}>
                         <FontAwesome
                           name="user-plus"
                           size={24}
@@ -572,6 +601,7 @@ const GLClub = () => {
                         <Text
                           style={[
                             styles.actionButtonText,
+                            phoneStyles.actionButtonText,
                             styles.unFriendText,
                           ]}>
                           Add Friend
@@ -634,6 +664,8 @@ const GLClub = () => {
                             styles.actionButton,
                             ,
                             styles.callButton,
+                            phoneStyles.actionButton,
+                            phoneStyles.callButton,
                             {
                               marginLeft: SCREEN_WIDTH > SCREEN_HEIGHT ? 0 : 30,
                             },
@@ -642,9 +674,10 @@ const GLClub = () => {
                             name="video-camera"
                             size={35}
                             color="white"
-                            style={styles.modalIcon}
+                            style={[styles.modalIcon, phoneStyles.modalIcon]}
                           />
-                          <Text style={[styles.actionButtonText]}>Call</Text>
+                          <Text style={[styles.actionButtonText, phoneStyles.actionButtonText]}  numberOfLines={1} 
+                               adjustsFontSizeToFit >Call</Text>
                         </Pressable>
                         <Pressable
                           onPress={handleChatPress}
@@ -652,6 +685,8 @@ const GLClub = () => {
                             styles.actionButton,
                             ,
                             styles.messageButton,
+                            phoneStyles.actionButton,
+                            phoneStyles.messageButton,
                             {
                               backgroundColor: "#0266E0",
                             },
@@ -660,9 +695,15 @@ const GLClub = () => {
                             name="comment"
                             size={35}
                             color="white"
-                            style={styles.modalIcon}
+                            style={[styles.modalIcon, phoneStyles.modalIcon]}
                           />
-                          <Text style={[styles.actionButtonText]}>Message</Text>
+                          <Text 
+                                 style={[styles.actionButtonText, phoneStyles.actionButtonText]} 
+                                  numberOfLines={1} 
+                               adjustsFontSizeToFit
+                                       >
+                                          Message
+                              </Text>
                         </Pressable>
 
                         {/* Modal for Chat Component */}
@@ -895,6 +936,297 @@ const GLClub = () => {
   );
 };
 
+
+const phoneStyles =
+  SCREEN_WIDTH <= 413
+    ? {
+        container: {
+          marginTop: SCREEN_HEIGHT * 0.2, // Adjust spacing for phones
+          height: SCREEN_WIDTH > SCREEN_HEIGHT ? 820 : 350,
+           
+        },
+        cardContainer: {
+          width: SCREEN_WIDTH * 0.43,
+          height: SCREEN_HEIGHT * 0.25,
+          marginHorizontal: 10,
+          marginVertical: 10,
+          borderRadius: 12,
+          alignItems: "center",
+          paddingVertical: SCREEN_HEIGHT * 0.02,
+          backgroundColor: "#fff",
+          shadowColor: "transparent", // Remove shadow
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0,
+          shadowRadius: 0,
+          elevation: 0,
+        },
+        image: {
+          width: 97, // Adjust size for phones
+          height: 97, // Adjust size for phones
+          borderRadius: 50, // Keep the image circular
+          marginBottom: 6,
+          margin: 8,
+          shadowColor: "transparent",
+           backgroundColor: "transparent",
+          shadowOffset: { width: 0, height: 0},
+          shadowOpacity: 0, // Slightly reduce shadow for smaller screens
+          shadowRadius: 0,
+          elevation: 0,
+        },
+        iconStyle: {
+          position: "absolute",
+          top: SCREEN_HEIGHT * 0.01, // Adjust top positioning for phones
+          right: SCREEN_WIDTH * 0.05, // Slightly larger margin for phones
+        },
+        nameIconStyle: {
+          marginLeft: 3, // Smaller margin for phones
+          fontSize: 18, 
+        },
+        cardText: {
+          fontSize: 16,
+          textAlign: "center",
+          color: "#333",
+          marginTop: SCREEN_HEIGHT * 0.005,
+          height: SCREEN_HEIGHT * 0.05,
+          overflow: "hidden",
+        },
+     
+        arrowLeft: {
+          position: "absolute",
+          left: -5, // Flush with the screen edge
+          top: "65%", // Centered vertically relative to the carousel
+          transform: [{ translateY: -50 }],
+          zIndex: 10,
+        },
+        arrowRight: {
+          position: "absolute",
+          right: -5, // Flush with the screen edge
+          top: "65%", // Centered vertically relative to the carousel
+          transform: [{ translateY: -50 }],
+          zIndex: 10,
+        },
+        filterButtons: {
+          flexDirection: "row",
+          justifyContent: "center",
+          marginTop: SCREEN_HEIGHT * 0.18,
+          marginBottom: SCREEN_HEIGHT * 0.03,
+        },
+        filterButton: {
+          paddingHorizontal: SCREEN_WIDTH * 0.05,
+          paddingVertical: SCREEN_HEIGHT * 0.015,
+          borderRadius: 15,
+          marginHorizontal: SCREEN_WIDTH * 0.02,
+        },
+        filterButtonText: {
+          fontSize: 16,
+        },
+        modalContainer: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)", // Dimmed background for focus
+          paddingHorizontal: 10, // Reduce padding for smaller screens
+          width: SCREEN_WIDTH * 0.95, // Make modal wider for phones
+          height: SCREEN_HEIGHT * 0.85, // Increase modal length
+        },
+        modalContent: {
+          width:SCREEN_WIDTH * 0.9, // Adjust width to fit phone screens
+          height: SCREEN_HEIGHT * 0.9, // Reduce height for smaller screens
+          backgroundColor: "#fff",
+          borderRadius: 12,
+          padding: 10, // Compact padding for phone screens
+          alignItems: "center",
+          justifyContent: "flex-start",
+        },
+
+        modalIcon: {
+          marginBottom: 5, // Reduced margin for better spacing
+        },
+        
+        closeButton: {
+          position: "absolute",
+          top: 15, // Adjust position for smaller screens
+          right: 15,
+          backgroundColor: "#ccc", // Neutral color for clarity
+          padding: 8,
+          borderRadius: 12,
+        },
+        modalImageButtons: {
+          flexDirection: "column",
+          alignItems: "center",
+          marginTop: 20, // Add spacing from the top
+        },
+        modalImage: {
+          width: SCREEN_WIDTH * 0.2, // Adjust image width
+          height: SCREEN_HEIGHT * 0.1, // Adjust image height
+          borderRadius: 10,
+          marginBottom: 10,
+        },
+
+        modalInfoContainer: {
+          flex: 1,
+          marginTop: -20, // Adjust alignment
+          alignItems: "center",
+        },
+        
+        
+        actionContainer: {
+          flexDirection: "row",
+          justifyContent: "space-around",
+          width: SCREEN_WIDTH * 0.8, // Adjust button container width
+          marginVertical: 10,
+        },
+        actionButton: {
+          backgroundColor: "#f0f0f0",
+          borderRadius: 8,
+          padding: 10,
+          width: SCREEN_WIDTH * 0.35, // Adjust button size
+          height:SCREEN_HEIGHT * 0.07,
+          paddingVertical: SCREEN_HEIGHT * 0.015, // Smaller padding
+          paddingHorizontal: SCREEN_WIDTH* 0.03,
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        actionButtonText: {
+          fontSize: 14, // Reduce font size
+          color: "#333",
+          marginTop: 5,
+        },
+        callButton: {
+          backgroundColor: "green",
+        },
+        messageButton: {
+          backgroundColor: "#0266E0",
+        },
+        
+          chatContainer: {
+            width: SCREEN_WIDTH * 0.9,
+            height: SCREEN_HEIGHT * 0.8,
+            borderRadius: 15,
+            backgroundColor: "#fff",
+            padding: 15,
+            alignItems: "center",
+          },
+          threeDotsButton: {
+            backgroundColor: "grey",
+  width: 30, // Smaller width
+  height: 30,
+  borderRadius: 20,
+  alignItems: "center",
+  justifyContent: "center",
+          },
+          threeDotsMenu: {
+            position: "absolute",
+            bottom: 50,
+            alignSelf: "center",
+            backgroundColor: "white",
+            borderRadius: 10,
+            padding: 10,
+            elevation: 5,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+           shadowOpacity: 0.3,
+            shadowRadius: 4,
+          },
+          scrollView: {
+            width: SCREEN_WIDTH * 0.9, // Full width for phones
+            paddingHorizontal: 10, // Add padding for better spacing
+          },
+          modalName: {
+            fontSize: 16, // Adjust font size for smaller screens
+            fontWeight: "bold",
+            color: "#333",
+            marginBottom: 10,
+            textAlign: "center",
+          },
+          moreDetailsContainer: {
+            height: 50, // Reduce collapsed height
+            marginVertical: 10,
+            alignItems: "center",
+            overflow: "hidden",
+          },
+          moreDetailsContainerExpanded: {
+            height: SCREEN_HEIGHT * 0.3, // Adjust expanded height
+            overflow: "visible",
+          },
+          readMoreText: {
+            fontSize: 14, // Reduced size for phones
+            color: "#0EC2E9",
+            marginTop: 10,
+            textAlign: "center",
+          },
+          modalInterestsTitle: {
+            fontSize: 14, // Adjust for phones
+            fontWeight: "bold",
+            color: "#666",
+            marginBottom: 5,
+            textAlign: "center",
+          },
+          modalInterests: {
+            fontSize: 12, // Smaller font size for phones
+            color: "#666",
+            marginBottom: 5,
+            textAlign: "center",
+          },  
+          
+
+      callButton: {
+        backgroundColor: "green",
+        padding: SCREEN_HEIGHT * 0.015,
+        borderRadius: 8,
+        marginHorizontal: SCREEN_WIDTH * 0.02,
+      },
+      chatButton: {
+        backgroundColor: "#0266E0",
+        padding: SCREEN_HEIGHT * 0.015,
+        borderRadius: 8,
+        marginHorizontal: SCREEN_WIDTH * 0.02,
+      },
+
+      unfriendButton: {
+        flexDirection: "row",
+        backgroundColor: "#f0f0f0",
+        borderRadius: 10,
+        padding: SCREEN_HEIGHT * 0.02,
+        marginHorizontal: SCREEN_WIDTH * 0.03,
+      },
+      unfriendText: {
+        color: "red",
+        fontSize: 14,
+        fontWeight: "600",
+      },
+      callingModal: {
+        justifyContent: "center",
+        alignItems: "center",
+        flex: 1,
+        backgroundColor: "rgba(0, 0, 0, 0.5)", // Dimmed background
+      },
+      modalTextCall: {
+        fontSize: 18, // Reduce font size
+        color: "#fff",
+        marginVertical: 10,
+      },
+      dismissButton: {
+        backgroundColor: "orange",
+        borderRadius: 8,
+        paddingVertical: 8,
+        paddingHorizontal: 15,
+      },
+      buttonText: {
+        fontSize: 14,
+        color: "#fff",
+      },
+      
+    
+      carousel: {
+        width: SCREEN_WIDTH * 0.9, // Full-width for the carousel
+        height: SCREEN_HEIGHT * 0.3, // Adjust height as needed
+      },
+      
+      }
+    : {};
+
+
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -902,12 +1234,14 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     position: "relative",
+    ...phoneStyles.container,
   },
   filterButtons: {
     flexDirection: "row",
     justifyContent: "center",
     marginBottom: SCREEN_HEIGHT * 0.04,
     marginTop: SCREEN_HEIGHT * 0.22,
+    ...phoneStyles.filterButtons,
   },
   filterButton: {
     paddingHorizontal: SCREEN_WIDTH * 0.05,
@@ -920,6 +1254,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    ...phoneStyles.filterButton,
   },
   activeFilterButton: {
     backgroundColor: "orange",
@@ -928,6 +1263,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "bold",
     color: "white",
+    ...phoneStyles.filterButtonText,
   },
   activeFilterButtonText: {
     color: "#fff",
@@ -935,10 +1271,12 @@ const styles = StyleSheet.create({
   arrowLeft: {
     position: "absolute",
     transform: [{ translateY: -50 }],
+    ...phoneStyles.arrowLeft,
   },
   arrowRight: {
     position: "absolute",
     transform: [{ translateY: -50 }],
+    ...phoneStyles.arrowRight,
   },
   cardContainer: {
     width: SCREEN_WIDTH * 0.25,
@@ -951,11 +1289,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.22,
     shadowRadius: 9.22,
     elevation: 12,
+    ...phoneStyles.cardContainer,
   },
   cardText: {
     fontSize: 30,
     color: "black",
     fontWeight: "700",
+    ...phoneStyles.cardText,
   },
   image: {
     width: 150,
@@ -967,25 +1307,30 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 5,
+    ...phoneStyles.image,
   },
   iconStyle: {
     position: "absolute",
     top: SCREEN_HEIGHT * 0.02,
     right: SCREEN_WIDTH * 0.03,
+    ...phoneStyles.iconStyle,
   },
   nameIconStyle: {
     marginLeft: 10,
+    ...phoneStyles.nameIconStyle,
   },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#FCF8E3",
+    ...phoneStyles.modalContainer,
   },
   modalTextCall: {
     fontSize: 40,
     color: "black",
     marginTop: 20,
+    ...phoneStyles. modalTextCall,
   },
   modalContent: {
     marginTop: 30,
@@ -1003,6 +1348,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 8,
+    ...phoneStyles.modalContent,
   },
   modalImage: {
     // borderRadius:30,
@@ -1021,14 +1367,18 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.8,
     // shadowRadius: 2,
     // elevation: 5,
+    ...phoneStyles.modalImage,
   },
   modalImageButtons: {
     flexDirection: "column",
     alignItems: "center",
+    ...phoneStyles.modalImageButtons
   },
   modalInfoContainer: {
     flex: 1,
     justifyContent: "flex-start",
+    ...phoneStyles.
+
   },
   modalName: {
     fontSize: 55,
@@ -1037,12 +1387,14 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     position: "absolute",
     zIndex: 10, // Keep it above other content
+    ...phoneStyles.modalName,
   },
   modalText: {
     fontSize: 25,
     fontWeight: "500",
     color: "#666",
     marginBottom: SCREEN_HEIGHT * 0.005,
+    ...phoneStyles.modalText,
   },
   modalInterestsTitle: {
     fontSize: 30,
@@ -1050,12 +1402,14 @@ const styles = StyleSheet.create({
     color: "#333",
     marginTop: SCREEN_HEIGHT * 0.015,
     marginBottom: SCREEN_HEIGHT * 0.005,
+    ...phoneStyles.modalInterestsTitle,
   },
   modalInterests: {
     fontSize: 23,
     color: "#666",
     marginBottom: SCREEN_HEIGHT * 0.005,
     marginLeft: 30,
+    ...phoneStyles.modalInterests,
   },
 
   actionContainer: {
@@ -1068,6 +1422,7 @@ const styles = StyleSheet.create({
     height: "20%",
     position: "absolute",
     zIndex: 10, // Keep it above other content
+    ...phoneStyles.actionContainer,
   },
   actionButton: {
     flexDirection: "column",
@@ -1085,31 +1440,38 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 2,
+    ...phoneStyles.actionButton,
   },
   callButton: {
     backgroundColor: "green",
+    ...phoneStyles.callButton,
   },
   unFriendText: {
     color: "black",
+    ...phoneStyles.unfriendText,
   },
   unFriendButton: {
     marginTop: 30,
     flexDirection: "row",
     width: 300,
     gap: 30,
+    ...phoneStyles.unfriendButton,
   },
   actionButtonText: {
     fontSize: 25,
     fontWeight: "600",
     color: "white",
     // marginRight: SCREEN_WIDTH * 0.02,
+    ...phoneStyles.actionButtonText,
   },
   modalIcon: {
     marginLeft: SCREEN_WIDTH * 0.02,
+    ...phoneStyles.modalIcon,
   },
   readMoreText: {
     fontSize: 23,
     color: "#0EC2E9",
+    ...phoneStyles.readMoreText,
   },
   closeButton: {
     position: "absolute",
@@ -1119,11 +1481,13 @@ const styles = StyleSheet.create({
     padding: 13,
     borderRadius: 5,
     zIndex: 1,
+    ...phoneStyles.closeButton,
   },
   closeButtonText: {
     fontSize: 35,
     color: "#fff",
     fontWeight: "bold",
+    ...phoneStyles.closeButtonText,
   },
   buttonText: {
     color: "white",
@@ -1165,6 +1529,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: SCREEN_HEIGHT * 0.01,
+    ...phoneStyles.threeDotsButton,
   },
   threeDotsMenu: {
     position: "absolute",
@@ -1178,6 +1543,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.7,
     shadowRadius: 4,
     zIndex: 100,
+    ...phoneStyles.threeDotsMenu,
   },
   chatContainer: {
     // flex: 1,
@@ -1194,6 +1560,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 2,
+    ...phoneStyles.chatContainer,
   },
 });
 
