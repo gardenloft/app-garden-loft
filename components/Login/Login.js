@@ -164,6 +164,52 @@ const Login = () => {
   );
 };
 
+const phoneStyles = viewportWidth <= 413 ? {
+  container: {
+    paddingHorizontal: 10, // Reduced horizontal padding for smaller screens
+    width: viewportWidth,
+    height: viewportHeight,
+  },
+  input: {
+    width: viewportWidth * 0.9, // Adjust width for phones
+    height: viewportHeight * 0.07, // Reduce height slightly
+    padding: 15, // Smaller padding
+    fontSize: 16, // Reduce font size
+    marginBottom: 15, // Reduced spacing
+  },
+  passwordContainer: {
+    width: viewportWidth * 0.9, // Adjust width for phones
+    height: viewportHeight * 0.07, // Reduce height slightly
+    marginBottom: 15, // Reduced spacing
+    paddingHorizontal: 10, // Adjusted padding
+  },
+  passwordInput: {
+    padding: 15, // Adjusted padding for input
+    fontSize: 16, // Smaller font size
+  },
+  eyeIcon: {
+    padding: 5, // Reduced padding for icon
+    marginRight: 5, // Adjust margin
+  },
+  welcome: {
+    fontSize: 30, // Reduce font size for phones
+    marginBottom: 20, // Adjust spacing
+    textAlign: "center", // Center align the text
+  },
+  checkboxContainer: {
+    marginBottom: 20, // Reduced spacing
+  },
+  checkboxLabel: {
+    fontSize: 16, // Reduce font size
+  },
+  logo: {
+    width: viewportWidth * 0.7, // Scale down for phones
+    height: viewportHeight * 0.2, // Adjust height proportionally
+    marginBottom: 15, // Reduced spacing
+  },
+} : {};
+
+
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
@@ -174,6 +220,7 @@ const styles = StyleSheet.create({
     height: viewportHeight,
     alignSelf: "center",
     alignItems: "center",
+    ...phoneStyles.container,
    
   },
   input: {
@@ -186,6 +233,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     marginBottom: 20,
     color: "black",
+    ...phoneStyles.input,
   },
   passwordContainer: {
     flexDirection: "row",
@@ -197,6 +245,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderColor: "black",
     borderWidth: 1,
+    ...phoneStyles.passwordContainer,
   },
   passwordInput: {
     flex: 1,
@@ -205,10 +254,12 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderBottomLeftRadius: 30,
     color: "black",
+    ...phoneStyles.passwordInput,
   },
   eyeIcon: {
     padding: 10,
     marginRight: 10,
+    ...phoneStyles.eyeIcon,
   },
   welcome: {
     fontSize: 40,
@@ -216,12 +267,14 @@ const styles = StyleSheet.create({
     color: "#f09030",
     alignSelf: "center",
     marginBottom: 30,
+    ...phoneStyles.welcome,
   },
   checkboxContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 30,
     justifyContent: "center",
+    ...phoneStyles.checkboxContainer,
   },
   checkbox: {
     alignSelf: "center",
@@ -229,6 +282,7 @@ const styles = StyleSheet.create({
   checkboxLabel: {
     marginLeft: 8,
     fontSize: 18,
+    ...phoneStyles.checkboxLabel,
   },
   logo: {
     position: "relative",
@@ -236,6 +290,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: 450,
     height: 220,
+    ...phoneStyles.logo,
   }
 });
 
