@@ -1057,11 +1057,11 @@ const phoneStyles =
           gap: 2, // Reduce gap for compact view
           alignItems: "center",
           justifyContent: "center",
-          width: SCREEN_WIDTH * 0.95, // Adjust width for smaller phones
+          width: SCREEN_WIDTH * 0.98, // Adjust width for smaller phones
           height: SCREEN_HEIGHT * 0.97, // Reduce height to fit smaller phones
           backgroundColor: "#fff",
           borderRadius: 10, // Slightly smaller radius for a cleaner fit
-          padding: 5, // Reduce padding
+          padding: 1, // Reduce padding
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 2},
           shadowOpacity: 0.1,
@@ -1082,13 +1082,13 @@ const phoneStyles =
           borderRadius: 12,
         },
         modalImage: {
-          borderTopLeftRadius: 50,
+          borderTopLeftRadius: 15,
           borderTopRightRadius: 130, // Adjusted radius for smaller screens
-          borderBottomLeftRadius: 70,
-          borderBottomRightRadius: 70,
+          borderBottomLeftRadius: 15,
+          borderBottomRightRadius: 15,
           borderWidth: 2, // Slightly thinner border for phones
           marginLeft: -3, // Reduced margins for better fit
-          marginRight: -10,
+          marginRight: -8,
           borderColor: "#FFD700",
           zIndex: 1,
           width:  300, // Scaled width for phones
