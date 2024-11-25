@@ -773,6 +773,7 @@ const Entertainment = ({ videoId, onClose }) => {
             }>
             <FontAwesome name="arrow-left" size={24} color="black" />
           </Pressable>
+          
           <YouTubeVideoPlayer
             videoId={selectedVideoId}
             onClose={closeVideoModal}

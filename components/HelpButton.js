@@ -924,8 +924,7 @@ import {
   Modal,
   StyleSheet,
   Dimensions,
-  Alert,
-  Platform,
+
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../FirebaseConfig";
@@ -939,6 +938,9 @@ const HelpButton = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [bioModalVisible, setBioModalVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false); // For missing emergency contact
+
+  // FaceTime link
+  const FACETIME_LINK = "https://facetime.apple.com/join#v=1&p=XEhJ9qklEe+Nf97v/61Iyg&k=8EJy-2zZvED8dUqzwNbZ_A-h7g0EEzEKTLWTh63K0KU";
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -960,35 +962,7 @@ const HelpButton = () => {
     setBioModalVisible(true);
   };
 
-  const handleEmergencyCall = () => {
-    if (!userInfo?.emergencyNumber) {
-      setModalVisible(true); // Show modal if no emergency number
-      return;
-    }
 
-    const emergencyNumber = String(userInfo.emergencyNumber);
-
-    if (Platform.OS === "ios") {
-      // Use FaceTime for iOS
-      const facetimeLink = `facetime:${emergencyNumber}`;
-      Linking.openURL(facetimeLink).catch((err) => {
-        console.error("FaceTime failed, trying phone dialer:", err);
-        // Fallback to phone dialer
-        const telLink = `tel:${emergencyNumber}`;
-        Linking.openURL(telLink).catch((error) => {
-          console.error("Phone call failed:", error);
-          Alert.alert("Error", "Failed to initiate a call.");
-        });
-      });
-    } else if (Platform.OS === "android") {
-      // Use phone dialer for Android
-      const telLink = `tel:${emergencyNumber}`;
-      Linking.openURL(telLink).catch((error) => {
-        console.error("Phone call failed:", error);
-        Alert.alert("Error", "Failed to initiate a call.");
-      });
-    } else {
-      Alert.alert("Error", "This feature is only available on mobile devices.");
     }
   };
 
@@ -1012,11 +986,9 @@ const HelpButton = () => {
         )}
       </TouchableOpacity>
 
-      {/* Emergency Call Button */}
-      <TouchableOpacity onPress={handleEmergencyCall} style={styles.callButton}>
-        <Text style={styles.emergencyButtonText}>Call Emergency</Text>
+
         <MaterialCommunityIcons
-          name="hospital-box-outline"
+          name="video"
           style={styles.iconStyle}
           size={SCREEN_WIDTH < 375 ? 30 : SCREEN_WIDTH < 430 ? 40 : 50}
           color="#f3b718"
@@ -1204,9 +1176,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
-  modalButtonText: {
-    color: "#fff",
-    fontSize: 16,
+
   },
   closeButton: {
     alignSelf: "flex-end",
