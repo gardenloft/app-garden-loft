@@ -1430,6 +1430,9 @@ import { FIREBASE_AUTH, FIRESTORE_DB } from "../FirebaseConfig";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
+// Threshold for detecting phones
+const isPhone = SCREEN_WIDTH < 600;
+
 const HelpButton = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [bioModalVisible, setBioModalVisible] = useState(false);
@@ -1613,7 +1616,7 @@ const HelpButton = () => {
         onRequestClose={() => setBioModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-          <ScrollView contentContainerStyle={styles.modalContent}>
+          <ScrollView contentContainerStyle={isPhone ? phoneStyles.modalContent : styles.modalContent}>
             <TouchableOpacity
               onPress={() => setBioModalVisible(false)}
               style={styles.closeButton}
@@ -1714,6 +1717,27 @@ const HelpButton = () => {
     </View>
   );
 };
+
+
+// Phone-specific styles
+const phoneStyles = StyleSheet.create({
+  modalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 20,
+    width: "100%", // Use 90% of screen width for phones
+    height: "75%", // Use 75% of screen height for phones
+    maxWidth: 450, // Ensure the modal doesn't become too wide
+    alignItems: "center",
+    justifyContent: "flex-start", // Align content to the top for phones
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 10,
+  },
+ 
+});
 const styles = StyleSheet.create({
   container: {
         width: SCREEN_WIDTH * 0.92,
@@ -1820,21 +1844,36 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "rgba(0, 0, 0, 0.5)",
       },
+      // modalContent: {
+      //   backgroundColor: "#fff",
+      //   borderRadius: 20,
+      //   padding: 20,
+      //   marginTop: 20,
+      //   width: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.8,
+      //   height: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.98,
+      //   alignItems: "center",
+      //   shadowColor: "#000",
+      //   shadowOffset: { width: 0, height: 4 },
+      //   shadowOpacity: 0.3,
+      //   shadowRadius: 5,
+      //   elevation: 10,
+      // },
       modalContent: {
         backgroundColor: "#fff",
         borderRadius: 20,
         padding: 20,
-        marginTop: 20,
-        width: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.8,
-        height: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.98,
+        marginTop: isPhone ? 20 : 50, // Smaller margin for phones
+        width: isPhone ? "70%" : Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.98, // Adjust width for phones
+        height: isPhone ? "75%" : Math.max(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.58, // Adjust height for phones
+        maxWidth: 550, // Limit width for smaller devices
         alignItems: "center",
+        justifyContent: "flex-start", // Ensure top alignment for phones
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,
         elevation: 10,
       },
-    
     
       logcontainer: {
         justifyContent: "center",
@@ -1844,7 +1883,7 @@ const styles = StyleSheet.create({
       },
       logoutButton: {
         flexDirection: "row",
-        marginTop:10,
+        marginTop:30,
        height: SCREEN_HEIGHT * 0.06,
         alignItems: "center",
         justifyContent: "center",
