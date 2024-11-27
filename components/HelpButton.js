@@ -1418,6 +1418,7 @@ import {
   Alert,
   Linking,
   Pressable,
+  Platform,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
@@ -1432,6 +1433,7 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const HelpButton = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [bioModalVisible, setBioModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false); // For missing emergency contact
   const [passkeyModalVisible, setPasskeyModalVisible] = useState(false);
   const [digits, setDigits] = useState(["", "", "", "", "", ""]);
   const [errorMessage, setErrorMessage] = useState("");
@@ -1503,44 +1505,76 @@ const HelpButton = () => {
     setPasskeyModalVisible(true);
   };
 
-  const handleEmergencyCall = async () => {
-    try {
-      const supported = await Linking.canOpenURL(FACETIME_LINK);
-      if (supported) {
-        await Linking.openURL(FACETIME_LINK);
-      } else {
-        Alert.alert(
-          "FaceTime Link",
-          "Would you like to open the FaceTime link in your browser?",
-          [
-            {
-              text: "Open in Browser",
-              onPress: async () => {
-                try {
-                  await Linking.openURL(FACETIME_LINK);
-                } catch (error) {
-                  console.error("Browser opening error:", error);
-                  Alert.alert(
-                    "Error",
-                    "Unable to open FaceTime link. Please ensure you're using an Apple device."
-                  );
-                }
-              },
-            },
-            { text: "Cancel", style: "cancel" },
-          ]
-        );
-      }
-    } catch (error) {
-      console.error("FaceTime link error:", error);
-      Alert.alert(
-        "Unable to Open FaceTime",
-        "Please ensure you're using an Apple device with FaceTime enabled.",
-        [
-          { text: "Open Settings", onPress: () => Linking.openURL("app-settings:") },
-          { text: "OK", style: "cancel" },
-        ]
-      );
+  // const handleEmergencyCall = async () => {
+  //   try {
+  //     const supported = await Linking.canOpenURL(FACETIME_LINK);
+  //     if (supported) {
+  //       await Linking.openURL(FACETIME_LINK);
+  //     } else {
+  //       Alert.alert(
+  //         "FaceTime Link",
+  //         "Would you like to open the FaceTime link in your browser?",
+  //         [
+  //           {
+  //             text: "Open in Browser",
+  //             onPress: async () => {
+  //               try {
+  //                 await Linking.openURL(FACETIME_LINK);
+  //               } catch (error) {
+  //                 console.error("Browser opening error:", error);
+  //                 Alert.alert(
+  //                   "Error",
+  //                   "Unable to open FaceTime link. Please ensure you're using an Apple device."
+  //                 );
+  //               }
+  //             },
+  //           },
+  //           { text: "Cancel", style: "cancel" },
+  //         ]
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.error("FaceTime link error:", error);
+  //     Alert.alert(
+  //       "Unable to Open FaceTime",
+  //       "Please ensure you're using an Apple device with FaceTime enabled.",
+  //       [
+  //         { text: "Open Settings", onPress: () => Linking.openURL("app-settings:") },
+  //         { text: "OK", style: "cancel" },
+  //       ]
+  //     );
+  //   }
+  // };
+
+  const handleEmergencyCall = () => {
+    if (!userInfo?.emergencyNumber) {
+      setModalVisible(true); // Show modal if no emergency number
+      return;
+    }
+
+    const emergencyNumber = String(userInfo.emergencyNumber);
+
+    if (Platform.OS === "ios") {
+      // Use FaceTime for iOS
+      const facetimeLink = `facetime:${emergencyNumber}`;
+      Linking.openURL(facetimeLink).catch((err) => {
+        console.error("FaceTime failed, trying phone dialer:", err);
+        // Fallback to phone dialer
+        const telLink = `tel:${emergencyNumber}`;
+        Linking.openURL(telLink).catch((error) => {
+          console.error("Phone call failed:", error);
+          Alert.alert("Error", "Failed to initiate a call.");
+        });
+      });
+    } else if (Platform.OS === "android") {
+      // Use phone dialer for Android
+      const telLink = `tel:${emergencyNumber}`;
+      Linking.openURL(telLink).catch((error) => {
+        console.error("Phone call failed:", error);
+        Alert.alert("Error", "Failed to initiate a call.");
+      });
+    } else {
+      Alert.alert("Error", "This feature is only available on mobile devices.");
     }
   };
 
@@ -1610,6 +1644,26 @@ const HelpButton = () => {
               <Text style={styles.buttonText}>Logout</Text>
             </Pressable>
           </ScrollView>
+        </View>
+      </Modal>
+
+        {/* Modal for Missing Emergency Contact */}
+        <Modal
+        visible={modalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>
+              Emergency contact has not been set.
+            </Text>
+            <TouchableOpacity
+              onPress={() => setModalVisible(false)}
+              style={styles.modalButton}>
+              <Text style={styles.modalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
 
@@ -1709,6 +1763,44 @@ const styles = StyleSheet.create({
         fontSize: SCREEN_WIDTH < 375 ? 14 : SCREEN_WIDTH < 430 ? 16 : 18,
         paddingRight: SCREEN_WIDTH < 375 ? 4 : 6,
         paddingLeft: SCREEN_WIDTH < 375 ? 6 : 10,
+      },
+      modalContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+      },
+      modalContent: {
+        height: SCREEN_WIDTH * 1.94,
+        backgroundColor: "#fff",
+        borderRadius: 20,
+        padding: 20,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+        elevation: 10,
+      },
+      modalText: {
+        fontSize: 18,
+        color: "#333",
+        textAlign: "center",
+        marginBottom: 20,
+      },
+      modalButton: {
+        backgroundColor: "#59ACCE",
+        padding: 10,
+        borderRadius: 10,
+        alignItems: "center",
+      },
+      modalButtonText: {
+       
+        color: "#fff",
+        fontSize: 16,
+      },
+      closeButton: {
+        alignSelf: "flex-end",
       },
       iconStyle: {
         marginRight: 5,
