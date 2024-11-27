@@ -1764,6 +1764,44 @@ const styles = StyleSheet.create({
         paddingRight: SCREEN_WIDTH < 375 ? 4 : 6,
         paddingLeft: SCREEN_WIDTH < 375 ? 6 : 10,
       },
+      modalContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+      },
+      modalContent: {
+        height: SCREEN_WIDTH * 1.94,
+        backgroundColor: "#fff",
+        borderRadius: 20,
+        padding: 20,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+        elevation: 10,
+      },
+      modalText: {
+        fontSize: 18,
+        color: "#333",
+        textAlign: "center",
+        marginBottom: 20,
+      },
+      modalButton: {
+        backgroundColor: "#59ACCE",
+        padding: 10,
+        borderRadius: 10,
+        alignItems: "center",
+      },
+      modalButtonText: {
+       
+        color: "#fff",
+        fontSize: 16,
+      },
+      closeButton: {
+        alignSelf: "flex-end",
+      },
       iconStyle: {
         marginRight: 5,
         paddingTop: 3,
