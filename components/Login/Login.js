@@ -32,6 +32,7 @@ const Login = () => {
   const [showEULAModal, setShowEULAModal] = useState(false);
   const auth = FIREBASE_AUTH;
   const navigation = useNavigation();
+  const [acceptYouTubeTerms, setAcceptYouTubeTerms] = useState(false);
 
   useEffect(() => {
     const checkRememberedUser = async () => {
@@ -163,6 +164,41 @@ const Login = () => {
             I Read and Accept the End User License Agreement (EULA).
           </Text>
         </View>
+        <CheckBox
+    value={acceptYouTubeTerms}
+    onValueChange={setAcceptYouTubeTerms}
+    style={styles.checkbox}
+  />
+  <View>
+    <Text style={styles.checkboxLabel}>
+      I Accept the{" "}
+      <Text
+        style={styles.link}
+        onPress={() => Linking.openURL("https://www.youtube.com/t/terms")}
+      >
+        YouTube Terms of Service
+      </Text>
+      ,{" "}
+      <Text
+        style={styles.link}
+        onPress={() => Linking.openURL("https://policies.google.com/privacy")}
+      >
+        Google Privacy Policy
+      </Text>
+      , and{" "}
+      <Text
+        style={styles.link}
+        onPress={() =>
+          Linking.openURL(
+            "https://developers.google.com/youtube/terms/api-services-terms-of-service"
+          )
+        }
+      >
+        YouTube API Services Terms of Service
+      </Text>
+      .
+    </Text>
+  </View>
         {loading ? (
           <ActivityIndicator size="large" color="orange" />
         ) : (
@@ -301,9 +337,13 @@ const phoneStyles = viewportWidth <= 413 ? {
     textAlign: "center", // Center align the text
   },
   checkboxContainer: {
+    flexDirection: "row", // Horizontal layout
+    alignItems: "center", // Align items vertically
     marginBottom: 20, // Reduced spacing
   },
   checkboxLabel: {
+    flex: 1, // Allow text to wrap
+    lineHeight: 20,
     fontSize: 16, // Reduce font size
   },
   logo: {
@@ -375,12 +415,15 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 30,
+    padding:10,
+    marginBottom: 20,
     justifyContent: "center",
     ...phoneStyles.checkboxContainer,
   },
   checkbox: {
+    marginRight: 10, 
     alignSelf: "center",
+    lineHeight: 20, 
   },
   checkboxLabel: {
     marginLeft: 8,
@@ -417,6 +460,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 20,
     textAlign: "justify",
+  },
+  link: {
+    color: "black",
+    textDecorationLine: "underline",
   },
 });
 
