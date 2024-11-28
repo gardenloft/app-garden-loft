@@ -183,54 +183,78 @@ const Login = () => {
     <ScrollView>
       <Text style={styles.eulaTitle}>End User License Agreement (EULA)</Text>
       <Text style={styles.eulaText}>
-        End User License Agreement (EULA){"\n"}
-        Effective Date: Nov 27{"\n\n"}
 
-        1. **Acceptance of Terms**{"\n"}
+        <Text style={{ fontWeight: "bold" }}>End User License Agreement (EULA)</Text>
+        {"\n"}
+      
+        <Text style={{ fontWeight: "bold" }}>Effective Date: Nov 27 </Text>
+        {"\n\n"}
+
+     
+        <Text style={{ fontWeight: "bold" }}>  1. Acceptance of Terms</Text>
+        {"\n"}
         By downloading, installing, or using the Garden Loft app, you agree to be bound by this EULA. If you do not agree to these terms, you must not use the app.{"\n\n"}
 
-        2. **License Grant**{"\n"}
+      
+        <Text style={{ fontWeight: "bold" }}> 2. License Grant </Text>
+        {"\n"}
         Garden Loft grants you a limited, non-exclusive, non-transferable, and revocable license to use this app for personal, non-commercial purposes, provided you comply with all terms outlined in this EULA.{"\n\n"}
 
-        3. **User-Generated Content**{"\n"}
+       
+        <Text style={{ fontWeight: "bold" }}>3. User-Generated Content </Text>
+        {"\n"}
         As a user, you are responsible for all content, including text, images, video, and audio, that you create, upload, or share within the app ("User-Generated Content"). By using GardenLoft, you agree to:{"\n"}
-        - **Prohibited Content:** Avoid sharing content that is unlawful, abusive, defamatory, obscene, offensive, or otherwise objectionable.{"\n"}
-        - **Reporting:** Use the app’s tools to report any objectionable content or abusive behavior.{"\n\n"}
+        - Prohibited Content: Avoid sharing content that is unlawful, abusive, defamatory, obscene, offensive, or otherwise objectionable.{"\n"}
+        - Reporting: Use the app’s tools to report any objectionable content or abusive behavior.{"\n\n"}
 
-        4. **Zero Tolerance for Objectionable Content**{"\n"}
-        GardenLoft strictly prohibits objectionable content or abusive behavior. Any violations may result in immediate account suspension or termination without prior notice.{"\n\n"}
+        <Text style={{ fontWeight: "bold" }}> 4. Zero Tolerance for Objectionable Content </Text>
+        {"\n"}
+        Garden Loft strictly prohibits objectionable content or abusive behavior. Any violations may result in immediate account suspension or termination without prior notice.{"\n\n"}
 
-        5. **Reporting and Moderation**{"\n"}
-        GardenLoft offers in-app tools for users to flag inappropriate content or behavior. Upon receiving a report, our team will review the flagged material and take action—such as removing content or banning users—within 24 hours.{"\n\n"}
+        <Text style={{ fontWeight: "bold" }}> 5. Reporting and Moderation </Text>
+        {"\n"}
+        Garden Loft offers in-app tools for users to flag inappropriate content or behavior. Upon receiving a report, our team will review the flagged material and take action—such as removing content or banning users—within 24 hours.{"\n\n"}
 
-        6. **Restrictions**{"\n"}
+       
+        <Text style={{ fontWeight: "bold" }}> 6. Restrictions </Text>
+        {"\n"}
         You agree not to:{"\n"}
         - Reverse engineer, modify, or create derivative works of the app.{"\n"}
         - Use the app for illegal, harmful, or unauthorized purposes.{"\n"}
         - Harass, abuse, or harm other users, directly or indirectly.{"\n"}
         Violations of these restrictions may result in legal action and termination of your access to the app.{"\n\n"}
 
-        7. **Privacy Policy**{"\n"}
-        By using GardenLoft, you consent to the collection and processing of your personal data as described in our Privacy Policy (https://www.gardenloft.ca/app-privacypolicy).{"\n\n"}
+       
+        <Text style={{ fontWeight: "bold" }}> 7. Privacy Policy </Text>
+        {"\n"}
+        By using Garden Loft, you consent to the collection and processing of your personal data as described in our Privacy Policy  <Text style={{ fontWeight: "bold" }}>(https://www.gardenloft.ca/app-privacypolicy) </Text>.{"\n\n"}
 
-        8. **Liability Disclaimer**{"\n"}
-        The GardenLoft app is provided "as is" without any warranties, express or implied. We are not responsible for:{"\n"}
+       
+        <Text style={{ fontWeight: "bold" }}> 8. Liability Disclaimer</Text>
+        {"\n"}
+        The Garden Loft app is provided "as is" without any warranties, express or implied. We are not responsible for:{"\n"}
         - Technical issues, interruptions, or errors within the app.{"\n"}
         - Loss or damage caused by your interactions with other users or your reliance on app content.{"\n\n"}
 
-        9. **Intellectual Property**{"\n"}
+      
+        <Text style={{ fontWeight: "bold" }}>9.Intellectual Property</Text>
+        {"\n"}
         All rights, titles, and interests in the app, its content, and any associated intellectual property are the exclusive property of Fabhome Ltd. Unauthorized use or reproduction is strictly prohibited.{"\n\n"}
 
-        10. **Termination**{"\n"}
+  
+        <Text style={{ fontWeight: "bold" }}>10. Termination</Text>
+        {"\n"}
         This license remains effective until terminated. GardenLoft reserves the right to:{"\n"}
         - Terminate your access if you violate any terms in this EULA.{"\n"}
         - Suspend or discontinue the app at any time without prior notice.{"\n\n"}
 
-        11. **Changes to the EULA**{"\n"}
-        GardenLoft reserves the right to update or modify this EULA at any time. Continued use of the app after any such changes constitutes your acceptance of the revised terms.{"\n\n"}
+        <Text style={{ fontWeight: "bold" }}>11. Changes to the EULA</Text>
+        {"\n"}
+        Garden Loft reserves the right to update or modify this EULA at any time. Continued use of the app after any such changes constitutes your acceptance of the revised terms.{"\n\n"}
 
-        **Contact Us**{"\n"}
-        If you have any questions, concerns, or feedback, contact us at Info@gardenloft.ca.{"\n"}
+         <Text style={{ fontWeight: "bold" }}>Contact Us</Text>{"\n"} 
+        If you have any questions, concerns, or feedback, contact us at  <Text style={{ fontWeight: "bold" }}>Info@gardenloft.ca</Text>
+        {"\n"}
       </Text>
       <Button title="Close" onPress={() => setShowEULAModal(false)} />
     </ScrollView>
