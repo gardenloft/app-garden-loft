@@ -9,6 +9,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import Carousel from "react-native-reanimated-carousel";
