@@ -264,8 +264,6 @@
 
 // export default Kosmi;
 
-
-
 // import React, { useState, useEffect, useRef } from "react";
 // import {
 //   View,
@@ -573,47 +571,50 @@ import { collection, getDocs } from "firebase/firestore";
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import { WebView } from "react-native-webview";
 
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
+const { width: viewportWidth, height: viewportHeight } =
+  Dimensions.get("window");
 
-  // Define phone-specific styles
-  const phoneStyles = viewportWidth <= 413 ? {
-    container: {
-      height: 400,
-      marginTop: 200, // Increase this value to move the cards lower on the screen
-    },
-    cardContainer: {
-      width: viewportWidth * 0.4,
-      height: viewportHeight * 0.2, // Adjust height to ensure space for text
-    padding: 15,
-    marginHorizontal: 10,
-    paddingBottom: 10,
-    shadowOpacity: 0,
-    elevation: 0,
-    borderRadius: 20,
-    overflow: "hidden",
-    },
-    cardText: {
-      fontSize: 16,
-      color: "#393939", // Ensure visible text color
-      fontWeight: "700",
-      marginTop: 10,
-      paddingHorizontal: 5,
-      textAlign: "center",
-    }, 
-    cardImage: {
-      width: "100%",
-      height: "100%",
-      borderRadius: 20, // Ensure image corners match card border radius
-      overflow: "hidden",
-    },
-    icon: {
-      size: 60, // Reduce icon size for phone
-    },
-    modalView: {
-      width: viewportWidth * 0.9,
-    },
-   
-  } : {};
+// Define phone-specific styles
+const phoneStyles =
+  viewportWidth <= 413
+    ? {
+        container: {
+          height: 400,
+          marginTop: 200, // Increase this value to move the cards lower on the screen
+        },
+        cardContainer: {
+          width: viewportWidth * 0.4,
+          height: viewportHeight * 0.2, // Adjust height to ensure space for text
+          padding: 15,
+          marginHorizontal: 10,
+          paddingBottom: 10,
+          shadowOpacity: 0,
+          elevation: 0,
+          borderRadius: 20,
+          overflow: "hidden",
+        },
+        cardText: {
+          fontSize: 16,
+          color: "#393939", // Ensure visible text color
+          fontWeight: "700",
+          marginTop: 10,
+          paddingHorizontal: 5,
+          textAlign: "center",
+        },
+        cardImage: {
+          width: "100%",
+          height: "100%",
+          borderRadius: 20, // Ensure image corners match card border radius
+          overflow: "hidden",
+        },
+        icon: {
+          size: 60, // Reduce icon size for phone
+        },
+        modalView: {
+          width: viewportWidth * 0.9,
+        },
+      }
+    : {};
 
 const Kosmi = () => {
   const [videos, setVideos] = useState([]);
@@ -628,7 +629,9 @@ const Kosmi = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const docSnapshot = await getDocs(collection(FIRESTORE_DB, "WatchParty"));
+        const docSnapshot = await getDocs(
+          collection(FIRESTORE_DB, "WatchParty")
+        );
         const videosData = [];
         docSnapshot.forEach((doc) => {
           const data = doc.data();
@@ -670,8 +673,10 @@ const Kosmi = () => {
         style={[
           styles.cardContainer,
           {
-            backgroundColor: index === activeIndex ? "transparent" : "transparent",
-            transform: index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
+            backgroundColor:
+              index === activeIndex ? "transparent" : "transparent",
+            transform:
+              index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
           },
           {
             height:
@@ -680,8 +685,7 @@ const Kosmi = () => {
                 : Math.round(Dimensions.get("window").height * 0.25),
           },
         ]}
-        onPress={() => openVideoModal(item.videoUrl)}
-      >
+        onPress={() => openVideoModal(item.videoUrl)}>
         {item.imageUrl ? (
           <Image
             source={{ uri: item.imageUrl }}
@@ -689,7 +693,11 @@ const Kosmi = () => {
             resizeMode="cover"
           />
         ) : (
-          <MaterialCommunityIcons name="television-play" size={94} color="white" />
+          <MaterialCommunityIcons
+            name="television-play"
+            size={94}
+            color="white"
+          />
         )}
       </Pressable>
       <Text style={styles.cardText}>{item.name}</Text>
@@ -704,8 +712,7 @@ const Kosmi = () => {
           {
             height: viewportWidth > viewportHeight ? 320 : 450,
           },
-        ]}
-      >
+        ]}>
         <ActivityIndicator size="large" color="orange" style={styles.loading} />
       </View>
     );
@@ -719,8 +726,7 @@ const Kosmi = () => {
           {
             height: viewportWidth > viewportHeight ? 320 : 450,
           },
-        ]}
-      >
+        ]}>
         <Text style={styles.errorText}>{error}</Text>
       </View>
     );
@@ -733,19 +739,20 @@ const Kosmi = () => {
         {
           height: viewportWidth > viewportHeight ? 320 : 450,
         },
-      ]}
-    >
+      ]}>
       <Modal
         animationType="slide"
         transparent={true}
         visible={isVideoModalVisible}
-        onRequestClose={closeVideoModal}
-      >
+        onRequestClose={closeVideoModal}>
         <View style={styles.modalView}>
           {currentVideoUrl ? (
             <WebView
               source={{ uri: currentVideoUrl }}
-              style={{ width: viewportWidth * 0.93, height: viewportHeight * 0.7 }}
+              style={{
+                width: viewportWidth * 0.93,
+                height: viewportHeight * 0.7,
+              }}
             />
           ) : (
             <Text>No video URL available</Text>
@@ -762,42 +769,61 @@ const Kosmi = () => {
         width={Math.round(viewportWidth * 0.3)}
         height={Math.round(viewportWidth * 0.3)}
         loop={true}
-        style={{ width: Math.round(viewportWidth * 0.9), height: Math.round(viewportWidth * 0.5) }}
+        style={{
+          width: Math.round(viewportWidth * 0.9),
+          height: Math.round(viewportWidth * 0.5),
+        }}
         onSnapToItem={(index) => setActiveIndex(index)}
         scrollAnimationDuration={800}
         snapEnabled
       />
 
-<Pressable
-  style={[
-    styles.arrowLeft,
-    {
-      left: viewportWidth > viewportHeight ? -25 : -22,
-      top: viewportWidth <= 413 ? "20%" : viewportWidth > viewportHeight ? "42%" : "32%", // Adjust top for phone
-    }
-  ]}
-  onPress={() => {
-    carouselRef.current?.scrollTo({ count: -1, animated: true });
-  }}
->
-  <FontAwesome name="angle-left" size={viewportWidth <= 413 ? 70 :100} color="black" />
-</Pressable>
+      <Pressable
+        style={[
+          styles.arrowLeft,
+          {
+            left: viewportWidth > viewportHeight ? -25 : -22,
+            top:
+              viewportWidth <= 413
+                ? "20%"
+                : viewportWidth > viewportHeight
+                ? "42%"
+                : "32%", // Adjust top for phone
+          },
+        ]}
+        onPress={() => {
+          carouselRef.current?.scrollTo({ count: -1, animated: true });
+        }}>
+        <FontAwesome
+          name="angle-left"
+          size={viewportWidth <= 413 ? 70 : 100}
+          color="black"
+        />
+      </Pressable>
 
-<Pressable
-  style={[
-    styles.arrowRight,
-    {
-      right: viewportWidth > viewportHeight ? -25 : -22,
-      top: viewportWidth <= 413 ? "20%" : viewportWidth > viewportHeight ? "42%" : "32%", // Adjust top for phone
-    }
-  ]}
-  onPress={() => {
-    carouselRef.current?.scrollTo({ count: 1, animated: true });
-  }}
->
-  <FontAwesome name="angle-right" size={viewportWidth <= 413 ? 70 :100} color="black" />
-</Pressable>
-     </View>
+      <Pressable
+        style={[
+          styles.arrowRight,
+          {
+            right: viewportWidth > viewportHeight ? -25 : -22,
+            top:
+              viewportWidth <= 413
+                ? "20%"
+                : viewportWidth > viewportHeight
+                ? "42%"
+                : "32%", // Adjust top for phone
+          },
+        ]}
+        onPress={() => {
+          carouselRef.current?.scrollTo({ count: 1, animated: true });
+        }}>
+        <FontAwesome
+          name="angle-right"
+          size={viewportWidth <= 413 ? 70 : 100}
+          color="black"
+        />
+      </Pressable>
+    </View>
   );
 };
 
@@ -805,7 +831,7 @@ const styles = StyleSheet.create({
   container: {
     position: "relative",
     alignItems: "center",
-    marginTop: 150, // Moves carousel lower on the screen
+    marginTop: 8, // Moves carousel lower on the screen
     ...phoneStyles.container,
   },
   itemContainer: {
