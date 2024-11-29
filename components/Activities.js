@@ -993,7 +993,7 @@ const Activities = () => {
     <Pressable
       key={index}
       style={[
-        styles.cardContainer,
+        styles.cardContainer, phoneStyles.cardContainer,
         {
           backgroundColor: index === activeIndex ? "transparent" : "transparent",
           transform: index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
@@ -1017,9 +1017,16 @@ const Activities = () => {
         resizeMode="contain"
       />
       <Text style={styles.cardText}
+      numberOfLines={1} // Limit to one line
+      ellipsizeMode="tail" // Add ellipsis for overflowing text
     > {item.item}</Text>
-      <Text style={styles.cardTextTime}>
+      <Text style={styles.cardTextTime} numberOfLines={1} // Limit to one line
+      ellipsizeMode="tail" >
+        
         {moment(item.startDate).format("dddd MMMM Do, h:mm a")}
+        
+        
+
       </Text>
     </Pressable>
   );
@@ -1073,7 +1080,7 @@ const Activities = () => {
   return (
     <View 
     style={[
-      styles.container,
+      styles.container, phoneStyles.container,
       {
         height: viewportWidth > viewportHeight ? 920 : 850,
         marginTop: viewportWidth > viewportHeight ? 0 : 45,
@@ -1137,7 +1144,7 @@ const Activities = () => {
             width={Math.round(viewportWidth * 0.3)}
             height={Math.round(viewportHeight * 0.3)}
             style={{
-              width: Math.round(viewportWidth * 0.9),
+              width: Math.round(viewportWidth * 0.95),
               height: Math.round(viewportHeight * 0.5),
             }}
             loop
@@ -1217,14 +1224,15 @@ const Activities = () => {
     </View>
   );
 };
-const phoneStyles = viewportWidth <= 413 ? {
+const phoneStyles = viewportWidth <= 433 ? {
   container: {
     marginTop: viewportHeight * 0.23, // Adjust spacing for phones
   },
   cardContainer: {
-    width: viewportWidth * 0.38,
+   
+    width: viewportWidth * 0.45,
     height: viewportHeight * 0.25,
-    marginHorizontal: viewportWidth * 0.04,
+    // marginHorizontal: viewportWidth * 0.02,
     borderRadius: 12,
     elevation: 0,
     shadowColor: "#000",
@@ -1232,16 +1240,27 @@ const phoneStyles = viewportWidth <= 413 ? {
     shadowOpacity: 0,
     shadowRadius: 0,
     alignItems: "center", // Center content horizontally
-    paddingVertical: viewportHeight * 0.02,
+  
     
   },
   cardImage: {
     width: "95%",
     height: "70%",
-    borderRadius: 8,
+    margin: 5,
+    resizeMode: "cover",
+    borderRadius: 10,
     alignSelf: "center",
     marginVertical: viewportHeight * 0.01,
   
+  },
+  imageUrl: {
+    width: "120%",
+      height: "100%",
+    // width: viewportWidth * 0.28,
+    // height: viewportWidth * 0.35,
+    margin: 5,
+    resizeMode: "cover",
+    borderRadius: 10,
   },
   cardText: {
     fontSize: 15,
@@ -1250,7 +1269,7 @@ const phoneStyles = viewportWidth <= 413 ? {
     marginTop: viewportHeight * 0.005,
     overflow: "hidden", // Prevent overflowing
     numberOfLines: 1, // Shorten text
-    ellipsizeMode: "tail",
+    ellipsizeMode: "t",
   },
   cardTextTime: {
     fontSize: 14,
