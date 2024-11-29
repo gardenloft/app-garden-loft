@@ -34,22 +34,22 @@ const { width: viewportWidth, height: viewportHeight } =
         height: 400,
         marginTop: 200, 
         flexDirection: "row",       // Arrange cards in rows
-    flexWrap: "wrap",           // Wrap to the next line after three cards
-    justifyContent: "center",
-    alignItems: "center",
-    width: viewportWidth,
+        flexWrap: "wrap",           // Wrap to the next line after three cards
+        justifyContent: "center",
+        alignItems: "center",
+        width: viewportWidth,
       },
       cardContainer: {
         width: viewportWidth * 0.3,
         height: viewportHeight * 0.2, // Adjust height to ensure space for text
-      padding: 15,
-      marginHorizontal: 5,
-      marginVertical:10,
-      paddingBottom: 10,
-      shadowOpacity: 0,
-      elevation: 0,
-      borderRadius: 20,
-      overflow: "hidden",
+        padding: 15,
+        marginHorizontal: 5,
+        marginVertical:10,
+        paddingBottom: 10,
+        shadowOpacity: 0,
+        elevation: 0,
+        borderRadius: 20,
+        overflow: "hidden",
       },
       cardText: {
         fontSize: 16,
@@ -62,8 +62,10 @@ const { width: viewportWidth, height: viewportHeight } =
         overflow: "hidden",   // Hide overflow text
       }, 
       imageUrl: {
-        width: viewportWidth * 0.28,
-        height: viewportWidth * 0.35,
+        width: "120%",
+          height: "100%",
+        // width: viewportWidth * 0.28,
+        // height: viewportWidth * 0.35,
         margin: 5,
         resizeMode: "cover",
         borderRadius: 10,
@@ -89,18 +91,18 @@ const { width: viewportWidth, height: viewportHeight } =
       },
       arrowLeft: {
         position: "absolute",
-        left: 15,                 // Align arrow to the far left
-        top: "40%",               // Center arrow vertically with cards
-        zIndex: 10,
+        left: 0,                 // Align arrow to the far left
+        top: "40%",
+                    // Center arrow vertically with cards
+        zIndex: 30,
       },
       arrowRight: {
         position: "absolute",
         right: 15,                // Align arrow to the far right
         top: "40%",               // Center arrow vertically with cards
-        zIndex: 5,
-      },
-    
+        zIndex: 50,
      
+      },
     } : {};
 
 const Entertainment = ({ videoId, onClose }) => {
@@ -559,7 +561,7 @@ const Entertainment = ({ videoId, onClose }) => {
     carouselRef.current?.scrollTo({ count: -1, animated: true });
   }}
 >
-  <FontAwesome name="angle-left" size={viewportWidth <= 413 ? 90:100} color="black" />
+  <FontAwesome name="angle-left" size={viewportWidth <= 413 ? 70:100} color="black" />
 </Pressable>
 
 <Pressable
@@ -574,7 +576,7 @@ const Entertainment = ({ videoId, onClose }) => {
     carouselRef.current?.scrollTo({ count: 1, animated: true });
   }}
 >
-  <FontAwesome name="angle-right" size={viewportWidth <= 413 ? 90 :100} color="black" />
+  <FontAwesome name="angle-right" size={viewportWidth <= 413 ? 70 :100} color="black" />
 </Pressable>
           {/* <Pressable
             style={[
