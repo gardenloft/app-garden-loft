@@ -19,6 +19,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "expo-router/build/useNavigation";
 import { FontAwesome } from "@expo/vector-icons";
+import * as Linking from "expo-linking";
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
 
@@ -164,6 +165,7 @@ const Login = () => {
             I Read and Accept the End User License Agreement (EULA).
           </Text>
         </View>
+        <View style={styles.checkboxContainer}>
         <CheckBox
     value={acceptYouTubeTerms}
     onValueChange={setAcceptYouTubeTerms}
@@ -198,6 +200,7 @@ const Login = () => {
       </Text>
       .
     </Text>
+    </View>
   </View>
         {loading ? (
           <ActivityIndicator size="large" color="orange" />
@@ -415,7 +418,8 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: "row",
     alignItems: "center",
-    padding:10,
+    width: viewportWidth * 0.8,
+    
     marginBottom: 20,
     justifyContent: "center",
     ...phoneStyles.checkboxContainer,
