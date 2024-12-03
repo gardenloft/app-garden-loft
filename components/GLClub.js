@@ -1563,12 +1563,12 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    top: 30,
-    right: 30,
+    top: 10,
+    right: 10,
     backgroundColor: "lightblue",
-    padding: 13,
+    padding: 10,
     borderRadius: 5,
-    zIndex: 1,
+    zIndex: 2,
     ...phoneStyles.closeButton,
   },
   closeButtonText: {
