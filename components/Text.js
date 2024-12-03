@@ -1029,7 +1029,11 @@ const TextComponent = ({ friendId, friendName }) => {
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false); // Delete chat modal
+  const [menuVisible, setMenuVisible] = useState(false);
   const [flagModalVisible, setFlagModalVisible] = useState(false); // Flag user modal
+  const [reportModalVisible, setReportModalVisible] = useState(false);
+  const [selectedReportReason, setSelectedReportReason] = useState("");
+  const [currentMessageId, setCurrentMessageId] = useState("");
   const [isBlocked, setIsBlocked] = useState(false); // Check if user is blocked
   const [selectedFlagReason, setSelectedFlagReason] = useState(""); // Reason for flagging
   const [isSpeaking, setIsSpeaking] = useState(false); // Track speaking state
@@ -1136,6 +1140,34 @@ const TextComponent = ({ friendId, friendName }) => {
     }
   };
 
+
+  const handleReportMessage = async () => {
+    if (!selectedReportReason) {
+      Alert.alert("Error", "Please select a reason for reporting.");
+      return;
+    }
+
+    try {
+      await addDoc(collection(FIRESTORE_DB, "reportedMessages"), {
+        reportedBy: user.uid,
+        messageId: currentMessageId,
+        flaggedUser: friendId,
+        reason: selectedReportReason,
+        timestamp: Timestamp.now(),
+        resolved: false,
+      });
+      Alert.alert("Reported",
+        currentMessageId
+          ? "The message has been reported for review."
+          : "The chat has been reported for review.");
+      setReportModalVisible(false);
+      setSelectedReportReason("");
+    } catch (error) {
+      console.error("Error reporting message: ", error);
+      Alert.alert("Error", "Failed to report the message. Try again later.");
+    }
+  };
+
   const handleFlagUser = async () => {
     if (!selectedFlagReason) {
       Alert.alert("Error", "Please select a reason for flagging.");
@@ -1155,6 +1187,11 @@ const TextComponent = ({ friendId, friendName }) => {
       console.error("Error flagging user:", error);
       Alert.alert("Error", "Failed to flag user. Try again later.");
     }
+  };
+
+  const openReportModal = (messageId = null) => {
+    setCurrentMessageId(messageId);// `null` means it's a chat-level report
+    setReportModalVisible(true);
   };
 
   const renderMessage = ({ item, index }) => {
@@ -1196,6 +1233,18 @@ const TextComponent = ({ friendId, friendName }) => {
           <Text style={styles.timestampText}>
             {moment(item.timestamp.toDate()).format("h:mm a")}
           </Text>
+          <TouchableOpacity
+        onLongPress={() => openReportModal(item.id)} // Trigger report modal on long press
+        style={[
+          styles.messageContainer,
+          isOwnMessage ? styles.ownMessage : styles.friendMessage,
+        ]}
+      >
+        <Text style={styles.messageText}>{item.text}</Text>
+        <Text style={styles.timestampText}>
+          {moment(item.timestamp.toDate()).format("h:mm a")}
+        </Text>
+      </TouchableOpacity>
         </View>
       </View>
     );
@@ -1205,6 +1254,42 @@ const TextComponent = ({ friendId, friendName }) => {
     <KeyboardAvoidingView behavior="padding" style={styles.container}>
       <View style={styles.chatHeader}>
         <Text style={styles.chatHeaderText}>{friendName}</Text>
+        <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)} style={styles.menuButton}>
+          <FontAwesome name="ellipsis-v" size={24} color="grey" />
+        </TouchableOpacity>
+        {menuVisible && (
+          <View style={styles.dropdownMenu}>
+            <TouchableOpacity
+              onPress={() => {
+                openReportModal(); // Report chat
+                setMenuVisible(false);
+              }}
+              style={styles.menuOption}
+            >
+              <Text style={styles.menuOptionText}>Report Chat</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setFlagModalVisible(true);
+                setMenuVisible(false);
+              }}
+              style={styles.menuOption}
+            >
+              <Text style={styles.menuOptionText}>Flag User</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                handleBlockUser();
+                setMenuVisible(false);
+              }}
+              style={styles.menuOption}
+            >
+              <Text style={styles.menuOptionText}>
+                {isBlocked ? "Unblock User" : "Block User"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       {loading ? (
@@ -1241,7 +1326,7 @@ const TextComponent = ({ friendId, friendName }) => {
         <Text style={styles.deleteButtonText}>Delete Chat</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => setFlagModalVisible(true)}
         style={styles.flagButton}>
         <Text style={styles.flagText}>Flag User</Text>
@@ -1253,7 +1338,47 @@ const TextComponent = ({ friendId, friendName }) => {
         <Text style={styles.blockText}>
           {isBlocked ? "Unblock User" : "Block User"}
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+
+           {/* Report Message Modal */}
+           <Modal
+        visible={reportModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setReportModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Select a reason for reporting:</Text>
+            {["Spam", "Harassment", "Inappropriate Content"].map((reason) => (
+              <TouchableOpacity
+                key={reason}
+                onPress={() => setSelectedReportReason(reason)}
+                style={[
+                  styles.reasonOption,
+                  selectedReportReason === reason && styles.selectedReason,
+                ]}
+              >
+                <Text style={styles.reasonText}>{reason}</Text>
+              </TouchableOpacity>
+            ))}
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                onPress={handleReportMessage}
+                style={styles.modalConfirmButton}
+              >
+                <Text style={styles.modalButtonText}>Submit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setReportModalVisible(false)}
+                style={styles.modalCancelButton}
+              >
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* Delete Chat Modal */}
       <Modal
@@ -1328,16 +1453,48 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
   },
   chatHeader: {
+    flexDirection: "row", // Place name and menu inline
+    justifyContent: "space-between", // Space out name and menu
+    alignItems: "center", // Vertically align items
     padding: 20,
     backgroundColor: "#f3b718",
     borderRadius: 10,
     marginBottom: 20,
     alignItems: "center",
+    paddingHorizontal: 10,
   },
   chatHeaderText: {
-    fontSize: 24,
+    fontSize: 26,
     color: "grey",
     fontWeight: "bold",
+    flex: 1, 
+    marginLeft: 10,
+  },
+
+  dropdownMenu: {
+    position: "absolute",
+    top: 60,
+    right: 10,
+    backgroundColor: "white",
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+    padding: 10,
+    elevation: 10, // For Android
+    zIndex: 1000,
+  },
+  menuButton: {
+    padding: 25, // Add padding to make it easier to tap
+  },
+  menuOption: {
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+  },
+  menuOptionText: {
+    fontSize: 16,
+    color: "grey",
   },
   inputContainer: {
     flexDirection: "row",
@@ -1346,6 +1503,9 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginBottom: 10,
     alignItems: "center",
+    paddingVertical: 8, // Reduce vertical padding
+    borderWidth: 1, // Optional: Add a border for visual balance
+    borderColor: "#ddd", // Subtle border color
   },
   input: {
     flex: 1,
@@ -1436,6 +1596,16 @@ const styles = StyleSheet.create({
   dateHeaderText: {
     fontSize: 16,
     color: "#555",
+  },
+
+  reportButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  reportButtonText: {
+    fontSize: 12,
+    color: "red",
+    marginLeft: 5,
   },
   modalContainer: {
     flex: 1,
