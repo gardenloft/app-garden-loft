@@ -1014,11 +1014,13 @@ import {
   Timestamp,
   arrayUnion,
   arrayRemove,
+  where,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import * as Speech from "expo-speech";
 import moment from "moment";
+import * as Notifications from "expo-notifications";
 import { FontAwesome } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get("window");
@@ -1037,11 +1039,18 @@ const TextComponent = ({ friendId, friendName }) => {
   const [isBlocked, setIsBlocked] = useState(false); // Check if user is blocked
   const [selectedFlagReason, setSelectedFlagReason] = useState(""); // Reason for flagging
   const [isSpeaking, setIsSpeaking] = useState(false); // Track speaking state
+  const [popUpVisible, setPopUpVisible] = useState(false);
+  const [popUpMessage, setPopUpMessage] = useState("");
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const auth = getAuth();
   const user = auth.currentUser;
   const flatListRef = useRef(null);
 
+
+  
+
   useEffect(() => {
+    
     // Check if the user is blocked
     const checkBlockedStatus = async () => {
       const userDoc = await getDoc(doc(FIRESTORE_DB, "users", user.uid));
@@ -1051,7 +1060,7 @@ const TextComponent = ({ friendId, friendName }) => {
     };
     checkBlockedStatus();
 
-    // Fetch messages
+ // Fetch messages
     if (!isBlocked) {
       const chatId = generateChatId(user.uid, friendId);
       const q = query(
@@ -1066,9 +1075,10 @@ const TextComponent = ({ friendId, friendName }) => {
         }));
         setMessages(loadedMessages);
         setLoading(false);
-      });
+});
 
-      return () => unsubscribe();
+  
+
     }
   }, [friendId, isBlocked]);
 
@@ -1089,20 +1099,25 @@ const TextComponent = ({ friendId, friendName }) => {
     try {
       const messageData = {
         senderId: user.uid,
+        receiverId: friendId,
         text: newMessage,
         timestamp: Timestamp.now(),
+        isRead: false, // Unread initially
       };
 
       await addDoc(
         collection(FIRESTORE_DB, `chats/${chatId}/messages`),
         messageData
       );
+      
       setNewMessage("");
     } catch (error) {
       console.error("Error sending message: ", error);
       Alert.alert("Error", "Failed to send message. Try again later.");
     }
   };
+
+
 
   const handleDeleteChat = async () => {
     const chatId = generateChatId(user.uid, friendId);
@@ -1254,6 +1269,7 @@ const TextComponent = ({ friendId, friendName }) => {
     <KeyboardAvoidingView behavior="padding" style={styles.container}>
       <View style={styles.chatHeader}>
         <Text style={styles.chatHeaderText}>{friendName}</Text>
+      
         <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)} style={styles.menuButton}>
           <FontAwesome name="ellipsis-v" size={24} color="grey" />
         </TouchableOpacity>
@@ -1291,6 +1307,8 @@ const TextComponent = ({ friendId, friendName }) => {
           </View>
         )}
       </View>
+
+
 
       {loading ? (
         <ActivityIndicator size="large" color="#f3b718" />
@@ -1496,6 +1514,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "grey",
   },
+
+
+ 
   inputContainer: {
     flexDirection: "row",
     padding: 12,
