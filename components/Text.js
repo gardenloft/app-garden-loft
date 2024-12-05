@@ -1111,12 +1111,56 @@ const TextComponent = ({ friendId, friendName }) => {
       );
       
       setNewMessage("");
+      sendNewMessageNotification(friendId, messageData.text);
     } catch (error) {
       console.error("Error sending message: ", error);
       Alert.alert("Error", "Failed to send message. Try again later.");
     }
   };
+     // Trigger push notification for new message
+      
+  
+  const sendNewMessageNotification = async (recipientId, messageText) => {
+    try {
+      const friendDoc = await getDoc(doc(FIRESTORE_DB, "users", recipientId));
+      const friendData = friendDoc.data();
+      const pushToken = friendData?.pushToken;
 
+      if (!friendData || !pushToken) {
+        console.error("Recipient's data or push token is not available");
+        return;
+      }
+
+      const senderName = user.displayName || user.email;
+
+      const message = {
+        to: pushToken,
+        sound: "default",
+        title: `New message from ${senderName}`,
+        body: messageText,
+        data: { someData: "goes here" },
+      };
+
+      const response = await fetch("https://exp.host/--/api/v2/push/send", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(message),
+      });
+
+      const data = await response.json();
+      console.log(
+        "Notification sent to",
+        friendData.userName,
+        "response:",
+        data
+      );
+    } catch (error) {
+      console.error("Error sending notification:", error);
+    }
+  };
 
 
   const handleDeleteChat = async () => {
