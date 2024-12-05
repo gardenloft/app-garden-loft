@@ -61,6 +61,7 @@ const GLClub = () => {
 
   const carouselRef = useRef(null);
   const notificationListenerRef = useRef(null); // Ref for the notification listener
+  
 
   const auth = getAuth();
   const user = auth.currentUser;
