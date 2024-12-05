@@ -897,7 +897,8 @@ const Activities = () => {
             endDate,
             zoomLink:
               item.location === "Zoom Meeting"
-                ? "https://us02web.zoom.us/wc/join/2548196535?omn=81709607895"
+                // ? "https://us02web.zoom.us/wc/join/2548196535?omn=81709607895"
+               ?  "https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09"
                 : null,
           };
         })
