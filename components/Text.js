@@ -1138,7 +1138,12 @@ const TextComponent = ({ friendId, friendName }) => {
         sound: "default",
         title: `New message from ${senderName}`,
         body: messageText,
-        data: { someData: "goes here" },
+        data: { someData: "goes here"
+          ,
+          type: "text", // Specify this is a text notification
+          friendId: user.uid, // Sender's ID
+          friendName: senderName, // Sender's Name
+         },
       };
 
       const response = await fetch("https://exp.host/--/api/v2/push/send", {
