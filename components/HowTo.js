@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   container: {
     position: "relative",
     alignItems: "center",
-    marginTop: 150, // Moves carousel lower on the screen
+    marginTop: 10, // Moves carousel lower on the screen
     ...phoneStyles.container,
   },
   cardContainer: {

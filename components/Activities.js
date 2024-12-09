@@ -1083,7 +1083,7 @@ const Activities = () => {
     style={[
       styles.container, phoneStyles.container,
       {
-        height: viewportWidth > viewportHeight ? 920 : 850,
+        height: viewportWidth > viewportHeight ? 620 : 850,
         marginTop: viewportWidth > viewportHeight ? 0 : 45,
       },
     ]}
