@@ -831,6 +831,7 @@ const Activities = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showWebView, setShowWebView] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [activityActiveIndex, setActivityActiveIndex] = useState(0); // For activity carousel
   const [filter, setFilter] = useState("all"); // Added state for filter
 
   const auth = getAuth();
@@ -844,6 +845,21 @@ const Activities = () => {
       setError("User not signed in");
       setLoading(false);
     }
+
+        const foregroundSubscription =
+      Notifications.addNotificationReceivedListener((notification) => {
+        Alert.alert("Notification Received", notification.request.content.body);
+      });
+
+    const responseSubscription =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        Alert.alert("Garden Loft", response.notification.request.content.body);
+      });
+
+    return () => {
+      foregroundSubscription.remove();
+      responseSubscription.remove();
+    };
   }, [user]);
 
   async function fetchUserNameAndEvents(uid) {
@@ -853,14 +869,17 @@ const Activities = () => {
       if (userSnap.exists()) {
         const userData = userSnap.data();
         const userName = userData.userName;
-        fetchEventsAndSaveToFirestore(userName);
-      } else {
-        throw new Error("No user data found");
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      setError("Failed to retrieve user data. Please try again later.");
-      setLoading(false);
+        if (Platform.OS !== "web") {
+                    registerForPushNotificationsAsync();
+                  }
+                  fetchEventsAndSaveToFirestore(userName);
+                } else {
+                  throw new Error("No user data found");
+                }
+              } catch (error) {
+                console.error("Error fetching user data:", error);
+                setError("Failed to retrieve user data. Please try again later.");
+                setLoading(false);
     }
   }
 
@@ -913,7 +932,7 @@ const Activities = () => {
       }
 
       eventData.sort((a, b) => a.startDate - b.startDate);
-
+ // Save or update each event in Firestore
       for (const event of eventData) {
         const q = query(
           collection(FIRESTORE_DB, "events"),
@@ -940,6 +959,8 @@ const Activities = () => {
         }
       }
 
+        // Fetch all events from Firestore to include manually added imageUrls
+
       const eventsSnapshot = await getDocs(collection(FIRESTORE_DB, "events"));
       const updatedEvents = eventsSnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -947,6 +968,13 @@ const Activities = () => {
         startDate: doc.data().startDate.toDate(),
         endDate: doc.data().endDate ? doc.data().endDate.toDate() : undefined,
       }));
+
+       // Schedule event notifications
+  updatedEvents.forEach((event) => {
+    if (Platform.OS !== "web") {
+      scheduleNotification(event);
+    }
+  });
 
       setEvents(updatedEvents);
       setLoading(false);
@@ -957,19 +985,77 @@ const Activities = () => {
     }
   }
 
+
+
+    async function registerForPushNotificationsAsync() {
+    const settings = await Notifications.getPermissionsAsync();
+    if (
+      settings.granted ||
+      settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+    ) {
+      console.log("Notification permissions granted.");
+    } else {
+      const response = await Notifications.requestPermissionsAsync({
+        ios: {
+          allowAlert: true,
+          allowSound: true,
+          allowBadge: true,
+          allowDisplayInCarPlay: true,
+          allowCriticalAlerts: true,
+        },
+      });
+      if (!response.granted) {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+    }
+
+    if (Platform.OS === "android") {
+      await Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        sound: "default",
+      });
+    }
+  }
+
+  // const filterEvents = () => {
+  //   const currentTime = moment(); // Current time
+  //   const currentDate = moment().startOf("day");
+  //   const endOfToday = moment().endOf("day");
+
+  //   if (filter === "today") {
+  //     return events.filter((event) =>
+  //       moment(event.startDate).isBetween(currentDate, endOfToday)
+  //     );
+  //   } else if (filter === "upcoming") {
+  //     return events.filter((event) => moment(event.startDate).isAfter(endOfToday));
+  //   }
+  //   return events;
+  // };
+
+
   const filterEvents = () => {
+    const currentTime = moment(); // Current time
     const currentDate = moment().startOf("day");
     const endOfToday = moment().endOf("day");
-
-    if (filter === "today") {
-      return events.filter((event) =>
-        moment(event.startDate).isBetween(currentDate, endOfToday)
-      );
-    } else if (filter === "upcoming") {
-      return events.filter((event) => moment(event.startDate).isAfter(endOfToday));
-    }
-    return events;
+  
+    return events.filter((event) => {
+      // Exclude past events
+      const isPast =
+        event.endDate && moment(event.endDate).isBefore(currentTime); // Event has ended
+      if (isPast) return false;
+  
+      if (filter === "today") {
+        return moment(event.startDate).isBetween(currentDate, endOfToday, null, "[)");
+      } else if (filter === "upcoming") {
+        return moment(event.startDate).isAfter(endOfToday);
+      }
+      return true; // Default to "All" filter for non-past events
+    });
   };
+  
 
   const handleFilterPress = (selectedFilter) => {
     setFilter(selectedFilter);
@@ -986,8 +1072,41 @@ const Activities = () => {
     setActiveIndex(newIndex);
   };
 
+//   const handleArrowPress = (direction) => {
+//   let newIndex = activeIndex; // Only affects the top carousel
+//   if (direction === "left") {
+//     newIndex = (activeIndex - 1 + events.length) % events.length; // Use `data` length for top carousel
+//   } else if (direction === "right") {
+//     newIndex = (activeIndex + 1) % events.length;
+//   }
+//   carouselRef.current?.scrollTo({ index: newIndex, animated: true });
+//   setActiveIndex(newIndex);
+// };
+
+
+  const handleActivitySnap = (index) => {
+    setActivityActiveIndex(index); // Isolated to activity carousel
+  };
+
   const handleSnapToItem = (index) => {
     setActiveIndex(index);
+  };
+
+
+    const scheduleNotification = async (event) => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Upcoming Activity!",
+        body: `Your activity ${event.item} is starting in 10 minutes.`,
+        sound: true,
+        data: { event },
+      },
+      trigger: {
+        date: new Date(event.startDate.getTime() - 10 * 60 * 1000),
+      },
+    });
+
+  
   };
 
   const renderItem = ({ item, index }) => (
@@ -1149,7 +1268,15 @@ const Activities = () => {
               height: Math.round(viewportHeight * 0.5),
             }}
             loop
+            // onSnapToItem={handleActivitySnap }
             onSnapToItem={(index) => setActiveIndex(index)}
+            panGestureHandlerProps={{
+              activeOffsetX: [-30, 30], // Reduce gesture sensitivity
+              failOffsetY: [-30, 30],   // Avoid conflicting with vertical gestures
+              simultaneousHandlers: carouselRef, // Allow gestures to propagate
+            }}
+            scrollEnabled={true} // Enable scrolling
+            
           />
 
           
