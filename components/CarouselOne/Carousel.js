@@ -494,10 +494,13 @@ const Home = () => {
         data={data}
         renderItem={renderItem}
         loop={true}
+       
         onSnapToItem={handleSnapToItem}
+        scrollEnabled={true} // Enable scrolling
         style={[
           styles.carousel,
           { marginTop: viewportWidth > viewportHeight ? 10 : 70 },
+          
         ]}
       />
 
