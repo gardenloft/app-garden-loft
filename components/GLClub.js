@@ -30,7 +30,7 @@ import { useRouter } from "expo-router";
 import * as Notifications from "expo-notifications"; // Import for notifications
 import { callUser } from "../app/VideoSDK2"; // Import from VideoCall
 import { getDownloadURL, ref } from "firebase/storage"; // Firebase Storage methods
-import TextComponent from "./Text.js";
+import TextComponent from "../app/Text.js";
 import ComingSoon from "./ComingSoon";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");

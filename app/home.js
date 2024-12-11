@@ -16,6 +16,9 @@ import * as Device from "expo-device";
 import CallAlertModal from "../components/CallAlertModal";
 import { useLocalSearchParams } from "expo-router";
 import VideoCall from "../components/VideoCall"; // Import VideoCall component
+import MessageModalHandler from "../components/MessageModalHandler";
+import { useNavigation } from "@react-navigation/native";
+
 
 export default function Home() {
   const auth = getAuth();
@@ -30,6 +33,27 @@ export default function Home() {
   const [meetingId, setMeetingId] = useState(params.meetingId || null);
   const [isCallAccepted, setIsCallAccepted] = useState(false); // Track if the call is accepted
   const router = useRouter();
+  const [messageModalVisible, setMessageModalVisible] = useState(false);
+  const [messageData, setMessageData] = useState({});
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        const { type, friendId, friendName, text } = notification.request.content.data;
+
+        if (type === "text") {
+          setMessageData({ senderName: friendName, senderId: friendId, text });
+          setMessageModalVisible(true);
+        }
+      });
+
+    return () => {
+      if (notificationListener.current) {
+        Notifications.removeNotificationSubscription(notificationListener.current);
+      }
+    };
+  }, []);
 
 // Function to show the CallAlertModal
   const showCallAlertModal = (callerName, callerUid, meetingId, calleeUid) => {
@@ -112,6 +136,28 @@ export default function Home() {
           }
         }
       );
+
+     // Notification listener for incoming messages and calls
+     notificationListener.current =
+     Notifications.addNotificationReceivedListener((notification) => {
+       const { type, friendId, friendName, text, callerName, meetingId } =
+         notification.request.content.data;
+
+       if (type === "text") {
+         setMessageData({
+           senderName: friendName,
+           text,
+           friendId,
+         });
+         setMessageModalVisible(true);
+       } else if (type === "call") {
+         setCallData({
+           callerName,
+           meetingId,
+         });
+         setCallModalVisible(true);
+       }
+     });
 
       return () => {
         if (notificationListener.current) {
@@ -270,6 +316,20 @@ export default function Home() {
           onAccept={() => handleAcceptCall(meetingId, callerUid, callerName)}    
           onDecline={() => handleDecline(callerUid)}
         />
+         <MessageModalHandler
+        visible={messageModalVisible}
+        senderName={messageData.senderName}
+        messageText={messageData.text}
+        onOpenChat={() => {
+          setMessageModalVisible(false);
+          navigation.navigate("Text", {
+            friendId: messageData.senderId,
+            friendName: messageData.senderName,
+          });
+        }}
+        onClose={() => setMessageModalVisible(false)}
+      />
+
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
