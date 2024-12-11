@@ -1047,7 +1047,6 @@ const TextComponent = ({ friendId, friendName }) => {
   const flatListRef = useRef(null);
 
 
-  
 
   useEffect(() => {
     
@@ -1081,6 +1080,8 @@ const TextComponent = ({ friendId, friendName }) => {
 
     }
   }, [friendId, isBlocked]);
+
+
 
   const generateChatId = (uid1, uid2) => {
     return uid1 > uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
@@ -1117,8 +1118,7 @@ const TextComponent = ({ friendId, friendName }) => {
       Alert.alert("Error", "Failed to send message. Try again later.");
     }
   };
-     // Trigger push notification for new message
-      
+    
   
   const sendNewMessageNotification = async (recipientId, messageText) => {
     try {
@@ -1284,6 +1284,9 @@ const TextComponent = ({ friendId, friendName }) => {
           ]}>
           <View style={styles.messageContent}>
             <Text style={styles.messageText}>{item.text}</Text>
+            <Text style={styles.timestampText}>
+          {moment(item.timestamp.toDate()).format("h:mm a")}
+        </Text>
             <TouchableOpacity
               onPress={() =>
                 Speech.speak(item.text, {
