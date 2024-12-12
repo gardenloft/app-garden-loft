@@ -9,7 +9,7 @@ import {
   Image,
 } from "react-native";
 
-const { width: viewportWidth } = Dimensions.get("window");
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
 
 const MessageModalHandler = ({
   visible,
@@ -44,6 +44,8 @@ const MessageModalHandler = ({
 const styles = StyleSheet.create({
   modalView: {
     flex: 1,
+    // width: viewportWidth * 0.8,
+    // height: viewportHeight * 0.3,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#FCF8E3",
