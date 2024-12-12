@@ -41,9 +41,14 @@ export default function Home() {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         const { type, friendId, friendName, text } = notification.request.content.data;
+        console.log("Sally checking", type, "friendID", friendId, "friendName", friendName, "text", text )
 
         if (type === "text") {
-          setMessageData({ senderName: friendName, senderId: friendId, text });
+          setMessageData({ senderName: friendName, 
+            // senderId: friendId, text: text
+            text,
+            friendId,
+           });
           setMessageModalVisible(true);
         }
       });
@@ -320,11 +325,18 @@ export default function Home() {
         visible={messageModalVisible}
         senderName={messageData.senderName}
         messageText={messageData.text}
-        onOpenChat={() => {
+        senderId={messageData.friendId}
+        onOpenChat={(friendId, friendName) => {
           setMessageModalVisible(false);
-          navigation.navigate("Text", {
-            friendId: messageData.senderId,
-            friendName: messageData.senderName,
+          // navigation.navigate("Text", {
+          //   friendId: messageData.senderId,
+          //   friendName: messageData.senderName,
+          // });
+          router.push({
+            pathname: "/OpenedChat",
+            // params: { friendId: messageData.senderId,
+            //   friendName: messageData.senderName },
+            params: { friendId, friendName },
           });
         }}
         onClose={() => setMessageModalVisible(false)}
