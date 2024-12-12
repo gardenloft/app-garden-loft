@@ -374,8 +374,10 @@ const GLClub = () => {
     removeNotificationListener(); // Remove the notification listener
   };
 
-  const handleChatPress = () => {
+  const handleChatPress = (contact) => {
     setChatModalVisible(true);
+    setSelectedContact(contact);
+    
   };
 
   const closeChatModal = () => {
@@ -695,7 +697,9 @@ const GLClub = () => {
                                adjustsFontSizeToFit >Call</Text>
                         </Pressable>
                         <Pressable
-                          onPress={handleChatPress}
+                          // onPress={handleChatPress}
+                          onPress={() => handleChatPress(selectedContact)}
+                        
                           style={[
                             styles.actionButton,
                             ,

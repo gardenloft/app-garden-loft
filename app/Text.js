@@ -1022,11 +1022,13 @@ import * as Speech from "expo-speech";
 import moment from "moment";
 import * as Notifications from "expo-notifications";
 import { FontAwesome } from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router";
 
 const { width, height } = Dimensions.get("window");
 const isLandscape = width > height;
 
-const TextComponent = ({ friendId, friendName }) => {
+// const TextComponent = ({ friendId, friendName }) => {
+const TextComponent = (props) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -1045,8 +1047,41 @@ const TextComponent = ({ friendId, friendName }) => {
   const auth = getAuth();
   const user = auth.currentUser;
   const flatListRef = useRef(null);
+  const params = useLocalSearchParams(); // Get params from the route
+  const friendId = props.friendId || params.friendId; // Use prop if available, else fallback to params
+  const friendName = props.friendName || params.friendName;
+
+//   useEffect(() => {
+
+// //  Check if the user is blocked
+//     const checkBlockedStatus = async () => {
+//       const userDoc = await getDoc(doc(FIRESTORE_DB, "users", user.uid));
+//       const userData = userDoc.data();
+//       const blockedUsers = userData?.blockedUsers || [];
+//       setIsBlocked(blockedUsers.includes(friendId));
+//     };
+//     checkBlockedStatus();
 
 
+//     if (friendId && user) {
+//       const chatId = user.uid > friendId ? `${user.uid}_${friendId}` : `${friendId}_${user.uid}`;
+//       const q = query(
+//         collection(FIRESTORE_DB, `chats/${chatId}/messages`),
+//         orderBy("timestamp", "asc")
+//       );
+
+//       const unsubscribe = onSnapshot(q, (snapshot) => {
+//         const loadedMessages = snapshot.docs.map((doc) => ({
+//           id: doc.id,
+//           ...doc.data(),
+//         }));
+//         setMessages(loadedMessages);
+//         setLoading(false);
+//       });
+
+//       return () => unsubscribe();
+//     }
+//   }, [friendId, user, isBlocked]);
 
   useEffect(() => {
     
@@ -1074,10 +1109,8 @@ const TextComponent = ({ friendId, friendName }) => {
         }));
         setMessages(loadedMessages);
         setLoading(false);
+        console.log("TextComponent received:", { friendId, friendName });
 });
-
-  
-
     }
   }, [friendId, isBlocked]);
 
