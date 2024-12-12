@@ -41,15 +41,8 @@ export default function Home() {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         const { type, friendId, friendName, text } = notification.request.content.data;
-        console.log("Sally checking", type, "friendID", friendId, "friendName", friendName, "text", text )
 
         if (type === "text") {
-          //when message is tapped
-          router.push({
-            pathname: "/OpenedChat",
-            params: { friendId, friendName },
-          });
-          //info passed from expo-notification
           setMessageData({ senderName: friendName, 
             text,
             friendId,
@@ -57,6 +50,21 @@ export default function Home() {
           setMessageModalVisible(true);
         }
       });
+
+        // Listener for notification taps
+  responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+    const { type, friendId, friendName } = response.notification.request.content.data;
+    console.log("Notification tapped:", { type, friendId, friendName });
+
+    if (type === "text") {
+      // Navigate directly to OpenedChat when notification is tapped
+      setMessageModalVisible(false); // Ensure the modal is closed
+      router.push({
+        pathname: "/OpenedChat",
+        params: { friendId, friendName },
+      });
+    }
+  });
 
     return () => {
       if (notificationListener.current) {
@@ -66,7 +74,7 @@ export default function Home() {
         Notifications.removeNotificationSubscription(responseListener.current);
       }
     };
-  }, [user]);
+  }, [user, router]);
 
 // Function to show the CallAlertModal
   const showCallAlertModal = (callerName, callerUid, meetingId, calleeUid) => {
