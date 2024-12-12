@@ -17,6 +17,7 @@ const MessageModalHandler = ({
   messageText,
   onOpenChat,
   onClose,
+  senderId,
 }) => {
   return (
     <Modal animationType="slide" transparent={true} visible={visible}>
@@ -25,7 +26,10 @@ const MessageModalHandler = ({
         <Text style={styles.title}>{senderName} sent you a message</Text>
         <Text style={styles.messageText}>{messageText}</Text>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={[styles.button, styles.openChatButton]} onPress={onOpenChat}>
+          <TouchableOpacity style={[styles.button, styles.openChatButton]} 
+          // onPress={onOpenChat}
+          onPress={() => onOpenChat(senderId, senderName)}
+          >
             <Text style={styles.buttonText}>Open Chat</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.button, styles.dismissButton]} onPress={onClose}>
