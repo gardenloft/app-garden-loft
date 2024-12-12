@@ -44,8 +44,13 @@ export default function Home() {
         console.log("Sally checking", type, "friendID", friendId, "friendName", friendName, "text", text )
 
         if (type === "text") {
+          //when message is tapped
+          router.push({
+            pathname: "/OpenedChat",
+            params: { friendId, friendName },
+          });
+          //info passed from expo-notification
           setMessageData({ senderName: friendName, 
-            // senderId: friendId, text: text
             text,
             friendId,
            });
@@ -57,8 +62,11 @@ export default function Home() {
       if (notificationListener.current) {
         Notifications.removeNotificationSubscription(notificationListener.current);
       }
+      if (responseListener.current) {
+        Notifications.removeNotificationSubscription(responseListener.current);
+      }
     };
-  }, []);
+  }, [user]);
 
 // Function to show the CallAlertModal
   const showCallAlertModal = (callerName, callerUid, meetingId, calleeUid) => {
@@ -334,12 +342,13 @@ export default function Home() {
           // });
           router.push({
             pathname: "/OpenedChat",
-            // params: { friendId: messageData.senderId,
-            //   friendName: messageData.senderName },
             params: { friendId, friendName },
           });
         }}
-        onClose={() => setMessageModalVisible(false)}
+        onClose={() => {
+          setMessageModalVisible(false);
+          router.push("/home");
+        }}
       />
 
       </SafeAreaProvider>
