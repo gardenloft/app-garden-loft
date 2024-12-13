@@ -642,8 +642,12 @@ const styles = StyleSheet.create({
   },
   loading: {
     flex: 1,
-    alignItems: "flex-start",
-    fontSize: 44,
+    alignItems: "center",
+    fontSize: 25,
+    marginTop: 150,
+    textAlign: "center",
+
+
   },
   modalContainer: {
     position: "absolute",
