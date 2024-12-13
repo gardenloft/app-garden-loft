@@ -21,7 +21,8 @@ import { useNavigation } from "expo-router/build/useNavigation";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
 
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
+const { width: viewportWidth, height: viewportHeight } =
+  Dimensions.get("window");
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -61,7 +62,11 @@ const Login = () => {
     }
     setLoading(true);
     try {
-      const response = await signInWithEmailAndPassword(auth, email.trim(), password);
+      const response = await signInWithEmailAndPassword(
+        auth,
+        email.trim(),
+        password
+      );
       if (rememberMe) {
         await AsyncStorage.setItem(
           "rememberedUser",
@@ -78,7 +83,7 @@ const Login = () => {
     }
   };
 
-    const signUp = async () => {
+  const signUp = async () => {
     setLoading(true);
     try {
       const response = await createUserWithEmailAndPassword(
@@ -110,7 +115,7 @@ const Login = () => {
       <KeyboardAvoidingView behavior="padding">
         <Text style={styles.welcome}>Welcome Garden Loft Residents</Text>
 
-          {/* <TextInput
+        {/* <TextInput
 //           value={userName}
 //           style={styles.input}
 //           placeholder="Name"
@@ -166,47 +171,51 @@ const Login = () => {
           </Text>
         </View>
         <View style={styles.checkboxContainer}>
-        <CheckBox
-    value={acceptYouTubeTerms}
-    onValueChange={setAcceptYouTubeTerms}
-    style={styles.checkbox}
-  />
-  <View>
-    <Text style={styles.checkboxLabel}>
-      I Accept the{" "}
-      <Text
-        style={styles.link}
-        onPress={() => Linking.openURL("https://www.youtube.com/t/terms")}
-      >
-        YouTube Terms of Service
-      </Text>
-      ,{" "}
-      <Text
-        style={styles.link}
-        onPress={() => Linking.openURL("https://policies.google.com/privacy")}
-      >
-        Google Privacy Policy
-      </Text>
-      , and{" "}
-      <Text
-        style={styles.link}
-        onPress={() =>
-          Linking.openURL(
-            "https://developers.google.com/youtube/terms/api-services-terms-of-service"
-          )
-        }
-      >
-        YouTube API Services Terms of Service
-      </Text>
-      .
-    </Text>
-    </View>
-  </View>
+          <CheckBox
+            value={acceptYouTubeTerms}
+            onValueChange={setAcceptYouTubeTerms}
+            style={styles.checkbox}
+          />
+          <View>
+            <Text style={styles.checkboxLabel}>
+              I Accept the{" "}
+              <Text
+                style={styles.link}
+                onPress={() =>
+                  Linking.openURL("https://www.youtube.com/t/terms")
+                }
+              >
+                YouTube Terms of Service
+              </Text>
+              ,{" "}
+              <Text
+                style={styles.link}
+                onPress={() =>
+                  Linking.openURL("https://policies.google.com/privacy")
+                }
+              >
+                Google Privacy Policy
+              </Text>
+              , and{" "}
+              <Text
+                style={styles.link}
+                onPress={() =>
+                  Linking.openURL(
+                    "https://developers.google.com/youtube/terms/api-services-terms-of-service"
+                  )
+                }
+              >
+                YouTube API Services Terms of Service
+              </Text>
+              .
+            </Text>
+          </View>
+        </View>
         {loading ? (
           <ActivityIndicator size="large" color="orange" />
         ) : (
           <Button title="Login" onPress={signIn} />
-                 /* <Button title="Create Account" onPress={signUp} /> */
+          /* <Button title="Create Account" onPress={signUp} /> */
         )}
       </KeyboardAvoidingView>
 
@@ -218,143 +227,176 @@ const Login = () => {
         onRequestClose={() => setShowEULAModal(false)}
       >
         <View style={styles.modalContainer}>
-  <View style={styles.modalContent}>
-    <ScrollView>
-      <Text style={styles.eulaTitle}>End User License Agreement (EULA)</Text>
-      <Text style={styles.eulaText}>
-
-        <Text style={{ fontWeight: "bold" }}>End User License Agreement (EULA)</Text>
-        {"\n"}
-      
-        <Text style={{ fontWeight: "bold" }}>Effective Date: Nov 27 </Text>
-        {"\n\n"}
-
-     
-        <Text style={{ fontWeight: "bold" }}>  1. Acceptance of Terms</Text>
-        {"\n"}
-        By downloading, installing, or using the Garden Loft app, you agree to be bound by this EULA. If you do not agree to these terms, you must not use the app.{"\n\n"}
-
-      
-        <Text style={{ fontWeight: "bold" }}> 2. License Grant </Text>
-        {"\n"}
-        Garden Loft grants you a limited, non-exclusive, non-transferable, and revocable license to use this app for personal, non-commercial purposes, provided you comply with all terms outlined in this EULA.{"\n\n"}
-
-       
-        <Text style={{ fontWeight: "bold" }}>3. User-Generated Content </Text>
-        {"\n"}
-        As a user, you are responsible for all content, including text, images, video, and audio, that you create, upload, or share within the app ("User-Generated Content"). By using GardenLoft, you agree to:{"\n"}
-        - Prohibited Content: Avoid sharing content that is unlawful, abusive, defamatory, obscene, offensive, or otherwise objectionable.{"\n"}
-        - Reporting: Use the app’s tools to report any objectionable content or abusive behavior.{"\n\n"}
-
-        <Text style={{ fontWeight: "bold" }}> 4. Zero Tolerance for Objectionable Content </Text>
-        {"\n"}
-        Garden Loft strictly prohibits objectionable content or abusive behavior. Any violations may result in immediate account suspension or termination without prior notice.{"\n\n"}
-
-        <Text style={{ fontWeight: "bold" }}> 5. Reporting and Moderation </Text>
-        {"\n"}
-        Garden Loft offers in-app tools for users to flag inappropriate content or behavior. Upon receiving a report, our team will review the flagged material and take action—such as removing content or banning users—within 24 hours.{"\n\n"}
-
-       
-        <Text style={{ fontWeight: "bold" }}> 6. Restrictions </Text>
-        {"\n"}
-        You agree not to:{"\n"}
-        - Reverse engineer, modify, or create derivative works of the app.{"\n"}
-        - Use the app for illegal, harmful, or unauthorized purposes.{"\n"}
-        - Harass, abuse, or harm other users, directly or indirectly.{"\n"}
-        Violations of these restrictions may result in legal action and termination of your access to the app.{"\n\n"}
-
-       
-        <Text style={{ fontWeight: "bold" }}> 7. Privacy Policy </Text>
-        {"\n"}
-        By using Garden Loft, you consent to the collection and processing of your personal data as described in our Privacy Policy  <Text style={{ fontWeight: "bold" }}>(https://www.gardenloft.ca/app-privacypolicy) </Text>.{"\n\n"}
-
-       
-        <Text style={{ fontWeight: "bold" }}> 8. Liability Disclaimer</Text>
-        {"\n"}
-        The Garden Loft app is provided "as is" without any warranties, express or implied. We are not responsible for:{"\n"}
-        - Technical issues, interruptions, or errors within the app.{"\n"}
-        - Loss or damage caused by your interactions with other users or your reliance on app content.{"\n\n"}
-
-      
-        <Text style={{ fontWeight: "bold" }}>9.Intellectual Property</Text>
-        {"\n"}
-        All rights, titles, and interests in the app, its content, and any associated intellectual property are the exclusive property of Fabhome Ltd. Unauthorized use or reproduction is strictly prohibited.{"\n\n"}
-
-  
-        <Text style={{ fontWeight: "bold" }}>10. Termination</Text>
-        {"\n"}
-        This license remains effective until terminated. GardenLoft reserves the right to:{"\n"}
-        - Terminate your access if you violate any terms in this EULA.{"\n"}
-        - Suspend or discontinue the app at any time without prior notice.{"\n\n"}
-
-        <Text style={{ fontWeight: "bold" }}>11. Changes to the EULA</Text>
-        {"\n"}
-        Garden Loft reserves the right to update or modify this EULA at any time. Continued use of the app after any such changes constitutes your acceptance of the revised terms.{"\n\n"}
-
-         <Text style={{ fontWeight: "bold" }}>Contact Us</Text>{"\n"} 
-        If you have any questions, concerns, or feedback, contact us at  <Text style={{ fontWeight: "bold" }}>Info@gardenloft.ca</Text>
-        {"\n"}
-      </Text>
-      <Button title="Close" onPress={() => setShowEULAModal(false)} />
-    </ScrollView>
-  </View>
-</View>
-
+          <View style={styles.modalContent}>
+            <ScrollView>
+              <Text style={styles.eulaTitle}>
+                End User License Agreement (EULA)
+              </Text>
+              <Text style={styles.eulaText}>
+                <Text style={{ fontWeight: "bold" }}>
+                  End User License Agreement (EULA)
+                </Text>
+                {"\n"}
+                <Text style={{ fontWeight: "bold" }}>
+                  Effective Date: Nov 27{" "}
+                </Text>
+                {"\n\n"}
+                <Text style={{ fontWeight: "bold" }}>
+                  {" "}
+                  1. Acceptance of Terms
+                </Text>
+                {"\n"}
+                By downloading, installing, or using the Garden Loft app, you
+                agree to be bound by this EULA. If you do not agree to these
+                terms, you must not use the app.{"\n\n"}
+                <Text style={{ fontWeight: "bold" }}> 2. License Grant </Text>
+                {"\n"}
+                Garden Loft grants you a limited, non-exclusive,
+                non-transferable, and revocable license to use this app for
+                personal, non-commercial purposes, provided you comply with all
+                terms outlined in this EULA.{"\n\n"}
+                <Text style={{ fontWeight: "bold" }}>
+                  3. User-Generated Content{" "}
+                </Text>
+                {"\n"}
+                As a user, you are responsible for all content, including text,
+                images, video, and audio, that you create, upload, or share
+                within the app ("User-Generated Content"). By using GardenLoft,
+                you agree to:{"\n"}- Prohibited Content: Avoid sharing content
+                that is unlawful, abusive, defamatory, obscene, offensive, or
+                otherwise objectionable.{"\n"}- Reporting: Use the app’s tools
+                to report any objectionable content or abusive behavior.{"\n\n"}
+                <Text style={{ fontWeight: "bold" }}>
+                  {" "}
+                  4. Zero Tolerance for Objectionable Content{" "}
+                </Text>
+                {"\n"}
+                Garden Loft strictly prohibits objectionable content or abusive
+                behavior. Any violations may result in immediate account
+                suspension or termination without prior notice.{"\n\n"}
+                <Text style={{ fontWeight: "bold" }}>
+                  {" "}
+                  5. Reporting and Moderation{" "}
+                </Text>
+                {"\n"}
+                Garden Loft offers in-app tools for users to flag inappropriate
+                content or behavior. Upon receiving a report, our team will
+                review the flagged material and take action—such as removing
+                content or banning users—within 24 hours.{"\n\n"}
+                <Text style={{ fontWeight: "bold" }}> 6. Restrictions </Text>
+                {"\n"}
+                You agree not to:{"\n"}- Reverse engineer, modify, or create
+                derivative works of the app.{"\n"}- Use the app for illegal,
+                harmful, or unauthorized purposes.{"\n"}- Harass, abuse, or harm
+                other users, directly or indirectly.{"\n"}
+                Violations of these restrictions may result in legal action and
+                termination of your access to the app.{"\n\n"}
+                <Text style={{ fontWeight: "bold" }}> 7. Privacy Policy </Text>
+                {"\n"}
+                By using Garden Loft, you consent to the collection and
+                processing of your personal data as described in our Privacy
+                Policy{" "}
+                <Text style={{ fontWeight: "bold" }}>
+                  (https://www.gardenloft.ca/app-privacypolicy){" "}
+                </Text>
+                .{"\n\n"}
+                <Text style={{ fontWeight: "bold" }}>
+                  {" "}
+                  8. Liability Disclaimer
+                </Text>
+                {"\n"}
+                The Garden Loft app is provided "as is" without any warranties,
+                express or implied. We are not responsible for:{"\n"}- Technical
+                issues, interruptions, or errors within the app.{"\n"}- Loss or
+                damage caused by your interactions with other users or your
+                reliance on app content.{"\n\n"}
+                <Text style={{ fontWeight: "bold" }}>
+                  9.Intellectual Property
+                </Text>
+                {"\n"}
+                All rights, titles, and interests in the app, its content, and
+                any associated intellectual property are the exclusive property
+                of Fabhome Ltd. Unauthorized use or reproduction is strictly
+                prohibited.{"\n\n"}
+                <Text style={{ fontWeight: "bold" }}>10. Termination</Text>
+                {"\n"}
+                This license remains effective until terminated. GardenLoft
+                reserves the right to:{"\n"}- Terminate your access if you
+                violate any terms in this EULA.{"\n"}- Suspend or discontinue
+                the app at any time without prior notice.{"\n\n"}
+                <Text style={{ fontWeight: "bold" }}>
+                  11. Changes to the EULA
+                </Text>
+                {"\n"}
+                Garden Loft reserves the right to update or modify this EULA at
+                any time. Continued use of the app after any such changes
+                constitutes your acceptance of the revised terms.{"\n\n"}
+                <Text style={{ fontWeight: "bold" }}>Contact Us</Text>
+                {"\n"}
+                If you have any questions, concerns, or feedback, contact us at{" "}
+                <Text style={{ fontWeight: "bold" }}>Info@gardenloft.ca</Text>
+                {"\n"}
+              </Text>
+              <Button title="Close" onPress={() => setShowEULAModal(false)} />
+            </ScrollView>
+          </View>
+        </View>
       </Modal>
     </View>
   );
 };
 
-
-
-const phoneStyles = viewportWidth <= 413 ? {
-  container: {
-    paddingHorizontal: 10, // Reduced horizontal padding for smaller screens
-    width: viewportWidth,
-    height: viewportHeight,
-  },
-  input: {
-    width: viewportWidth * 0.9, // Adjust width for phones
-    height: viewportHeight * 0.07, // Reduce height slightly
-    padding: 15, // Smaller padding
-    fontSize: 16, // Reduce font size
-    marginBottom: 15, // Reduced spacing
-  },
-  passwordContainer: {
-    width: viewportWidth * 0.9, // Adjust width for phones
-    height: viewportHeight * 0.07, // Reduce height slightly
-    marginBottom: 15, // Reduced spacing
-    paddingHorizontal: 10, // Adjusted padding
-  },
-  passwordInput: {
-    padding: 15, // Adjusted padding for input
-    fontSize: 16, // Smaller font size
-  },
-  eyeIcon: {
-    padding: 5, // Reduced padding for icon
-    marginRight: 5, // Adjust margin
-  },
-  welcome: {
-    fontSize: 30, // Reduce font size for phones
-    marginBottom: 20, // Adjust spacing
-    textAlign: "center", // Center align the text
-  },
-  checkboxContainer: {
-    flexDirection: "row", // Horizontal layout
-    alignItems: "center", // Align items vertically
-    marginBottom: 20, // Reduced spacing
-  },
-  checkboxLabel: {
-    flex: 1, // Allow text to wrap
-    lineHeight: 20,
-    fontSize: 16, // Reduce font size
-  },
-  logo: {
-    width: viewportWidth * 0.7, // Scale down for phones
-    height: viewportHeight * 0.2, // Adjust height proportionally
-    marginBottom: 15, // Reduced spacing
-  },
-} : {};
+const phoneStyles =
+  viewportWidth <= 413
+    ? {
+        container: {
+          paddingHorizontal: 10, // Reduced horizontal padding for smaller screens
+          width: viewportWidth,
+          height: viewportHeight,
+        },
+        input: {
+          width: viewportWidth * 0.9, // Adjust width for phones
+          height: viewportHeight * 0.07, // Reduce height slightly
+          padding: 15, // Smaller padding
+          fontSize: 16, // Reduce font size
+          marginBottom: 15, // Reduced spacing
+        },
+        passwordContainer: {
+          width: viewportWidth * 0.9, // Adjust width for phones
+          height: viewportHeight * 0.07, // Reduce height slightly
+          marginBottom: 15, // Reduced spacing
+          paddingHorizontal: 10, // Adjusted padding
+        },
+        passwordInput: {
+          padding: 15, // Adjusted padding for input
+          fontSize: 16, // Smaller font size
+        },
+        eyeIcon: {
+          padding: 5, // Reduced padding for icon
+          marginRight: 5, // Adjust margin
+        },
+        welcome: {
+          fontSize: 30, // Reduce font size for phones
+          marginBottom: 20, // Adjust spacing
+          textAlign: "center", // Center align the text
+        },
+        checkboxContainer: {
+          flexDirection: "row", // Horizontal layout
+          alignItems: "center", // Align items vertically
+          marginBottom: 20, // Reduced spacing
+        },
+        checkboxLabel: {
+          flex: 1, // Allow text to wrap
+          lineHeight: 20,
+          fontSize: 16, // Reduce font size
+        },
+        logo: {
+          width: viewportWidth * 0.7, // Scale down for phones
+          height: viewportHeight * 0.2, // Adjust height proportionally
+          marginBottom: 15, // Reduced spacing
+        },
+      }
+    : {};
 
 const styles = StyleSheet.create({
   container: {
@@ -367,7 +409,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
     ...phoneStyles.container,
-   
   },
   input: {
     borderColor: "black",
@@ -419,15 +460,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     width: viewportWidth * 0.8,
-    
+
     marginBottom: 20,
     justifyContent: "center",
     ...phoneStyles.checkboxContainer,
   },
   checkbox: {
-    marginRight: 10, 
+    marginRight: 10,
     alignSelf: "center",
-    lineHeight: 20, 
+    lineHeight: 20,
   },
   checkboxLabel: {
     marginLeft: 8,
@@ -472,8 +513,6 @@ const styles = StyleSheet.create({
 });
 
 export default Login;
-
-
 
 // import React, { useState, useEffect } from "react";
 // import {
@@ -686,7 +725,6 @@ export default Login;
 //   },
 // } : {};
 
-
 // const styles = StyleSheet.create({
 //   container: {
 //     justifyContent: "center",
@@ -698,7 +736,7 @@ export default Login;
 //     alignSelf: "center",
 //     alignItems: "center",
 //     ...phoneStyles.container,
-   
+
 //   },
 //   input: {
 //     borderColor: "black",

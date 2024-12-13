@@ -17,7 +17,6 @@ const OpenChat = ({ friendId, friendName }) => {
 
   return (
     <View style={styles.container}>
-
       {/* Modal to display TextComponent */}
       <Modal
         visible={modalVisible}
@@ -33,7 +32,8 @@ const OpenChat = ({ friendId, friendName }) => {
             {/* <Text style={styles.modalTitle}>{friendName}'s Chat</Text> */}
             <Text style={styles.modalTitle}></Text>
             <TouchableOpacity
-              onPress={() => {setModalVisible(false);
+              onPress={() => {
+                setModalVisible(false);
                 router.push("/home");
               }}
               style={styles.closeButton}
