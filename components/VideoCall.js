@@ -17,7 +17,8 @@ import { useRouter } from "expo-router";
 import * as Notifications from "expo-notifications";
 import { callUser } from "../app/VideoSDK2";
 
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
+const { width: viewportWidth, height: viewportHeight } =
+  Dimensions.get("window");
 
 const VideoCall = () => {
   const [friends, setFriends] = useState([]);
@@ -122,7 +123,8 @@ const VideoCall = () => {
         styles.cardContainer,
         {
           backgroundColor: "transparent",
-          transform: index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
+          transform:
+            index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
           height:
             viewportWidth > viewportHeight
               ? Math.round(Dimensions.get("window").height * 0.32)
@@ -133,7 +135,9 @@ const VideoCall = () => {
     >
       <Image
         source={
-          item.imageUrl && typeof item.imageUrl === "string" && item.imageUrl.trim() !== ""
+          item.imageUrl &&
+          typeof item.imageUrl === "string" &&
+          item.imageUrl.trim() !== ""
             ? { uri: item.imageUrl }
             : require("../assets/garden-loft-logo2.png")
         }
@@ -144,7 +148,12 @@ const VideoCall = () => {
   );
 
   return (
-    <View style={[styles.container, { height: viewportWidth > viewportHeight ? 320 : 450 }]}>
+    <View
+      style={[
+        styles.container,
+        { height: viewportWidth > viewportHeight ? 320 : 450 },
+      ]}
+    >
       {/* Calling message modal */}
       <Modal animationType="fade" transparent={true} visible={isCalling}>
         <View style={styles.modalContainer}>
@@ -199,7 +208,9 @@ const VideoCall = () => {
             top: viewportWidth > viewportHeight ? "40%" : "30%",
           },
         ]}
-        onPress={() => scrollViewRef.current?.scrollTo({ count: -1, animated: true })}
+        onPress={() =>
+          scrollViewRef.current?.scrollTo({ count: -1, animated: true })
+        }
       >
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
@@ -211,7 +222,9 @@ const VideoCall = () => {
             top: viewportWidth > viewportHeight ? "40%" : "30%",
           },
         ]}
-        onPress={() => scrollViewRef.current?.scrollTo({ count: 1, animated: true })}
+        onPress={() =>
+          scrollViewRef.current?.scrollTo({ count: 1, animated: true })
+        }
       >
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </TouchableOpacity>
