@@ -78,37 +78,160 @@ const GLClub = () => {
     filterAndSortContacts();
   }, [contacts, filter, friendRequests, friends]);
 
+
   const fetchUserNames = async () => {
     try {
+      // Ensure user is defined
+      if (!user || !user.uid) {
+        console.error("Logged-in user not available");
+        return;
+      }
+  
       const querySnapshot = await getDocs(collection(FIRESTORE_DB, "users"));
-      const fetchedContacts = querySnapshot.docs
-        .map((doc) => {
-          const data = doc.data();
+  
+      const fetchedContacts = await Promise.all(
+        querySnapshot.docs.map(async (userDoc) => {
+          const data = userDoc.data();
+  
+          // Skip the logged-in user explicitly
+          if (data.uid === user.uid) {
+            console.log("Skipping logged-in user:", data.uid);
+            return null; // Exclude logged-in user
+          }
+  
           let imageUrl =
-            data.imageUrl || defaultImage[data.userName] || defaultImage.john; // Using the direct URL if available
-
+            data.imageUrl || defaultImage[data.userName] || defaultImage.john;
+  
+          // Get unreadCount for friends
+          const currentFriendDoc = await getDoc(
+            doc(FIRESTORE_DB, `users/${user.uid}/friends`, userDoc.id)
+          );
+          const unreadCount = currentFriendDoc.exists()
+            ? currentFriendDoc.data().unreadCount || 0
+            : 0;
+  
           return {
-            id: doc.id,
+            id: userDoc.id,
             uid: data.uid,
             name: data.userName || "Unknown User",
             city: data.city || "Calgary",
             hobbies: data.hobbies
               ? data.hobbies.split(", ")
               : ["Reading", "Painting"], // Split hobbies into an array
-            clubs: data.clubs ? data.clubs.split(", ") : ["Book", "Knitting"],
+            clubs: data.clubs
+              ? data.clubs.split(", ")
+              : ["Book", "Knitting"], // Split clubs into an array
             meetingId: data.meetingId || "",
             imageUrl: data.imageUrl, // Direct URL from Firestore
+            unreadCount, // Include unread count
           };
         })
-        .filter(
-          (contact) => contact.uid !== user.uid // Filter out the logged-in user and null users
-        );
-
-      setContacts(fetchedContacts);
+      );
+  
+      // Filter out null values (skipped logged-in user)
+      const contactsList = fetchedContacts.filter((contact) => contact !== null);
+  
+      setContacts(contactsList);
     } catch (error) {
-      console.error("Error fetching user names: ", error.message);
+      console.error("Error fetching user names:", error.message);
     }
   };
+  
+  // const fetchUserNames = async () => {
+  //   try {
+  //     const querySnapshot = await getDocs(collection(FIRESTORE_DB, "users"));
+  //     const fetchedContacts = await Promise.all(
+  //       querySnapshot.docs
+  //         .map(async (userDoc) => { // Renamed `doc` to `userDoc` to avoid shadowing
+  //           const data = userDoc.data();
+  //           let imageUrl =
+  //             data.imageUrl || defaultImage[data.userName] || defaultImage.john; // Use default images if no URL
+  
+  //           // Get unreadCount for friends
+  //           const currentFriendDoc = await getDoc(
+  //             doc(FIRESTORE_DB, `users/${user.uid}/friends`, userDoc.id)
+  //           );
+  //           const unreadCount = currentFriendDoc.exists()
+  //             ? currentFriendDoc.data().unreadCount || 0
+  //             : 0;
+  
+  //           return {
+  //             id: userDoc.id,
+  //             uid: data.uid,
+  //             name: data.userName || "Unknown User",
+  //             city: data.city || "Calgary",
+  //             hobbies: data.hobbies
+  //               ? data.hobbies.split(", ")
+  //               : ["Reading", "Painting"], // Split hobbies into an array
+  //             clubs: data.clubs
+  //               ? data.clubs.split(", ")
+  //               : ["Book", "Knitting"], // Split clubs into an array
+  //             meetingId: data.meetingId || "",
+  //             imageUrl: data.imageUrl, // Direct URL from Firestore, // Final image URL with fallback
+  //             unreadCount, // Include unread count
+  //           };
+  //         })
+  //         // .filter((contact) => contact.uid !== user.uid) // Exclude logged-in user
+  //         .filter((contact) => {
+  //           console.log("Checking contact:", contact.uid, "against user:", user.uid);
+  //           return contact.uid !== user.uid; // Exclude logged-in user
+  //         })
+  //     );
+  
+  //     setContacts(fetchedContacts);
+  //   } catch (error) {
+  //     console.error("Error fetching user names:", error.message);
+  //   }
+  // };
+  
+  useEffect(() => {
+    if (user) {
+      const friendsRef = collection(FIRESTORE_DB, `users/${user.uid}/friends`);
+      const unsubscribe = onSnapshot(friendsRef, (snapshot) => {
+        const updatedFriends = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          unreadCount: doc.data().unreadCount || 0, // Get unread count
+          ...doc.data(),
+        }));
+        setContacts(updatedFriends);
+      });
+  
+      return () => unsubscribe();
+    }
+  }, [user]);
+
+  // const fetchUserNames = async () => {
+  //   try {
+  //     const querySnapshot = await getDocs(collection(FIRESTORE_DB, "users"));
+  //     const fetchedContacts = querySnapshot.docs
+  //       .map((doc) => {
+  //         const data = doc.data();
+          
+  //         let imageUrl =
+  //           data.imageUrl || defaultImage[data.userName] || defaultImage.john; // Using the direct URL if available
+
+  //         return {
+  //           id: doc.id,
+  //           uid: data.uid,
+  //           name: data.userName || "Unknown User",
+  //           city: data.city || "Calgary",
+  //           hobbies: data.hobbies
+  //             ? data.hobbies.split(", ")
+  //             : ["Reading", "Painting"], // Split hobbies into an array
+  //           clubs: data.clubs ? data.clubs.split(", ") : ["Book", "Knitting"],
+  //           meetingId: data.meetingId || "",
+  //           imageUrl: data.imageUrl, // Direct URL from Firestore
+  //         };
+  //       })
+  //       .filter(
+  //         (contact) => contact.uid !== user.uid // Filter out the logged-in user and null users
+  //       );
+
+  //     setContacts(fetchedContacts);
+  //   } catch (error) {
+  //     console.error("Error fetching user names: ", error.message);
+  //   }
+  // };
 
   const listenToFriendRequests = () => {
     const friendRequestsRef = collection(
@@ -405,10 +528,16 @@ const GLClub = () => {
       ]}
       onPress={() => handleCardPress(item)}
     >
+
       <Image
         source={{ uri: item.imageUrl }}
         style={[styles.image, phoneStyles.image]}
       />
+        {item.unreadCount > 0 && (
+      <View style={styles.unreadBubble}>
+        <Text style={styles.unreadText}>{item.unreadCount}</Text>
+      </View>
+    )}
       <Text style={[styles.cardText, phoneStyles.cardText]}>
         {item.name}
         {friendRequests[item.id]?.status === "accepted" && (
@@ -1377,6 +1506,36 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "relative",
     ...phoneStyles.container,
+  },
+  // unreadBubble: {
+  //   backgroundColor: "red",
+  //   borderRadius: 12,
+  //   marginLeft: 8, // Space between the name and the bubble
+  //   width: 24,
+  //   height: 24,
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
+  // unreadText: {
+  //   color: "white",
+  //   fontWeight: "bold",
+  //   fontSize: 12,
+  // },
+  unreadBubble: {
+    position: "absolute",
+    top: 50, // Adjust as needed
+    right: 10, // Adjust as needed
+    backgroundColor: "red",
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  unreadText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 14,
   },
   filterButtons: {
     flexDirection: "row",
