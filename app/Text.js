@@ -1051,40 +1051,38 @@ const TextComponent = (props) => {
   const friendId = props.friendId || params.friendId; // Use prop if available, else fallback to params
   const friendName = props.friendName || params.friendName;
 
-//   useEffect(() => {
+  //   useEffect(() => {
 
-// //  Check if the user is blocked
-//     const checkBlockedStatus = async () => {
-//       const userDoc = await getDoc(doc(FIRESTORE_DB, "users", user.uid));
-//       const userData = userDoc.data();
-//       const blockedUsers = userData?.blockedUsers || [];
-//       setIsBlocked(blockedUsers.includes(friendId));
-//     };
-//     checkBlockedStatus();
+  // //  Check if the user is blocked
+  //     const checkBlockedStatus = async () => {
+  //       const userDoc = await getDoc(doc(FIRESTORE_DB, "users", user.uid));
+  //       const userData = userDoc.data();
+  //       const blockedUsers = userData?.blockedUsers || [];
+  //       setIsBlocked(blockedUsers.includes(friendId));
+  //     };
+  //     checkBlockedStatus();
 
+  //     if (friendId && user) {
+  //       const chatId = user.uid > friendId ? `${user.uid}_${friendId}` : `${friendId}_${user.uid}`;
+  //       const q = query(
+  //         collection(FIRESTORE_DB, `chats/${chatId}/messages`),
+  //         orderBy("timestamp", "asc")
+  //       );
 
-//     if (friendId && user) {
-//       const chatId = user.uid > friendId ? `${user.uid}_${friendId}` : `${friendId}_${user.uid}`;
-//       const q = query(
-//         collection(FIRESTORE_DB, `chats/${chatId}/messages`),
-//         orderBy("timestamp", "asc")
-//       );
+  //       const unsubscribe = onSnapshot(q, (snapshot) => {
+  //         const loadedMessages = snapshot.docs.map((doc) => ({
+  //           id: doc.id,
+  //           ...doc.data(),
+  //         }));
+  //         setMessages(loadedMessages);
+  //         setLoading(false);
+  //       });
 
-//       const unsubscribe = onSnapshot(q, (snapshot) => {
-//         const loadedMessages = snapshot.docs.map((doc) => ({
-//           id: doc.id,
-//           ...doc.data(),
-//         }));
-//         setMessages(loadedMessages);
-//         setLoading(false);
-//       });
-
-//       return () => unsubscribe();
-//     }
-//   }, [friendId, user, isBlocked]);
+  //       return () => unsubscribe();
+  //     }
+  //   }, [friendId, user, isBlocked]);
 
   useEffect(() => {
-    
     // Check if the user is blocked
     const checkBlockedStatus = async () => {
       const userDoc = await getDoc(doc(FIRESTORE_DB, "users", user.uid));
@@ -1094,7 +1092,7 @@ const TextComponent = (props) => {
     };
     checkBlockedStatus();
 
- // Fetch messages
+    // Fetch messages
     if (!isBlocked) {
       const chatId = generateChatId(user.uid, friendId);
       const q = query(
@@ -1110,11 +1108,9 @@ const TextComponent = (props) => {
         setMessages(loadedMessages);
         setLoading(false);
         console.log("TextComponent received:", { friendId, friendName });
-});
+      });
     }
   }, [friendId, isBlocked]);
-
-
 
   const generateChatId = (uid1, uid2) => {
     return uid1 > uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
@@ -1143,7 +1139,7 @@ const TextComponent = (props) => {
         collection(FIRESTORE_DB, `chats/${chatId}/messages`),
         messageData
       );
-      
+
       setNewMessage("");
       sendNewMessageNotification(friendId, messageData.text);
     } catch (error) {
@@ -1151,8 +1147,7 @@ const TextComponent = (props) => {
       Alert.alert("Error", "Failed to send message. Try again later.");
     }
   };
-    
-  
+
   const sendNewMessageNotification = async (recipientId, messageText) => {
     try {
       const friendDoc = await getDoc(doc(FIRESTORE_DB, "users", recipientId));
@@ -1171,12 +1166,12 @@ const TextComponent = (props) => {
         sound: "default",
         title: `New message from ${senderName}`,
         body: messageText,
-        data: { someData: "goes here"
-          ,
+        data: {
+          someData: "goes here",
           type: "text", // Specify this is a text notification
           friendId: user.uid, // Sender's ID
           friendName: senderName, // Sender's Name
-         },
+        },
       };
 
       const response = await fetch("https://exp.host/--/api/v2/push/send", {
@@ -1199,7 +1194,6 @@ const TextComponent = (props) => {
       console.error("Error sending notification:", error);
     }
   };
-
 
   const handleDeleteChat = async () => {
     const chatId = generateChatId(user.uid, friendId);
@@ -1237,7 +1231,6 @@ const TextComponent = (props) => {
     }
   };
 
-
   const handleReportMessage = async () => {
     if (!selectedReportReason) {
       Alert.alert("Error", "Please select a reason for reporting.");
@@ -1253,10 +1246,12 @@ const TextComponent = (props) => {
         timestamp: Timestamp.now(),
         resolved: false,
       });
-      Alert.alert("Reported",
+      Alert.alert(
+        "Reported",
         currentMessageId
           ? "The message has been reported for review."
-          : "The chat has been reported for review.");
+          : "The chat has been reported for review."
+      );
       setReportModalVisible(false);
       setSelectedReportReason("");
     } catch (error) {
@@ -1287,7 +1282,7 @@ const TextComponent = (props) => {
   };
 
   const openReportModal = (messageId = null) => {
-    setCurrentMessageId(messageId);// `null` means it's a chat-level report
+    setCurrentMessageId(messageId); // `null` means it's a chat-level report
     setReportModalVisible(true);
   };
 
@@ -1314,19 +1309,21 @@ const TextComponent = (props) => {
           style={[
             styles.messageContainer,
             isOwnMessage ? styles.ownMessage : styles.friendMessage,
-          ]}>
+          ]}
+        >
           <View style={styles.messageContent}>
             <Text style={styles.messageText}>{item.text}</Text>
             <Text style={styles.timestampText}>
-          {moment(item.timestamp.toDate()).format("h:mm a")}
-        </Text>
+              {moment(item.timestamp.toDate()).format("h:mm a")}
+            </Text>
             <TouchableOpacity
               onPress={() =>
                 Speech.speak(item.text, {
                   onDone: () => setIsSpeaking(false),
                 })
               }
-              style={styles.speakerIcon}>
+              style={styles.speakerIcon}
+            >
               <FontAwesome name="volume-up" size={24} color="gray" />
             </TouchableOpacity>
           </View>
@@ -1334,17 +1331,17 @@ const TextComponent = (props) => {
             {moment(item.timestamp.toDate()).format("h:mm a")}
           </Text>
           <TouchableOpacity
-        onLongPress={() => openReportModal(item.id)} // Trigger report modal on long press
-        style={[
-          styles.messageContainer,
-          isOwnMessage ? styles.ownMessage : styles.friendMessage,
-        ]}
-      >
-        <Text style={styles.messageText}>{item.text}</Text>
-        <Text style={styles.timestampText}>
-          {moment(item.timestamp.toDate()).format("h:mm a")}
-        </Text>
-      </TouchableOpacity>
+            onLongPress={() => openReportModal(item.id)} // Trigger report modal on long press
+            style={[
+              styles.messageContainer,
+              isOwnMessage ? styles.ownMessage : styles.friendMessage,
+            ]}
+          >
+            <Text style={styles.messageText}>{item.text}</Text>
+            <Text style={styles.timestampText}>
+              {moment(item.timestamp.toDate()).format("h:mm a")}
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -1354,8 +1351,11 @@ const TextComponent = (props) => {
     <KeyboardAvoidingView behavior="padding" style={styles.container}>
       <View style={styles.chatHeader}>
         <Text style={styles.chatHeaderText}>{friendName}</Text>
-      
-        <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)} style={styles.menuButton}>
+
+        <TouchableOpacity
+          onPress={() => setMenuVisible(!menuVisible)}
+          style={styles.menuButton}
+        >
           <FontAwesome name="ellipsis-v" size={24} color="grey" />
         </TouchableOpacity>
         {menuVisible && (
@@ -1393,8 +1393,6 @@ const TextComponent = (props) => {
         )}
       </View>
 
-
-
       {loading ? (
         <ActivityIndicator size="large" color="#f3b718" />
       ) : (
@@ -1424,7 +1422,8 @@ const TextComponent = (props) => {
 
       <TouchableOpacity
         onPress={() => setModalVisible(true)}
-        style={styles.deleteButton}>
+        style={styles.deleteButton}
+      >
         <FontAwesome name="trash" size={24} color="grey" />
         <Text style={styles.deleteButtonText}>Delete Chat</Text>
       </TouchableOpacity>
@@ -1443,8 +1442,8 @@ const TextComponent = (props) => {
         </Text>
       </TouchableOpacity> */}
 
-           {/* Report Message Modal */}
-           <Modal
+      {/* Report Message Modal */}
+      <Modal
         visible={reportModalVisible}
         transparent={true}
         animationType="slide"
@@ -1488,7 +1487,8 @@ const TextComponent = (props) => {
         visible={modalVisible}
         transparent={true}
         animationType="slide"
-        onRequestClose={() => setModalVisible(false)}>
+        onRequestClose={() => setModalVisible(false)}
+      >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>
@@ -1497,12 +1497,14 @@ const TextComponent = (props) => {
             <View style={styles.modalActions}>
               <TouchableOpacity
                 onPress={handleDeleteChat}
-                style={styles.modalConfirmButton}>
+                style={styles.modalConfirmButton}
+              >
                 <Text style={styles.modalButtonText}>Yes, Delete</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
-                style={styles.modalCancelButton}>
+                style={styles.modalCancelButton}
+              >
                 <Text style={styles.modalButtonText}>Cancel</Text>
               </TouchableOpacity>
             </View>
@@ -1515,7 +1517,8 @@ const TextComponent = (props) => {
         visible={flagModalVisible}
         transparent={true}
         animationType="slide"
-        onRequestClose={() => setFlagModalVisible(false)}>
+        onRequestClose={() => setFlagModalVisible(false)}
+      >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>Select a reason for flagging:</Text>
@@ -1526,19 +1529,22 @@ const TextComponent = (props) => {
                 style={[
                   styles.reasonOption,
                   selectedFlagReason === reason && styles.selectedReason,
-                ]}>
+                ]}
+              >
                 <Text style={styles.reasonText}>{reason}</Text>
               </TouchableOpacity>
             ))}
             <View style={styles.modalActions}>
               <TouchableOpacity
                 onPress={handleFlagUser}
-                style={styles.modalConfirmButton}>
+                style={styles.modalConfirmButton}
+              >
                 <Text style={styles.modalButtonText}>Submit</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => setFlagModalVisible(false)}
-                style={styles.modalCancelButton}>
+                style={styles.modalCancelButton}
+              >
                 <Text style={styles.modalButtonText}>Cancel</Text>
               </TouchableOpacity>
             </View>
@@ -1570,7 +1576,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: "grey",
     fontWeight: "bold",
-    flex: 1, 
+    flex: 1,
     marginLeft: 10,
   },
 
@@ -1600,8 +1606,6 @@ const styles = StyleSheet.create({
     color: "grey",
   },
 
-
- 
   inputContainer: {
     flexDirection: "row",
     padding: 12,
