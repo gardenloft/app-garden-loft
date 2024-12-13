@@ -359,10 +359,6 @@ const TextComponent = (props) => {
           ]}
         >
           <View style={styles.messageContent}>
-            <Text style={styles.messageText}>{item.text}</Text>
-            <Text style={styles.timestampText}>
-              {moment(item.timestamp.toDate()).format("h:mm a")}
-            </Text>
             <TouchableOpacity
               onPress={() =>
                 Speech.speak(item.text, {
@@ -374,9 +370,6 @@ const TextComponent = (props) => {
               <FontAwesome name="volume-up" size={24} color="gray" />
             </TouchableOpacity>
           </View>
-          <Text style={styles.timestampText}>
-            {moment(item.timestamp.toDate()).format("h:mm a")}
-          </Text>
           <TouchableOpacity
             onLongPress={() => openReportModal(item.id)} // Trigger report modal on long press
             style={[
