@@ -265,19 +265,42 @@ const GLClub = () => {
   };
 
   const filterAndSortContacts = () => {
-    let filtered = contacts;
-    if (filter === "friends") {
+    let filtered = [];
+  
+    if (filter === "all") {
+      // Show all contacts except the logged-in user
+      filtered = contacts.filter((contact) => contact.uid !== user.uid);
+    } else if (filter === "friends") {
+      // Show only friends
       filtered = contacts.filter((contact) =>
         friends.some((friend) => friend.id === contact.id)
       );
     }
+  
+    // Sort the filtered contacts alphabetically by name
     filtered.sort((a, b) => {
       const nameA = (a.name || "").toLowerCase();
       const nameB = (b.name || "").toLowerCase();
       return nameA.localeCompare(nameB);
     });
-    setFilteredContacts([...new Set(filtered)]);
+  
+    setFilteredContacts(filtered);
   };
+
+  // const filterAndSortContacts = () => {
+  //   let filtered = contacts;
+  //   if (filter === "friends") {
+  //     filtered = contacts.filter((contact) =>
+  //       friends.some((friend) => friend.id === contact.id)
+  //     );
+  //   }
+  //   filtered.sort((a, b) => {
+  //     const nameA = (a.name || "").toLowerCase();
+  //     const nameB = (b.name || "").toLowerCase();
+  //     return nameA.localeCompare(nameB);
+  //   });
+  //   setFilteredContacts([...new Set(filtered)]);
+  // };
 
   const handleAddFriend = async (contact) => {
     if (!user) {
