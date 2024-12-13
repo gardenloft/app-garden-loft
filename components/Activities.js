@@ -18,9 +18,18 @@ import { FontAwesome } from "@expo/vector-icons";
 import { getAuth } from "firebase/auth";
 import * as Notifications from "expo-notifications";
 import { FIRESTORE_DB } from "../FirebaseConfig";
-import { getDoc,collection, query, where, getDocs, updateDoc, addDoc, doc} from "firebase/firestore";
+import {
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  addDoc,
+  doc,
+} from "firebase/firestore";
 import { WebView } from "react-native-webview";
-import { Image } from 'react-native';
+import { Image } from "react-native";
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
@@ -123,259 +132,138 @@ const Activities = () => {
     }
   }
 
-//   async function fetchEventsAndSaveToFirestore(userName) {
-//     try {
-//       const response = await axios.get(
-//         "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
-//       );
-   
-
-//       const currentTime = new Date();
-  
-//       const eventData = response.data.data.signup
-//         .filter((item) => item.firstname === userName)
-//         .map((item) => ({
-//           item: item.item,
-         
-//           startDate: moment
-//             .tz(item.startdatestring.replace(/-/g, "T"), "YYYY/MM/DD HH:mm", "")
-//             .toDate(),
-//           endDate: item.enddatestring
-//             ? moment
-//                 .tz(
-//                   item.enddatestring.replace(/-/g, "T"),
-//                   "YYYY/MM/DD HH:mm:ss",
-//                   ""
-//                 )
-//                 .toDate()
-//             : undefined,
-//           zoomLink:
-//             item.location === "Zoom Meeting"
-//               ? `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
-//               : null,
-             
-              
-//         }))
-        
-//         .filter(
-//           (event) =>
-//             (event.endDate && currentTime < event.endDate) || // Keep if the current time is before the event's end date
-//             (!event.endDate && currentTime < event.startDate) // Or if no endDate, keep if the event hasn't started yet
-//         );
-        
-//         if (eventData.length === 0) {
-//           throw new Error("No upcoming events found.");
-//         }
-  
-//       eventData.sort((a, b) => a.startDate - b.startDate);
-
-//    // Save or update each event in Firestore
-//   for (const event of eventData) {
-//     const q = query(collection(FIRESTORE_DB, "events"), where("item", "==", event.item));
-//     const querySnapshot = await getDocs(q);
-
-//     if (querySnapshot.empty) {
-//       // Event does not exist, add it
-//       await addDoc(collection(FIRESTORE_DB, "events"), {
-//         ...event,
-//         isNew: true,
-//         imageUrl: '' // Initialize with empty string
-//       });
-//     } else {
-//       // Event exists, update it
-//       querySnapshot.forEach(async (docSnapshot) => {
-//         const existingEvent = docSnapshot.data();
-//         const eventDoc = doc(FIRESTORE_DB, "events", docSnapshot.id);
-//         await updateDoc(eventDoc, {
-//           ...event,
-//           isNew: false,
-//           imageUrl: existingEvent.imageUrl || '' // Preserve existing imageUrl if any
-//         });
-//       });
-//     }
-//   }
-
-//   // Fetch all events from Firestore to include manually added imageUrls
-//   const eventsSnapshot = await getDocs(collection(FIRESTORE_DB, "events"));
-//   const updatedEvents = eventsSnapshot.docs.map(doc => ({
-//     id: doc.id,
-//     ...doc.data()
-//   }));
-
-//   // Schedule event notifications
-//   updatedEvents.forEach((event) => {
-//     if (Platform.OS !== "web") {
-//       scheduleNotification(event);
-//     }
-//   });
-
-//   setEvents(updatedEvents);
-//   setLoading(false);
-// } catch (error) {
-//   console.error("Error fetching events: ", error.message);
-//   setError("Failed to retrieve signed-up activities. Please try again later.");
-//   setLoading(false);
-// }
-//   }
-async function fetchEventsAndSaveToFirestore(userName) {
-  try {
-    const response = await axios.get(
-      "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
-    );
-
-    const currentTime = new Date();
-
-    const eventData = response.data.data.signup
-      .filter((item) => item.firstname === userName)
-      .map((item) => {
-        // Parse dates carefully, considering AM/PM
-        let startDate, endDate;
-        try {
-          // Assuming the API returns time in 12-hour format with AM/PM indicator
-          startDate = moment.tz(item.startdatestring.replace(/-/g, "T"), "YYYY/MM/DD HH:mm", "").toDate();
-          endDate = item.enddatestring
-            ? moment.tz(item.enddatestring.replace(/-/g, "T"), "YYYY/MM/DD HH:mm:ss", "").toDate()
-            : undefined;
-          
-          
-
-          // Log parsed dates for debugging
-          console.log(`Parsed startDate: ${startDate}, endDate: ${endDate}`);
-        } catch (error) {
-          console.error("Error parsing date for item:", item, error);
-          // Set to current date if parsing fails, to avoid breaking the app
-          startDate = new Date();
-          endDate = new Date();
-        }
-
-        return {
-          item: item.item,
-          startDate,
-          endDate,
-          zoomLink:
-            item.location === "Zoom Meeting"
-              ? `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
-              
-              : null,
-        };
-      })
-      .filter(
-        (event) =>
-          (event.endDate && currentTime < event.endDate) ||
-          (!event.endDate && currentTime < event.startDate)
+  async function fetchEventsAndSaveToFirestore(userName) {
+    try {
+      const response = await axios.get(
+        "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
       );
 
-    if (eventData.length === 0) {
-      throw new Error("No upcoming events found.");
-    }
+      const currentTime = new Date();
 
-    eventData.sort((a, b) => a.startDate - b.startDate);
+      const eventData = response.data.data.signup
+        .filter((item) => item.firstname === userName)
+        .map((item) => {
+          // Parse dates carefully, considering AM/PM
+          let startDate, endDate;
+          try {
+            // Assuming the API returns time in 12-hour format with AM/PM indicator
+            startDate = moment
+              .tz(
+                item.startdatestring.replace(/-/g, "T"),
+                "YYYY/MM/DD HH:mm",
+                ""
+              )
+              .toDate();
+            endDate = item.enddatestring
+              ? moment
+                  .tz(
+                    item.enddatestring.replace(/-/g, "T"),
+                    "YYYY/MM/DD HH:mm:ss",
+                    ""
+                  )
+                  .toDate()
+              : undefined;
 
-    // Save or update each event in Firestore
-    for (const event of eventData) {
-      const q = query(collection(FIRESTORE_DB, "events"), where("item", "==", event.item));
-      const querySnapshot = await getDocs(q);
+            // Log parsed dates for debugging
+            console.log(`Parsed startDate: ${startDate}, endDate: ${endDate}`);
+          } catch (error) {
+            console.error("Error parsing date for item:", item, error);
+            // Set to current date if parsing fails, to avoid breaking the app
+            startDate = new Date();
+            endDate = new Date();
+          }
 
-      if (querySnapshot.empty) {
-        // Event does not exist, add it
-        await addDoc(collection(FIRESTORE_DB, "events"), {
-          ...event,
-          isNew: true,
-          imageUrl: '' // Initialize with empty string
-        });
-      } else {
-        // Event exists, update it
-        querySnapshot.forEach(async (docSnapshot) => {
-          const existingEvent = docSnapshot.data();
-          const eventDoc = doc(FIRESTORE_DB, "events", docSnapshot.id);
-          await updateDoc(eventDoc, {
+          return {
+            item: item.item,
+            startDate,
+            endDate,
+            zoomLink:
+              item.location === "Zoom Meeting"
+                ? `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
+                : null,
+          };
+        })
+        .filter(
+          (event) =>
+            (event.endDate && currentTime < event.endDate) ||
+            (!event.endDate && currentTime < event.startDate)
+        );
+
+      if (eventData.length === 0) {
+        throw new Error("No upcoming events found.");
+      }
+
+      eventData.sort((a, b) => a.startDate - b.startDate);
+
+      // Save or update each event in Firestore
+      for (const event of eventData) {
+        const q = query(
+          collection(FIRESTORE_DB, "events"),
+          where("item", "==", event.item)
+        );
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          // Event does not exist, add it
+          await addDoc(collection(FIRESTORE_DB, "events"), {
             ...event,
-            isNew: false,
-            imageUrl: existingEvent.imageUrl || '' // Preserve existing imageUrl if any
+            isNew: true,
+            imageUrl: "", // Initialize with empty string
           });
-        });
+        } else {
+          // Event exists, update it
+          querySnapshot.forEach(async (docSnapshot) => {
+            const existingEvent = docSnapshot.data();
+            const eventDoc = doc(FIRESTORE_DB, "events", docSnapshot.id);
+            await updateDoc(eventDoc, {
+              ...event,
+              isNew: false,
+              imageUrl: existingEvent.imageUrl || "", // Preserve existing imageUrl if any
+            });
+          });
+        }
       }
+
+      // Fetch all events from Firestore to include manually added imageUrls
+      const eventsSnapshot = await getDocs(collection(FIRESTORE_DB, "events"));
+      const updatedEvents = eventsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        // Ensure dates are properly converted back to Date objects
+        startDate: doc.data().startDate.toDate(),
+        endDate: doc.data().endDate ? doc.data().endDate.toDate() : undefined,
+      }));
+
+      // Schedule event notifications
+      updatedEvents.forEach((event) => {
+        if (Platform.OS !== "web") {
+          scheduleNotification(event);
+        }
+      });
+
+      setEvents(updatedEvents);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching events: ", error.message);
+      setError(
+        "Failed to retrieve signed-up activities. Please try again later."
+      );
+      setLoading(false);
     }
-
-    // Fetch all events from Firestore to include manually added imageUrls
-    const eventsSnapshot = await getDocs(collection(FIRESTORE_DB, "events"));
-    const updatedEvents = eventsSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-      // Ensure dates are properly converted back to Date objects
-      startDate: doc.data().startDate.toDate(),
-      endDate: doc.data().endDate ? doc.data().endDate.toDate() : undefined
-    }));
-
-    // Schedule event notifications
-    updatedEvents.forEach((event) => {
-      if (Platform.OS !== "web") {
-        scheduleNotification(event);
-      }
-    });
-
-    setEvents(updatedEvents);
-    setLoading(false);
-  } catch (error) {
-    console.error("Error fetching events: ", error.message);
-    setError("Failed to retrieve signed-up activities. Please try again later.");
-    setLoading(false);
   }
-}
-  // async function fetchEvents(userName) {
-  //   try {
-  //     const response = await axios.get(
-  //       "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
-  //     );
-  //     const currentTime = new Date();
-  //     const eventData = response.data.data.signup
-  //       .filter((item) => item.firstname === userName)
-  //       .map((item) => ({
-  //         item: item.item,
-  //         startDate: moment
-  //           .tz(item.startdatestring.replace(/-/g, "T"), "YYYY/MM/DD HH:mm", "")
-  //           .toDate(),
-  //         endDate: item.enddatestring
-  //           ? moment
-  //               .tz(
-  //                 item.enddatestring.replace(/-/g, "T"),
-  //                 "YYYY/MM/DD HH:mm:ss",
-  //                 ""
-  //               )
-  //               .toDate()
-  //           : undefined,
-  //         zoomLink:
-  //           item.location === "Zoom Meeting"
-  //             ? `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
-  //             : null,
-  //       }));
-
-  //     eventData.sort((a, b) => a.startDate - b.startDate);
-
-  //     eventData.forEach((event) => {
-  //       if (Platform.OS !== "web") {
-  //         scheduleNotification(event);
-  //       }
-  //     });
-
-  //     setEvents(eventData);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     setError(
-  //       "Failed to retrieve signed-up activities. Please try again later."
-  //     );
-  //     setLoading(false);
-  //   }
-  // }
 
   const filterEvents = () => {
-    const currentDate = moment().startOf('day');
-    const endOfToday = moment().endOf('day');
+    const currentDate = moment().startOf("day");
+    const endOfToday = moment().endOf("day");
 
-    if (filter === 'today') {
-      return events.filter(event => moment(event.startDate).isBetween(currentDate, endOfToday));
-    } else if (filter === 'upcoming') {
-      return events.filter(event => moment(event.startDate).isAfter(endOfToday));
+    if (filter === "today") {
+      return events.filter((event) =>
+        moment(event.startDate).isBetween(currentDate, endOfToday)
+      );
+    } else if (filter === "upcoming") {
+      return events.filter((event) =>
+        moment(event.startDate).isAfter(endOfToday)
+      );
     }
     return events;
   };
@@ -469,8 +357,10 @@ async function fetchEventsAndSaveToFirestore(userName) {
       style={[
         styles.cardContainer,
         {
-          backgroundColor: index === activeIndex ? "transparent" : "transparent",
-          transform: index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
+          backgroundColor:
+            index === activeIndex ? "transparent" : "transparent",
+          transform:
+            index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
         },
         {
           height:
@@ -479,12 +369,17 @@ async function fetchEventsAndSaveToFirestore(userName) {
               : Math.round(Dimensions.get("window").height * 0.25),
         },
       ]}
-      onPress={() => navigateToZoomLink(item)}>
+      onPress={() => navigateToZoomLink(item)}
+    >
       <Image
-      source={item.imageUrl ? { uri: item.imageUrl } : require("../assets/images/garden-loft-logo-outline.png")} // Use the image URL or fallback
-      style={styles.cardImage} // Style the image
-      resizeMode="contain" // Optional: Adjust image resizing behavior
-    />
+        source={
+          item.imageUrl
+            ? { uri: item.imageUrl }
+            : require("../assets/images/garden-loft-logo-outline.png")
+        } // Use the image URL or fallback
+        style={styles.cardImage} // Style the image
+        resizeMode="contain" // Optional: Adjust image resizing behavior
+      />
       <Text style={styles.cardText}>{item.item}</Text>
       <Text style={styles.cardTextTime}>
         {moment(item.startDate).format("dddd MMMM Do, h:mm a")}
@@ -534,10 +429,12 @@ async function fetchEventsAndSaveToFirestore(userName) {
   };
 
   return (
-    <View  style={[
-      styles.container,
-      { height: viewportWidth > viewportHeight ? 320 : 450 },
-    ]}>
+    <View
+      style={[
+        styles.container,
+        { height: viewportWidth > viewportHeight ? 320 : 450 },
+      ]}
+    >
       {loading ? (
         <ActivityIndicator size="large" color="orange" style={styles.loading} />
       ) : error ? (
@@ -556,108 +453,114 @@ async function fetchEventsAndSaveToFirestore(userName) {
           </View>
         </View>
       ) : (
-        
-          <View
-            style={[
-              styles.container,
-              { height: viewportWidth > viewportHeight ? 320 : 450 },
-            ]}>
-                        {/* Filter Buttons */}
+        <View
+          style={[
+            styles.container,
+            { height: viewportWidth > viewportHeight ? 320 : 450 },
+          ]}
+        >
+          {/* Filter Buttons */}
           <View style={styles.filterButtonsContainer}>
             <Pressable
-              style={[styles.filterButton, filter === 'all' && styles.activeFilterButton]}
-              onPress={() => handleFilterPress('all')}
+              style={[
+                styles.filterButton,
+                filter === "all" && styles.activeFilterButton,
+              ]}
+              onPress={() => handleFilterPress("all")}
             >
               <Text style={styles.filterButtonText}>All</Text>
             </Pressable>
             <Pressable
-              style={[styles.filterButton, filter === 'today' && styles.activeFilterButton]}
-              onPress={() => handleFilterPress('today')}
+              style={[
+                styles.filterButton,
+                filter === "today" && styles.activeFilterButton,
+              ]}
+              onPress={() => handleFilterPress("today")}
             >
               <Text style={styles.filterButtonText}>Today</Text>
             </Pressable>
             <Pressable
-              style={[styles.filterButton, filter === 'upcoming' && styles.activeFilterButton]}
-              onPress={() => handleFilterPress('upcoming')}
+              style={[
+                styles.filterButton,
+                filter === "upcoming" && styles.activeFilterButton,
+              ]}
+              onPress={() => handleFilterPress("upcoming")}
             >
               <Text style={styles.filterButtonText}>Upcoming</Text>
             </Pressable>
           </View>
-            <Carousel
-              ref={carouselRef}
-              // ref={scrollViewRef}
-              // data={events}
-              data={filterEvents()}
-              // layout={"default"}
-              renderItem={renderItem}
-              width={Math.round(viewportWidth * 0.3)}
-              height={Math.round(viewportHeight * 0.3)}
-              style={{
-                width: Math.round(viewportWidth * 0.9),
-                height: Math.round(viewportHeight * 0.5),
-              }}
-              itemWidth={Math.round(viewportWidth * 0.3)}
-              loop={true}
-              useScrollView={true}
-              activeSlideAlignment="center"
-              onSnapToItem={(index) => handleSnapToItem(index)}
-              scrollAnimationDuration={800}
+          <Carousel
+            ref={carouselRef}
+            // ref={scrollViewRef}
+            // data={events}
+            data={filterEvents()}
+            // layout={"default"}
+            renderItem={renderItem}
+            width={Math.round(viewportWidth * 0.3)}
+            height={Math.round(viewportHeight * 0.3)}
+            style={{
+              width: Math.round(viewportWidth * 0.9),
+              height: Math.round(viewportHeight * 0.5),
+            }}
+            itemWidth={Math.round(viewportWidth * 0.3)}
+            loop={true}
+            useScrollView={true}
+            activeSlideAlignment="center"
+            onSnapToItem={(index) => handleSnapToItem(index)}
+            scrollAnimationDuration={800}
+          />
+          <Pressable
+            style={[
+              styles.arrowLeft,
+              {
+                left: viewportWidth > viewportHeight ? -17 : -22,
+                top: viewportWidth > viewportHeight ? "40%" : "30%",
+              },
+            ]}
+            onPress={() => {
+              handleArrowPress("left");
+            }}
+          >
+            <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
+          </Pressable>
+          <Pressable
+            style={[
+              styles.arrowRight,
+              {
+                right: viewportWidth > viewportHeight ? -25 : -22,
+                top: viewportWidth > viewportHeight ? "40%" : "30%",
+              },
+            ]}
+            onPress={() => {
+              handleArrowPress("right");
+            }}
+          >
+            <FontAwesome
+              name="angle-right"
+              size={100}
+              color="rgb(45, 62, 95)"
             />
-            <Pressable
-              style={[
-                styles.arrowLeft,
-                {
-                  left: viewportWidth > viewportHeight ? -17 : -22,
-                  top: viewportWidth > viewportHeight ? "40%" : "30%",
-                },
-              ]}
-              onPress={() => {
-                handleArrowPress("left");
-              }}>
-              <FontAwesome
-                name="angle-left"
-                size={100}
-                color="rgb(45, 62, 95)"
-              />
-            </Pressable>
-            <Pressable
-              style={[
-                styles.arrowRight,
-                {
-                  right: viewportWidth > viewportHeight ? -25 : -22,
-                  top: viewportWidth > viewportHeight ? "40%" : "30%",
-                },
-              ]}
-              onPress={() => {
-                handleArrowPress("right");
-              }}>
-              <FontAwesome
-                name="angle-right"
-                size={100}
-                color="rgb(45, 62, 95)"
-              />
-            </Pressable>
-            {isModalOpen && selectedEvent && (
-              <View style={styles.modalContainer}>
-                <View style={styles.modal}>
-                  <Text>{selectedEvent.item}</Text>
-                  {selectedEvent.endDate && (
-                    <Text>
-                      End Date:{" "}
-                      {moment(selectedEvent.endDate).format(
-                        "dddd MMMM Do, h:mm a"
-                      )}
-                    </Text>
-                  )}
-                  {renderModalContent(selectedEvent)}
-                  <Pressable onPress={closeModal} style={styles.closeButton}>
-                    <Text>Close</Text>
-                  </Pressable>
-                </View>
+          </Pressable>
+          {isModalOpen && selectedEvent && (
+            <View style={styles.modalContainer}>
+              <View style={styles.modal}>
+                <Text>{selectedEvent.item}</Text>
+                {selectedEvent.endDate && (
+                  <Text>
+                    End Date:{" "}
+                    {moment(selectedEvent.endDate).format(
+                      "dddd MMMM Do, h:mm a"
+                    )}
+                  </Text>
+                )}
+                {renderModalContent(selectedEvent)}
+                <Pressable onPress={closeModal} style={styles.closeButton}>
+                  <Text>Close</Text>
+                </Pressable>
               </View>
-            )}
-          </View>
-        
+            </View>
+          )}
+        </View>
       )}
     </View>
   );
@@ -707,8 +610,8 @@ const styles = StyleSheet.create({
   filterButtonsContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginBottom: 30, 
-    marginTop: viewportWidth > viewportHeight ? -70: -40,    
+    marginBottom: 30,
+    marginTop: viewportWidth > viewportHeight ? -70 : -40,
   },
   filterButton: {
     paddingHorizontal: 20,
@@ -814,7 +717,3 @@ const styles = StyleSheet.create({
 });
 
 export default Activities;
-
-
-
-

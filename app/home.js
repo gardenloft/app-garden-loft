@@ -19,7 +19,6 @@ import VideoCall from "../components/VideoCall"; // Import VideoCall component
 import MessageModalHandler from "../components/MessageModalHandler";
 import { useNavigation } from "@react-navigation/native";
 
-
 export default function Home() {
   const auth = getAuth();
   const [user, setUser] = useState(null);
@@ -40,35 +39,37 @@ export default function Home() {
   useEffect(() => {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
-        const { type, friendId, friendName, text } = notification.request.content.data;
+        const { type, friendId, friendName, text } =
+          notification.request.content.data;
 
         if (type === "text") {
-          setMessageData({ senderName: friendName, 
-            text,
-            friendId,
-           });
+          setMessageData({ senderName: friendName, text, friendId });
           setMessageModalVisible(true);
         }
       });
 
-        // Listener for notification taps
-  responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-    const { type, friendId, friendName } = response.notification.request.content.data;
-    console.log("Notification tapped:", { type, friendId, friendName });
+    // Listener for notification taps
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        const { type, friendId, friendName } =
+          response.notification.request.content.data;
+        console.log("Notification tapped:", { type, friendId, friendName });
 
-    if (type === "text") {
-      // Navigate directly to OpenedChat when notification is tapped
-      setMessageModalVisible(false); // Ensure the modal is closed
-      router.push({
-        pathname: "/OpenedChat",
-        params: { friendId, friendName },
+        if (type === "text") {
+          // Navigate directly to OpenedChat when notification is tapped
+          setMessageModalVisible(false); // Ensure the modal is closed
+          router.push({
+            pathname: "/OpenedChat",
+            params: { friendId, friendName },
+          });
+        }
       });
-    }
-  });
 
     return () => {
       if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(notificationListener.current);
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
       }
       if (responseListener.current) {
         Notifications.removeNotificationSubscription(responseListener.current);
@@ -76,7 +77,7 @@ export default function Home() {
     };
   }, [user, router]);
 
-// Function to show the CallAlertModal
+  // Function to show the CallAlertModal
   const showCallAlertModal = (callerName, callerUid, meetingId, calleeUid) => {
     setCallerName(callerName);
     setCallerUid(callerUid);
@@ -85,12 +86,12 @@ export default function Home() {
     setModalVisible(true); // Show the modal manually
   };
 
-      useEffect(() => {
-      // If the necessary parameters are passed, trigger the CallAlertModal
-      if (callerName && callerUid && meetingId && calleeUid) {
-        showCallAlertModal(callerName, callerUid, meetingId, calleeUid);
-      }
-    }, [callerName, callerUid, meetingId, calleeUid]);
+  useEffect(() => {
+    // If the necessary parameters are passed, trigger the CallAlertModal
+    if (callerName && callerUid && meetingId && calleeUid) {
+      showCallAlertModal(callerName, callerUid, meetingId, calleeUid);
+    }
+  }, [callerName, callerUid, meetingId, calleeUid]);
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (authenticatedUser) => {
@@ -130,62 +131,65 @@ export default function Home() {
       ]);
 
       // Notification listener for incoming calls
-      notificationListener.current = Notifications.addNotificationReceivedListener(
-        (notification) => {
+      notificationListener.current =
+        Notifications.addNotificationReceivedListener((notification) => {
           const { caller, callerUid, meetingId, calleeUid } =
             notification.request.content.data;
-            setCallerUid(callerUid);
-                    setCallerName(caller);
-                    setMeetingId(meetingId);
-                    setCalleeUid(calleeUid); 
-        }
-      );
+          setCallerUid(callerUid);
+          setCallerName(caller);
+          setMeetingId(meetingId);
+          setCalleeUid(calleeUid);
+        });
 
       // Response listener for actions (Accept/Decline)
-      responseListener.current = Notifications.addNotificationResponseReceivedListener(
-        async (response) => {
-          const { meetingId, callerUid, callee, calleeUid } = response.notification.request.content.data;
-          setCalleeUid(calleeUid);
+      responseListener.current =
+        Notifications.addNotificationResponseReceivedListener(
+          async (response) => {
+            const { meetingId, callerUid, callee, calleeUid } =
+              response.notification.request.content.data;
+            setCalleeUid(calleeUid);
 
-          if (
-            response.actionIdentifier === "ACCEPT_CALL") {
+            if (response.actionIdentifier === "ACCEPT_CALL") {
               // Linking.openURL(`app-garden-loft://VideoSDK2?meetingId=${meetingId}&caller=${callerUid}&autoJoin=true`);
-            // await handleAcceptCall(meetingId, callerUid, callee);
-          } else if (
-            response.actionIdentifier === "DECLINE_CALL") {
-            handleDecline();
+              // await handleAcceptCall(meetingId, callerUid, callee);
+            } else if (response.actionIdentifier === "DECLINE_CALL") {
+              handleDecline();
+            }
           }
-        }
-      );
+        );
 
-     // Notification listener for incoming messages and calls
-     notificationListener.current =
-     Notifications.addNotificationReceivedListener((notification) => {
-       const { type, friendId, friendName, text, callerName, meetingId } =
-         notification.request.content.data;
+      // Notification listener for incoming messages and calls
+      notificationListener.current =
+        Notifications.addNotificationReceivedListener((notification) => {
+          const { type, friendId, friendName, text, callerName, meetingId } =
+            notification.request.content.data;
 
-       if (type === "text") {
-         setMessageData({
-           senderName: friendName,
-           text,
-           friendId,
-         });
-         setMessageModalVisible(true);
-       } else if (type === "call") {
-         setCallData({
-           callerName,
-           meetingId,
-         });
-         setCallModalVisible(true);
-       }
-     });
+          if (type === "text") {
+            setMessageData({
+              senderName: friendName,
+              text,
+              friendId,
+            });
+            setMessageModalVisible(true);
+          } else if (type === "call") {
+            setCallData({
+              callerName,
+              meetingId,
+            });
+            setCallModalVisible(true);
+          }
+        });
 
       return () => {
         if (notificationListener.current) {
-          Notifications.removeNotificationSubscription(notificationListener.current);
+          Notifications.removeNotificationSubscription(
+            notificationListener.current
+          );
         }
         if (responseListener.current) {
-          Notifications.removeNotificationSubscription(responseListener.current);
+          Notifications.removeNotificationSubscription(
+            responseListener.current
+          );
         }
       };
     }
@@ -222,8 +226,6 @@ export default function Home() {
             },
             body: JSON.stringify(acceptMessage),
           });
-
-      
 
           // Close modal and route to VideoSDK screen
           setModalVisible(false);
@@ -300,7 +302,8 @@ export default function Home() {
     }
 
     if (Device.isDevice) {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
       if (existingStatus !== "granted") {
         const { status } = await Notifications.requestPermissionsAsync();
@@ -334,31 +337,30 @@ export default function Home() {
           visible={modalVisible}
           callerUId={callerUid}
           callerId={callerName}
-          onAccept={() => handleAcceptCall(meetingId, callerUid, callerName)}    
+          onAccept={() => handleAcceptCall(meetingId, callerUid, callerName)}
           onDecline={() => handleDecline(callerUid)}
         />
-         <MessageModalHandler
-        visible={messageModalVisible}
-        senderName={messageData.senderName}
-        messageText={messageData.text}
-        senderId={messageData.friendId}
-        onOpenChat={(friendId, friendName) => {
-          setMessageModalVisible(false);
-          // navigation.navigate("Text", {
-          //   friendId: messageData.senderId,
-          //   friendName: messageData.senderName,
-          // });
-          router.push({
-            pathname: "/OpenedChat",
-            params: { friendId, friendName },
-          });
-        }}
-        onClose={() => {
-          setMessageModalVisible(false);
-          router.push("/home");
-        }}
-      />
-
+        <MessageModalHandler
+          visible={messageModalVisible}
+          senderName={messageData.senderName}
+          messageText={messageData.text}
+          senderId={messageData.friendId}
+          onOpenChat={(friendId, friendName) => {
+            setMessageModalVisible(false);
+            // navigation.navigate("Text", {
+            //   friendId: messageData.senderId,
+            //   friendName: messageData.senderName,
+            // });
+            router.push({
+              pathname: "/OpenedChat",
+              params: { friendId, friendName },
+            });
+          }}
+          onClose={() => {
+            setMessageModalVisible(false);
+            router.push("/home");
+          }}
+        />
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
