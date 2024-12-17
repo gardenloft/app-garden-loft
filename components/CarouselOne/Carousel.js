@@ -438,7 +438,7 @@ const Home = () => {
                 : Math.round(Dimensions.get("window").height * 0.2),
             marginLeft: viewportWidth > viewportHeight ? 350 : 220,
           },
-          viewportWidth <= 413 && phoneStyles.item,
+          viewportWidth <= 513 && phoneStyles.item,
         ]}>
         <MaterialCommunityIcons
           style={[
@@ -462,7 +462,7 @@ const Home = () => {
   const cardsToShow = viewportWidth > viewportHeight ? 5 : 3;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, viewportWidth <= 513 && phoneStyles.container]}>
       <TouchableOpacity
         style={[
           styles.arrowLeft,
@@ -470,14 +470,14 @@ const Home = () => {
             left: viewportWidth > viewportHeight ? 28 : 18,
             top: viewportWidth > viewportHeight ? "12%" : "14.5%",
           },
-          viewportWidth <= 413 && phoneStyles.arrowLeft,
+          viewportWidth <= 513 && phoneStyles.arrowLeft,
         ]}
         onPress={() =>
           carouselRef.current?.scrollTo({ count: -1, animated: true })
         }>
         <FontAwesome
           name="angle-left"
-          size={viewportWidth <= 413 ? 60 : 100}
+          size={viewportWidth <= 513 ? 100 : 100}
           color="rgb(45, 62, 95)"
         />
       </TouchableOpacity>
@@ -485,7 +485,7 @@ const Home = () => {
       <Carousel
         ref={carouselRef}
         width={
-          viewportWidth <= 413
+          viewportWidth <= 513
             ? viewportWidth * 0.8
             : Math.round(viewportWidth / cardsToShow)
         }
@@ -511,14 +511,14 @@ const Home = () => {
             right: viewportWidth > viewportHeight ? 35 : 22,
             top: viewportWidth > viewportHeight ? "12%" : "15%",
           },
-          viewportWidth <= 413 && phoneStyles.arrowRight,
+          viewportWidth <= 513 && phoneStyles.arrowRight,
         ]}
         onPress={() =>
           carouselRef.current?.scrollTo({ count: 1, animated: true })
         }>
         <FontAwesome
           name="angle-right"
-          size={viewportWidth <= 413 ? 60 : 100}
+          size={viewportWidth <= 513 ? 100 : 100}
           color="rgb(45, 62, 95)"
         />
       </TouchableOpacity>
@@ -539,6 +539,8 @@ const Home = () => {
               style={[
                 styles.prompt,
                 { marginBottom: viewportWidth > viewportHeight ? 30 : 50 },
+                viewportWidth <= 513 && phoneStyles.prompt,
+
               ]}>
               {data[activeIndex].prompt}
             </Text>
@@ -552,6 +554,9 @@ const Home = () => {
 
 // Phone-specific styles
 const phoneStyles = {
+  container: {
+    marginTop: -20,
+  },
   item: {
     width: Dimensions.get("window").width * 0.7,
     height: Dimensions.get("window").height * 0.25,
@@ -560,20 +565,21 @@ const phoneStyles = {
     marginRight: 1,
   },
   arrowLeft: {
-    left: 10,
-    top: "30%",
+    left: 7,
+    top: "20%",
     transform: [{ translateY: -30 }],
   },
   arrowRight: {
-    right: 10,
-    top: "30%",
+    right: 7,
+    top: "20%",
     transform: [{ translateY: -30 }],
   },
   prompt: {
     fontSize: 22, // Smaller font for phones
     textAlign: "center", // Center the prompt text
     marginHorizontal: Dimensions.get("window").width * 0.1, // Add horizontal margin
-    marginTop: 2, // Space above the prompt
+    // marginTop: 2, // Space above the prompt
+    marginBottom: -40,
     color: "rgb(45, 62, 95)",
   },
 };
