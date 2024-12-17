@@ -453,21 +453,22 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     color: "#f09030",
     alignSelf: "center",
+    textAlign: "center",
     marginBottom: 30,
     ...phoneStyles.welcome,
   },
   checkboxContainer: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: 'center',
+    justifyContent: "flex-start",
     width: viewportWidth * 0.8,
-
     marginBottom: 20,
-    justifyContent: "center",
+    paddingLeft: 30,
+    paddingRight: 30,
     ...phoneStyles.checkboxContainer,
   },
   checkbox: {
     marginRight: 10,
-    alignSelf: "center",
     lineHeight: 20,
   },
   checkboxLabel: {
@@ -479,8 +480,9 @@ const styles = StyleSheet.create({
     position: "relative",
     alignItems: "center",
     marginBottom: 20,
-    width: 450,
-    height: 220,
+    objectFit: 'contain',
+    width: viewportWidth * 0.8,
+    // height: 220,
     ...phoneStyles.logo,
   },
   modalContainer: {
