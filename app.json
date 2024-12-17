@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "app-garden-loft",
+    "name": "GardenLoft",
     "slug": "app-garden-loft",
     "scheme": "app-garden-loft",
     "platforms": ["ios", "android", "web"],
@@ -98,7 +98,7 @@
       "@config-plugins/react-native-callkeep",
       {
         "ios": {
-          "appName": "app-garden-loft",
+          "appName": "GardenLoft",
           "supportsVideo": true,
           "maximumCallGroups": "5",
           "maximumCallsPerCallGroup": "5"
