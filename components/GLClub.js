@@ -1231,21 +1231,21 @@ const phoneStyles =
         arrowLeft: {
           position: "absolute",
           left: -5, // Flush with the screen edge
-          top: "79%", // Centered vertically relative to the carousel
+          top: "104%", // Centered vertically relative to the carousel
           transform: [{ translateY: -50 }],
           zIndex: 10,
         },
         arrowRight: {
           position: "absolute",
           right: -15, // Flush with the screen edge
-          top: "79%", // Centered vertically relative to the carousel
+          top: "104%", // Centered vertically relative to the carousel
           transform: [{ translateY: -50 }],
           zIndex: 10,
         },
         filterButtons: {
           flexDirection: "row",
           justifyContent: "center",
-          marginTop: SCREEN_HEIGHT * 0.2,
+          marginTop: SCREEN_HEIGHT * 0.32,
           marginBottom: SCREEN_HEIGHT * 0.03,
         },
         filterButton: {
