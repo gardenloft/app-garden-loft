@@ -757,13 +757,15 @@ function ControlsContainer({
   return (
     <View style={styles.controlsContainer}>
       <ControlButton
-        onPress={toggleWebcam}
+        // onPress={toggleWebcam}
+        onPress={() => toggleWebcam()}
         iconName={isWebcamOn ? "camera" : "camera-off"}
         isActive={!isWebcamOn}
         label={isWebcamOn ? "Camera On" : "Camera Off"}
       />
       <ControlButton
-        onPress={toggleMic}
+        // onPress={toggleMic}
+        onPress={() => toggleMic()}
         iconName={isMicOn ? "microphone" : "microphone-off"}
         isActive={!isMicOn}
         label={isMicOn ? "Mic On" : "Mic Off"}
@@ -788,7 +790,7 @@ function ControlsContainer({
 }
 
 function ParticipantView({ participantId }) {
-  const { webcamStream, webcamOn, setQuality, displayName } = useParticipant(participantId);
+  const { webcamStream, webcamOn, setQuality, displayName, isActiveSpeaker } = useParticipant(participantId);
   const auth = getAuth();
 
   useEffect(() => {
@@ -799,14 +801,30 @@ function ParticipantView({ participantId }) {
 
   const getDisplayName = () => {
     if (participantId === auth.currentUser?.uid) {
-      return "";
+      return auth.currentUser.displayName || "Your";
     }
     return displayName || 'Participant';
   };
 
+  const participantContainerStyle = [
+    styles.participantContainer,
+    isActiveSpeaker && {
+      borderWidth: 4,
+      borderColor: 'green'
+    }
+  ];
+
+  const offlineContainerStyle = [
+    styles.offlineParticipantContainer,
+    isActiveSpeaker && {
+      borderWidth: 4,
+      borderColor: 'green'
+    }
+  ];
+
   if (webcamOn && webcamStream) {
     return (
-      <View style={styles.participantContainer}>
+      <View style={participantContainerStyle}>
         <RTCView
           streamURL={new MediaStream([webcamStream.track]).toURL()}
           objectFit="cover"
@@ -821,7 +839,7 @@ function ParticipantView({ participantId }) {
     );
   } else {
     return (
-      <View style={styles.offlineParticipantContainer}>
+     <View style={offlineContainerStyle}>
         <MaterialCommunityIcons name="camera-off" size={40} color="#666" />
         <Text style={styles.offlineText}>
           {getDisplayName()} camera is off
