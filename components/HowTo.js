@@ -20,13 +20,14 @@ const { width: viewportWidth, height: viewportHeight } =
 
 // Define phone-specific styles
 const phoneStyles =
-  viewportWidth <= 413
+  viewportWidth <= 513
     ? {
         container: {
           height: 400,
-          marginTop: 200, // Increase this value to move the cards lower on the screen
+          // marginTop: 200, // Increase this value to move the cards lower on the screen
         },
         cardContainer: {
+          marginTop: 50,
           width: viewportWidth * 0.32,
           height: viewportHeight * 0.2,
           padding: 15,
@@ -38,7 +39,7 @@ const phoneStyles =
           fontSize: 16,
         },
         icon: {
-          size: 60, // Reduce icon size for phone
+          size: 50, // Reduce icon size for phone
         },
         modalView: {
           width: viewportWidth * 0.9,
@@ -113,7 +114,7 @@ const HowTo = () => {
             viewportWidth > viewportHeight
               ? Math.round(Dimensions.get("window").height * 0.3)
               : Math.round(Dimensions.get("window").height * 0.25),
-        },
+        }, phoneStyles.cardContainer,
       ]}
       onPress={() => openVideoModal(item.videoUrl)}
     >
@@ -215,7 +216,7 @@ const HowTo = () => {
         loop={true}
         style={{
           width: Math.round(viewportWidth * 0.9),
-          height: Math.round(viewportWidth * 0.5),
+          height: Math.round(viewportWidth * 0.6),
         }}
         onSnapToItem={(index) => setActiveIndex(index)}
         scrollAnimationDuration={800}

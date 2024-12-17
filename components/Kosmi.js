@@ -576,17 +576,18 @@ const { width: viewportWidth, height: viewportHeight } =
 
 // Define phone-specific styles
 const phoneStyles =
-  viewportWidth <= 413
+  viewportWidth <= 513
     ? {
         container: {
-          height: 400,
-          marginTop: 200, // Increase this value to move the cards lower on the screen
+          height: 700,
+          // marginTop: 200, // Increase this value to move the cards lower on the screen
         },
         cardContainer: {
-          width: viewportWidth * 0.4,
+          width: viewportWidth * 0.3,
           height: viewportHeight * 0.2, // Adjust height to ensure space for text
           padding: 15,
           marginHorizontal: 10,
+          marginTop: 30,
           paddingBottom: 10,
           shadowOpacity: 0,
           elevation: 0,
@@ -602,16 +603,35 @@ const phoneStyles =
           textAlign: "center",
         },
         cardImage: {
-          width: "100%",
-          height: "100%",
-          borderRadius: 20, // Ensure image corners match card border radius
-          overflow: "hidden",
+          // width: "100%",
+          // height: "70%",
+          // resizeMode: "cover",
+          // borderRadius: 20, // Ensure image corners match card border radius
+          // // overflow: "hidden",
+
+          width: "130%",
+          height: "75%",
+        // width: viewportWidth * 0.28,
+        // height: viewportWidth * 0.35,
+        margin: 5,
+        // resizeMode: "contain",
+        resizeMode: "cover",
+        borderRadius: 10,
         },
         icon: {
           size: 60, // Reduce icon size for phone
         },
         modalView: {
           width: viewportWidth * 0.9,
+        },
+        arrowLeft: {
+          left: -15,                 // Align arrow to the far left
+        top: "26%",
+      
+        },
+        arrowRight: {
+          right: -15,                // Align arrow to the far right
+          top: "26%",
         },
       }
     : {};
@@ -789,7 +809,7 @@ const Kosmi = () => {
                 : viewportWidth > viewportHeight
                 ? "42%"
                 : "32%", // Adjust top for phone
-          },
+          },phoneStyles.arrowLeft
         ]}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: -1, animated: true });
@@ -812,7 +832,7 @@ const Kosmi = () => {
                 : viewportWidth > viewportHeight
                 ? "42%"
                 : "32%", // Adjust top for phone
-          },
+          },phoneStyles.arrowRight
         ]}
         onPress={() => {
           carouselRef.current?.scrollTo({ count: 1, animated: true });
@@ -877,11 +897,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 10,
     transform: [{ translateY: -20 }], // Moves the left arrow to align with the carousel vertically
+    ...phoneStyles.arrowLeft,
   },
   arrowRight: {
     position: "absolute",
     zIndex: 10,
     transform: [{ translateY: -20 }], // Moves the right arrow to align with the carousel vertically
+    ...phoneStyles.arrowRight,
   },
   modalView: {
     margin: 10,
