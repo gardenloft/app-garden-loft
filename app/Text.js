@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -145,6 +145,8 @@ const TextComponent = (props) => {
         const loadedMessages = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
+          formattedDate: moment(doc.data().timestamp.toDate()).format("DD MMM YYYY"),
+          formattedTime: moment(doc.data().timestamp.toDate()).format("h:mm a"),
         }));
         setMessages(loadedMessages);
         setLoading(false);
@@ -333,7 +335,8 @@ const TextComponent = (props) => {
     setReportModalVisible(true);
   };
 
-  const renderMessage = ({ item, index }) => {
+
+  const renderMessage = useCallback(({ item, index }) => {
     const isOwnMessage = item.senderId === user.uid;
 
     // Check if the current message is the first of a new day
@@ -349,7 +352,7 @@ const TextComponent = (props) => {
       <View>
         {showDateHeader && (
           <View style={styles.dateHeader}>
-            <Text style={styles.dateHeaderText}>{currentDate}</Text>
+            <Text style={styles.dateHeaderText}>{item.formattedDate}</Text>
           </View>
         )}
         <View
@@ -379,13 +382,16 @@ const TextComponent = (props) => {
           >
             <Text style={styles.messageText}>{item.text}</Text>
             <Text style={styles.timestampText}>
-              {moment(item.timestamp.toDate()).format("h:mm a")}
+              {/* {moment(item.timestamp.toDate()).format("h:mm a")} */}
+              {item.formattedTime}
             </Text>
           </TouchableOpacity>
         </View>
       </View>
     );
-  };
+  }, [messages, user.uid]);
+
+  const MemoizedRenderMessage = React.memo(renderMessage); 
 
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.container}>
@@ -440,7 +446,12 @@ const TextComponent = (props) => {
           ref={flatListRef}
           data={messages}
           renderItem={renderMessage}
+          // renderItem={MemoizedMessage}
           keyExtractor={(item) => item.id}
+          initialNumToRender={20} // Start with 20 messages
+  maxToRenderPerBatch={10} // Render 10 more when scrolling
+  windowSize={5} 
+  removeClippedSubviews={true}
           onContentSizeChange={() =>
             flatListRef.current.scrollToEnd({ animated: true })
           }
@@ -648,7 +659,7 @@ const styles = StyleSheet.create({
 
   inputContainer: {
     flexDirection: "row",
-    padding: 12,
+    padding: 10,
     backgroundColor: "white",
     borderRadius: 25,
     marginBottom: 10,
@@ -660,7 +671,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
   },
   sendButton: {
     backgroundColor: "#f3b718",
@@ -710,13 +721,17 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     padding: 10,
+    // width: width > height ? width * 0.7 : width * 0.60,
     marginVertical: 5,
     borderRadius: 15,
+  },
+  messageContent: {
+    width: width > height ? width * 0.70 : width * 0.60,
   },
   ownMessage: {
     backgroundColor: "#e1ffc7",
     alignSelf: "flex-end",
-    marginLeft: 120,
+    marginLeft: 60,
   },
   friendMessage: {
     backgroundColor: "#ffffff",
@@ -730,6 +745,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#888",
     marginTop: 5,
+    marginHorizontal: 10,
     alignSelf: "flex-end",
   },
   speakerIcon: {
