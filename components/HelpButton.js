@@ -25,7 +25,7 @@ import { FIREBASE_AUTH, FIRESTORE_DB } from "../FirebaseConfig";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 // Threshold for detecting phones
-const isPhone = SCREEN_WIDTH < 600;
+const isPhone = SCREEN_WIDTH <= 514;
 
 const HelpButton = () => {
   const [userInfo, setUserInfo] = useState(null);
@@ -154,20 +154,20 @@ const HelpButton = () => {
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.callButton} onPress={handleEmergencyCall}>
+      <TouchableOpacity style={[styles.callButton, phoneStyles.callButton]} onPress={handleEmergencyCall}>
         <Text style={styles.emergencyButtonText}>Call Emergency</Text>
         <MaterialCommunityIcons
           name="hospital-box-outline"
-          style={styles.iconStyle}
+          style={[styles.iconStyle, phoneStyles.iconStyle]}
           size={40}
           color="#f3b718"
         />
       </TouchableOpacity>
 
-      <View style={styles.logoContainer}>
+      <View style={[styles.logoContainer,phoneStyles.logoContainer]}>
         <Image
           source={require("../assets/garden-loft-logo2.png")}
-          style={styles.logoImage}
+          style={[styles.logoImage, phoneStyles.logoImage]}
         />
       </View>
 
@@ -181,7 +181,7 @@ const HelpButton = () => {
         <View style={styles.modalContainer}>
           <ScrollView
             contentContainerStyle={
-              isPhone ? phoneStyles.modalContent : styles.modalContent
+              isPhone ? phoneStyles2.modalContent : styles.modalContent
             }
           >
             <TouchableOpacity
@@ -299,7 +299,18 @@ const HelpButton = () => {
 };
 
 // Phone-specific styles
-const phoneStyles = StyleSheet.create({
+const phoneStyles = SCREEN_WIDTH <= 513 ? {
+logoImage: {
+  width: SCREEN_WIDTH * 0.2,
+  resizeMode: "contain",
+},
+callButton: {},
+iconStyle: {
+
+},
+
+} : {}
+const phoneStyles2 = StyleSheet.create({
   modalContent: {
     backgroundColor: "#fff",
     borderRadius: 20,
@@ -348,7 +359,7 @@ const styles = StyleSheet.create({
   },
   callButton: {
     backgroundColor: "#59ACCE",
-    paddingHorizontal: SCREEN_WIDTH < 375 ? 8 : SCREEN_WIDTH < 430 ? 10 : 20,
+    paddingHorizontal: SCREEN_WIDTH < 515 ? 8 : SCREEN_WIDTH < 430 ? 10 : 20,
     paddingVertical: 9,
     borderRadius: 15,
     flexDirection: "row",
