@@ -34,19 +34,30 @@ export default function Home() {
   const router = useRouter();
   const [messageModalVisible, setMessageModalVisible] = useState(false);
   const [messageData, setMessageData] = useState({});
-  const navigation = useNavigation();
+  const [openChatFriendId, setOpenChatFriendId] = useState(null); // Track currently open chat
 
   useEffect(() => {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         const { type, friendId, friendName, text } =
           notification.request.content.data;
-
+        // Check if the chat with the sender is currently open
         if (type === "text") {
-          setMessageData({ senderName: friendName, text, friendId });
-          setMessageModalVisible(true);
+          if (openChatFriendId === friendId) {
+            // Chat is already open: Update messages only
+            console.log(`New message from ${friendName} while chat is open.`);
+          } else {
+            // Chat not open: Show MessageModalHandler
+            setMessageData({ senderName: friendName, text, friendId });
+            setMessageModalVisible(true);
+          }
         }
       });
+      //   if (type === "text") {
+      //     setMessageData({ senderName: friendName, text, friendId });
+      //     setMessageModalVisible(true);
+      //   }
+      // });
 
     // Listener for notification taps
     responseListener.current =
@@ -56,12 +67,15 @@ export default function Home() {
         console.log("Notification tapped:", { type, friendId, friendName });
 
         if (type === "text") {
+          // Navigate to the opened chat and update state
+          setOpenChatFriendId(friendId);
           // Navigate directly to OpenedChat when notification is tapped
-          setMessageModalVisible(false); // Ensure the modal is closed
+          // setMessageModalVisible(false); // Ensure the modal is closed
           router.push({
             pathname: "/OpenedChat",
             params: { friendId, friendName },
           });
+            setMessageModalVisible(false); // Ensure the modal is closed
         }
       });
 
@@ -75,7 +89,7 @@ export default function Home() {
         Notifications.removeNotificationSubscription(responseListener.current);
       }
     };
-  }, [user, router]);
+  }, [user, router, openChatFriendId]);
 
   // Function to show the CallAlertModal
   const showCallAlertModal = (callerName, callerUid, meetingId, calleeUid) => {
