@@ -12,10 +12,10 @@ const YouTubeVideoPlayer = ({ videoId, onClose }) => {
     <View style={styles.container}>
       <WebView
         source={{ uri: videoUrl }}
-        style={{
+        style={[{
           height: viewportHeight * 0.7,
-          width: viewportWidth * 0.8,
-        }}
+          width: viewportWidth * 0.8, 
+        },phoneStyles.video]}
         javaScriptEnabled={true}
         domStorageEnabled={true}
         allowsInlineMediaPlayback
@@ -29,6 +29,12 @@ const YouTubeVideoPlayer = ({ videoId, onClose }) => {
     </View>
   );
 };
+const phoneStyles = viewportWidth <= 513 ? {
+video: {
+  height: viewportHeight * 0.5,
+  width: viewportWidth * 0.8,
+}
+} : {}
 
 const styles = StyleSheet.create({
   container: {
@@ -37,5 +43,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+
 
 export default YouTubeVideoPlayer;
