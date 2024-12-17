@@ -1173,11 +1173,11 @@ const GLClub = () => {
 };
 
 const phoneStyles =
-  SCREEN_WIDTH <= 413
+  SCREEN_WIDTH <= 513
     ? {
         container: {
           marginTop: SCREEN_HEIGHT * 0.2, // Adjust spacing for phones
-          height: SCREEN_WIDTH > SCREEN_HEIGHT ? 620 : 250,
+          height: SCREEN_WIDTH > SCREEN_HEIGHT ? 620 : 150,
         },
         cardContainer: {
           width: SCREEN_WIDTH * 0.43,
@@ -1195,12 +1195,14 @@ const phoneStyles =
           elevation: 0,
         },
         image: {
-          width: 95, // Adjust size for phones
-          height: 94, // Adjust size for phones
+          // width: 95, // Adjust size for phones
+          // height: 94, // Adjust size for phones
+          width: 80,
+          height: 80,
           borderRadius: 50, // Keep the image circular
           marginBottom: 6,
           gap: 2,
-          margin: 6,
+          margin: 3,
           shadowColor: "transparent",
           backgroundColor: "transparent",
           shadowOffset: { width: 0, height: 0 },
@@ -1229,21 +1231,21 @@ const phoneStyles =
         arrowLeft: {
           position: "absolute",
           left: -5, // Flush with the screen edge
-          top: "65%", // Centered vertically relative to the carousel
+          top: "79%", // Centered vertically relative to the carousel
           transform: [{ translateY: -50 }],
           zIndex: 10,
         },
         arrowRight: {
           position: "absolute",
-          right: -5, // Flush with the screen edge
-          top: "65%", // Centered vertically relative to the carousel
+          right: -15, // Flush with the screen edge
+          top: "79%", // Centered vertically relative to the carousel
           transform: [{ translateY: -50 }],
           zIndex: 10,
         },
         filterButtons: {
           flexDirection: "row",
           justifyContent: "center",
-          marginTop: SCREEN_HEIGHT * 0.18,
+          marginTop: SCREEN_HEIGHT * 0.2,
           marginBottom: SCREEN_HEIGHT * 0.03,
         },
         filterButton: {
@@ -1255,6 +1257,12 @@ const phoneStyles =
         filterButtonText: {
           fontSize: 16,
         },
+        unreadBubble: {
+          // position: "absolute",
+          top: 30, // Adjust as needed
+          right: 50, // Adjust as needed
+          backgroundColor: "red",
+        },
         modalContainer: {
           flex: 1,
           justifyContent: "center",
@@ -1263,12 +1271,12 @@ const phoneStyles =
           padding: 3, // Add padding to adjust for smaller screen sizes
         },
         modalContent: {
-          marginTop: 15, // Slightly reduce top margin
+          marginTop: 55, // Slightly reduce top margin
           gap: 2, // Reduce gap for compact view
           alignItems: "center",
           justifyContent: "center",
           width: SCREEN_WIDTH * 0.98, // Adjust width for smaller phones
-          height: SCREEN_HEIGHT * 0.97, // Reduce height to fit smaller phones
+          height: SCREEN_HEIGHT * 0.93, // Reduce height to fit smaller phones
           backgroundColor: "#fff",
           borderRadius: 10, // Slightly smaller radius for a cleaner fit
           padding: 1, // Reduce padding
@@ -1438,21 +1446,22 @@ const phoneStyles =
         },
         moreDetailsContainer: {
           position: "relative", // Use relative positioning
-          marginTop: 10, // Space just below the modal name
+          marginTop: -40, // Space just below the modal name
           alignItems: "center", // Center-align content horizontally
           justifyContent: "center",
           width: SCREEN_WIDTH * 0.9,
+          height: 50,
         },
         moreDetailsContainerExpanded: {
-          marginTop: 10,
+          marginTop: -50,
           alignItems: "center",
           justifyContent: "center",
-          height: SCREEN_HEIGHT * 0.3,
-          overflow: "visible",
+          height: SCREEN_HEIGHT * 0.10,
+          overflow: "hidden",
         },
         scrollableDetails: {
           width: SCREEN_WIDTH * 0.9, // Fit scrollable details within the modal
-          height: SCREEN_HEIGHT * 0.25, // Adjust height for scrolling
+          height: SCREEN_HEIGHT * 0.1, // Adjust height for scrolling
           marginTop: 10,
           paddingHorizontal: 10,
           paddingVertical: 5,
@@ -1472,6 +1481,9 @@ const phoneStyles =
           marginBottom: 5,
           textAlign: "center",
         },
+        modalName: {
+          fontSize: 40, // Smaller font size
+        },
         modalInterests: {
           fontSize: 16, // Smaller font size for hobbies/clubs
           color: "#666",
@@ -1479,9 +1491,10 @@ const phoneStyles =
           marginBottom: 5,
         },
         readMoreText: {
-          fontSize: 16, // Adjusted size for "Read More/Less"
+          fontSize: 26, // Adjusted size for "Read More/Less"
           color: "#0EC2E9",
-          marginTop: 60,
+          marginTop: 0,
+          marginBottom: 10,
           textAlign: "center",
           alignSelf: "center", // Center horizontally
         },
@@ -1530,20 +1543,6 @@ const styles = StyleSheet.create({
     position: "relative",
     ...phoneStyles.container,
   },
-  // unreadBubble: {
-  //   backgroundColor: "red",
-  //   borderRadius: 12,
-  //   marginLeft: 8, // Space between the name and the bubble
-  //   width: 24,
-  //   height: 24,
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  // },
-  // unreadText: {
-  //   color: "white",
-  //   fontWeight: "bold",
-  //   fontSize: 12,
-  // },
   unreadBubble: {
     position: "absolute",
     top: 50, // Adjust as needed
@@ -1554,6 +1553,7 @@ const styles = StyleSheet.create({
     height: 30,
     justifyContent: "center",
     alignItems: "center",
+    ...phoneStyles.unreadBubble,
   },
   unreadText: {
     color: "white",
@@ -1648,6 +1648,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#FCF8E3",
+    ...phoneStyles.modalContainer,
   },
   modalTextCall: {
     fontSize: 40,
@@ -1656,7 +1657,7 @@ const styles = StyleSheet.create({
     ...phoneStyles.modalTextCall,
   },
   modalContent: {
-    marginTop: 30,
+    marginTop: 50,
     gap: 30,
     // flexDirection: "row",
     alignItems: "center",
@@ -1671,6 +1672,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 8,
+    ...phoneStyles.modalContent,
   },
   modalImage: {
     // borderRadius:30,
@@ -1689,14 +1691,17 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.8,
     // shadowRadius: 2,
     // elevation: 5,
+    ...phoneStyles.modalImage,
   },
   modalImageButtons: {
     flexDirection: "column",
     alignItems: "center",
+    ...phoneStyles.modalImageButtons,
   },
   modalInfoContainer: {
     flex: 1,
     justifyContent: "flex-start",
+    ...phoneStyles.modalInfoContainer,
   },
   modalName: {
     fontSize: 55,
@@ -1705,6 +1710,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     position: "absolute",
     zIndex: 10, // Keep it above other content
+    ...phoneStyles.modalName,
   },
   modalText: {
     fontSize: 25,
@@ -1736,6 +1742,7 @@ const styles = StyleSheet.create({
     height: "20%",
     position: "absolute",
     zIndex: 10, // Keep it above other content
+    ...phoneStyles.actionContainer,
   },
   actionButton: {
     flexDirection: "column",
