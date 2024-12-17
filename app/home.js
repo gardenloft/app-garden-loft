@@ -158,28 +158,6 @@ export default function Home() {
           }
         );
 
-      // Notification listener for incoming messages and calls
-      notificationListener.current =
-        Notifications.addNotificationReceivedListener((notification) => {
-          const { type, friendId, friendName, text, callerName, meetingId } =
-            notification.request.content.data;
-
-          if (type === "text") {
-            setMessageData({
-              senderName: friendName,
-              text,
-              friendId,
-            });
-            setMessageModalVisible(true);
-          } else if (type === "call") {
-            setCallData({
-              callerName,
-              meetingId,
-            });
-            setCallModalVisible(true);
-          }
-        });
-
       return () => {
         if (notificationListener.current) {
           Notifications.removeNotificationSubscription(

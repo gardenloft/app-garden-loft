@@ -67,7 +67,7 @@ const HelpButton = () => {
         await updateDoc(userDocRef, { pushToken: null });
         await signOut(auth);
         await AsyncStorage.removeItem("rememberedUser");
-        console.log("User signed out and pushToken removed");
+        console.log("User signed out and pushToken removed!");
         navigation.reset({
           index: 0,
           routes: [{ name: "index" }],

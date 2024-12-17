@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,14 @@ import TextComponent from "./Text"; // Import your TextComponent here
 const OpenChat = ({ friendId, friendName }) => {
   const [modalVisible, setModalVisible] = useState(true);
   const router = useRouter();
+  const textComponentRef = useRef(null); // Ref for TextComponent
+
+  useEffect(() => {
+    // Ensure it scrolls to the bottom when the modal is first displayed
+    if (modalVisible && textComponentRef.current) {
+      textComponentRef.current.scrollToEnd();
+    }
+  }, [modalVisible]);
 
   return (
     <View style={styles.container}>
