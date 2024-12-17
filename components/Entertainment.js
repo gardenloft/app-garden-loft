@@ -29,10 +29,11 @@ const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
 
     // Define phone-specific styles
-    const phoneStyles = viewportWidth <= 413 ? {
+    const phoneStyles = viewportWidth <= 513 ? {
       container: {
         height: 400,
-        marginTop: 200, 
+        // marginTop: 80, 
+        // marginBottom: -80,
         flexDirection: "row",       // Arrange cards in rows
         flexWrap: "wrap",           // Wrap to the next line after three cards
         justifyContent: "center",
@@ -43,8 +44,9 @@ const { width: viewportWidth, height: viewportHeight } =
         width: viewportWidth * 0.3,
         height: viewportHeight * 0.2, // Adjust height to ensure space for text
         padding: 15,
-        marginHorizontal: 5,
+        marginHorizontal: 17,
         marginVertical:10,
+        marginTop: 40,
         paddingBottom: 10,
         shadowOpacity: 0,
         elevation: 0,
@@ -63,10 +65,11 @@ const { width: viewportWidth, height: viewportHeight } =
       }, 
       imageUrl: {
         width: "120%",
-          height: "100%",
+          height: "70%",
         // width: viewportWidth * 0.28,
         // height: viewportWidth * 0.35,
         margin: 5,
+        // resizeMode: "contain",
         resizeMode: "cover",
         borderRadius: 10,
       },
@@ -84,22 +87,22 @@ const { width: viewportWidth, height: viewportHeight } =
         borderRadius: 10,
       },
       seasonButtonText: {
-        fontSize: 14, // Smaller font for phone screens
+        fontSize: 18, // Smaller font for phone screens
         fontWeight: "600",
         textAlign: "center",
         marginTop: 5, // Add slight margin to prevent overlap
       },
       arrowLeft: {
         position: "absolute",
-        left: 0,                 // Align arrow to the far left
-        top: "40%",
+        left: -1,                 // Align arrow to the far left
+        top: "30%",
                     // Center arrow vertically with cards
         zIndex: 30,
       },
       arrowRight: {
         position: "absolute",
-        right: 15,                // Align arrow to the far right
-        top: "40%",               // Center arrow vertically with cards
+        right: -1,                // Align arrow to the far right
+        top: "30%",               // Center arrow vertically with cards
         zIndex: 50,
      
       },
@@ -554,8 +557,8 @@ const Entertainment = ({ videoId, onClose }) => {
     styles.arrowLeft,
     {
       left: viewportWidth > viewportHeight ? -25 : -22,
-      top: viewportWidth <= 413 ? "20%" : viewportWidth > viewportHeight ? "42%" : "32%", // Adjust top for phone
-    }
+      top: viewportWidth <= 513 ? "20%" : viewportWidth > viewportHeight ? "42%" : "32%", // Adjust top for phone
+    }, phoneStyles.arrowLeft
   ]}
   onPress={() => {
     carouselRef.current?.scrollTo({ count: -1, animated: true });
@@ -569,8 +572,8 @@ const Entertainment = ({ videoId, onClose }) => {
     styles.arrowRight,
     {
       right: viewportWidth > viewportHeight ? -25 : -20,
-      top: viewportWidth <= 413 ? "20%" : viewportWidth > viewportHeight ? "42%" : "32%", // Adjust top for phone
-    }
+      top: viewportWidth <= 513 ? "20%" : viewportWidth > viewportHeight ? "42%" : "32%", // Adjust top for phone
+    }, phoneStyles.arrowRight
   ]}
   onPress={() => {
     carouselRef.current?.scrollTo({ count: 1, animated: true });
@@ -687,16 +690,16 @@ const Entertainment = ({ videoId, onClose }) => {
               {selectedSeasons.map((season, index) => (
                 <Pressable
                   key={index}
-                  style={styles.seasonButton}
+                  style={[styles.seasonButton, phoneStyles.seasonButton]}
                   onPress={() => {
                     openSeasonModal(season);
                     setIsSubcategoryModalVisible(false);
                   }}>
                   <Image
                     source={{ uri: season.imageUrl, cache: "force-cache" }}
-                    style={styles.imageUrl}
+                    style={[styles.imageUrl, phoneStyles.imageUrl]}
                   />
-                  <Text style={styles.seasonButtonText}>{season.name}</Text>
+                  <Text style={[styles.seasonButtonText, phoneStyles.seasonButtonText]}>{season.name}</Text>
                 </Pressable>
               ))}
             </View>
@@ -732,7 +735,7 @@ const Entertainment = ({ videoId, onClose }) => {
                 <Pressable
                   key={index}
                   style={[
-                    styles.seasonButton,
+                    styles.seasonButton, phoneStyles.seasonButton,
                     episode.isWatched && styles.watchedOverlay,
                   ]}
                   onPress={() => {
@@ -741,10 +744,10 @@ const Entertainment = ({ videoId, onClose }) => {
                   }}>
                   <Image
                     source={{ uri: episode.imageUrl, cache: "force-cache" }}
-                    style={styles.imageUrl}
+                    style={[styles.imageUrl, phoneStyles.imageUrl]}
                   />
-                  <Text style={styles.seasonButtonText}>{episode.name}</Text>
-                  <Text style={styles.seasonButtonText}>{episode.title}</Text>
+                  <Text style={[styles.seasonButtonText, phoneStyles.seasonButtonText]}>{episode.name}</Text>
+                  <Text style={[styles.seasonButtonText, phoneStyles.seasonButtonText]}>{episode.title}</Text>
                   {episode.isWatched && (
                     <View style={styles.watchedBadge}>
                       <Text style={styles.watchedText}>Watched</Text>
