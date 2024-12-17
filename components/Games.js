@@ -17,12 +17,12 @@ import { collection, getDocs } from "firebase/firestore";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-const phoneStyles = SCREEN_WIDTH <= 413 ? {
+const phoneStyles = SCREEN_WIDTH <= 513 ? {
   container: {
     marginTop: SCREEN_HEIGHT * 0.17, // Adjust margin for spacing
   },
   filterButtons: {
-    marginTop: SCREEN_HEIGHT * 0.1,
+    marginTop: SCREEN_HEIGHT * 0.2,
     marginBottom: SCREEN_HEIGHT * 0.03,
   },
   cardContainer: {
@@ -60,12 +60,12 @@ const phoneStyles = SCREEN_WIDTH <= 413 ? {
     fontSize: 20,
   },
   arrowLeft: {
-    top: "50%",
-    left: -17,
+    top: "58%",
+    left: -20,
   },
   arrowRight: {
-    top: "50%",
-    right: -17,
+    top: "58%",
+    right: -20,
   },
 } : {};
 

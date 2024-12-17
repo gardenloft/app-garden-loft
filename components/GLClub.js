@@ -1197,8 +1197,8 @@ const phoneStyles =
         image: {
           // width: 95, // Adjust size for phones
           // height: 94, // Adjust size for phones
-          width: 80,
-          height: 80,
+          width: 95,
+          height: 95,
           borderRadius: 50, // Keep the image circular
           marginBottom: 6,
           gap: 2,
