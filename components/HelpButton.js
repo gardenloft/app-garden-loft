@@ -135,7 +135,7 @@ const HelpButton = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, phoneStyles.container]}>
       <TouchableOpacity
         onPress={() => setBioModalVisible(true)}
         style={styles.profileContainer}
@@ -178,7 +178,7 @@ const HelpButton = () => {
         transparent={true}
         onRequestClose={() => setBioModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
+        <View style={[styles.modalContainer,phoneStyles.modalContainer]}>
           <ScrollView
             contentContainerStyle={
               isPhone ? phoneStyles2.modalContent : styles.modalContent
@@ -306,15 +306,20 @@ logoImage: {
 },
 callButton: {},
 iconStyle: {
-
 },
+container: {
+  marginTop: 60,
+},
+modalContainer: {
+}
 
 } : {}
 const phoneStyles2 = StyleSheet.create({
   modalContent: {
     backgroundColor: "#fff",
     borderRadius: 20,
-    padding: 20,
+    padding: 90,
+    marginTop: 80,
     width: "100%", // Use 90% of screen width for phones
     height: "75%", // Use 75% of screen height for phones
     maxWidth: 450, // Ensure the modal doesn't become too wide
