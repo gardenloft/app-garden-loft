@@ -714,7 +714,7 @@ function JoinScreen() {
   return (
     <SafeAreaView style={styles.joinScreenContainer}>
       <Text style={styles.joinScreenText}>
-        Join the meeting by pressing the button below
+        {/* Join the meeting by pressing the button below */}
       </Text>
     </SafeAreaView>
   );
@@ -724,8 +724,9 @@ function ControlButton({ onPress, iconName, isActive, label }) {
   return (
     <TouchableOpacity 
       style={[
-        styles.controlButton,
-        { backgroundColor: isActive ? '#FF4444' : '#2196F3' }
+        styles.controlButton, phoneStyles.controlButton,
+        { backgroundColor: isActive ? '#FF4444' : '#2196F3' },
+
       ]}
       onPress={onPress}
     >
@@ -734,7 +735,7 @@ function ControlButton({ onPress, iconName, isActive, label }) {
         size={28} 
         color="white"
       />
-      <Text style={styles.controlButtonText}>{label}</Text>
+      <Text style={[styles.controlButtonText, phoneStyles.controlButtonText]}>{label}</Text>
     </TouchableOpacity>
   );
 }
@@ -746,6 +747,9 @@ function ControlsContainer({
   isWebcamOn,
   isMicOn,
   addPeople,
+  join,
+  leave,
+  end,
 }) {
   const router = useRouter();
   console.log("handleEnd function:", handleEnd);
@@ -755,7 +759,7 @@ function ControlsContainer({
   };
 
   return (
-    <View style={styles.controlsContainer}>
+    <View style={[styles.controlsContainer, phoneStyles.controlsContainer]}>
       <ControlButton
         // onPress={toggleWebcam}
         onPress={() => toggleWebcam()}
@@ -771,9 +775,14 @@ function ControlsContainer({
         label={isMicOn ? "Mic On" : "Mic Off"}
       />
       <ControlButton
-        onPress={() => {
-          handleEnd();
-          handleBack();
+        // onPress={() => {
+        //   handleEnd();
+        //   handleBack();
+        // }}
+        onPress={async () => {
+          await handleEnd(); // End the call
+          // handleBack(); // Navigate back
+          router.push("/home"); // Explicitly go to the home screen
         }}
         iconName="phone-hangup"
         isActive={true}
@@ -1186,6 +1195,23 @@ export default function VideoSDK() {
   );
 }
 
+// Phone-specific styles
+const phoneStyles = viewportWidth <= 513 ? {
+  controlsContainer: {
+    // flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  controlButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    gap: 2,
+    minWidth: 110,
+  },
+  controlButtonText: {
+    fontSize: 12,
+  },
+  } : {}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -1216,8 +1242,8 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   participantContainer: {
-    width: viewportWidth * 0.85,
-    height: viewportHeight * 0.35,
+    width: viewportWidth > viewportHeight ? viewportWidth * 0.45 : viewportWidth * 0.85,
+    height: viewportWidth > viewportHeight ? viewportHeight * 0.85 : viewportHeight * 0.35,
     marginVertical: 8,
     borderRadius: 20,
     overflow: 'hidden',
@@ -1237,15 +1263,15 @@ const styles = StyleSheet.create({
   },
   gridContainer: {
     flex: 1,
-    flexDirection: 'column',
+    flexDirection: viewportWidth > viewportHeight ? 'row' : 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
     width: '100%',
     gap: 16,
   },
   offlineParticipantContainer: {
-    width: viewportWidth * 0.85,
-    height: viewportHeight * 0.35,
+    width: viewportWidth > viewportHeight ? viewportWidth * 0.45 : viewportWidth * 0.85,
+    height: viewportWidth > viewportHeight ? viewportHeight * 0.85 : viewportHeight * 0.35,
     marginVertical: 8,
     backgroundColor: '#f0f0f0',
     borderRadius: 20,
