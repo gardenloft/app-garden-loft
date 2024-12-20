@@ -1445,27 +1445,30 @@ const phoneStyles =
           textAlign: "center",
         },
         moreDetailsContainer: {
-          position: "relative", // Use relative positioning
-          marginTop: -40, // Space just below the modal name
-          alignItems: "center", // Center-align content horizontally
-          justifyContent: "center",
-          width: SCREEN_WIDTH * 0.9,
-          height: 50,
+          // position: "relative", // Use relative positioning
+          // marginTop: -40, // Space just below the modal name
+          // alignItems: "center", // Center-align content horizontally
+          // justifyContent: "center",
+          // width: SCREEN_WIDTH * 0.9,
+          // height: 50,
+          display: "none",
         },
         moreDetailsContainerExpanded: {
-          marginTop: -50,
-          alignItems: "center",
-          justifyContent: "center",
-          height: SCREEN_HEIGHT * 0.10,
-          overflow: "hidden",
+          // marginTop: -50,
+          // alignItems: "center",
+          // justifyContent: "center",
+          // height: SCREEN_HEIGHT * 0.10,
+          // overflow: "hidden",
+          display: "none",
         },
         scrollableDetails: {
-          width: SCREEN_WIDTH * 0.9, // Fit scrollable details within the modal
-          height: SCREEN_HEIGHT * 0.1, // Adjust height for scrolling
-          marginTop: 10,
-          paddingHorizontal: 10,
-          paddingVertical: 5,
-          overflow: "scroll",
+          // width: SCREEN_WIDTH * 0.9, // Fit scrollable details within the modal
+          // height: SCREEN_HEIGHT * 0.1, // Adjust height for scrolling
+          // marginTop: 10,
+          // paddingHorizontal: 10,
+          // paddingVertical: 5,
+          // overflow: "scroll",
+          display: "none",
         },
         modalText: {
           fontSize: 16, // Smaller font size
