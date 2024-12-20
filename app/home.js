@@ -29,6 +29,7 @@ export default function Home() {
   const [callerUid, setCallerUid] = useState(params.callerUid || "");
   const [calleeUid, setCalleeUid] = useState(params.calleeUid || "");
   const [callerName, setCallerName] = useState(params.callerName || "");
+  const [callerImageUrl, setCallerImageUrl] = useState(null);
   const [meetingId, setMeetingId] = useState(params.meetingId || null);
   const [isCallAccepted, setIsCallAccepted] = useState(false); // Track if the call is accepted
   const router = useRouter();
@@ -187,6 +188,23 @@ export default function Home() {
     }
   }, [user]);
 
+  useEffect(() => {
+    const notificationListener = Notifications.addNotificationReceivedListener(
+      async (notification) => {
+        const { callerUid } =
+          notification.request.content.data;
+        
+        // Fetch caller's imageUrl from Firestore
+        const callerDoc = await getDoc(doc(FIRESTORE_DB, "users", callerUid));
+        const callerImageUrl = callerDoc.exists() ? callerDoc.data().imageUrl : null;
+        setCallerImageUrl(callerImageUrl); // Set caller image URL
+      
+      }
+    );
+  
+    return () => Notifications.removeNotificationSubscription(notificationListener);
+  }, []);
+
   const handleAcceptCall = async (meetingId, callerUid, callee) => {
     if (isCallAccepted) {
       return; // Ensure that this is not triggered multiple times
@@ -329,6 +347,7 @@ export default function Home() {
           visible={modalVisible}
           callerUId={callerUid}
           callerId={callerName}
+          callerImageUrl={callerImageUrl} // Pass the imageUrl
           onAccept={() => handleAcceptCall(meetingId, callerUid, callerName)}
           onDecline={() => handleDecline(callerUid)}
         />
