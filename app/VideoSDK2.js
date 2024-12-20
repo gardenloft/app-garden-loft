@@ -1195,22 +1195,152 @@ export default function VideoSDK() {
   );
 }
 
-// Phone-specific styles
-const phoneStyles = viewportWidth <= 513 ? {
+
+
+const phoneStyles = {
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FCF8E3",
+    width: viewportWidth * 0.95,
+    height: viewportHeight * 0.95,
+    borderRadius: 15,
+    padding: viewportWidth * 0.02,
+  },
+  joinScreenContainer: {
+    flex: 1,
+    backgroundColor: "#F6F6FF",
+    justifyContent: "center",
+    paddingHorizontal: viewportWidth * 0.08,
+    width: viewportWidth * 0.9,
+  },
   controlsContainer: {
-    // flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: viewportHeight * 0.02,
+    paddingHorizontal: viewportWidth * 0.03,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   controlButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-    gap: 2,
-    minWidth: 110,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f0f0f0",
+    borderRadius: 15,
+    padding: viewportWidth * 0.04,
+    marginHorizontal: viewportWidth * 0.02,
+    width: viewportWidth * 0.2,
+    height: viewportHeight * 0.08,
+  },
+  participantContainer: {
+    width: viewportWidth * 0.9,
+    height: viewportHeight * 0.3,
+    marginVertical: viewportHeight * 0.01,
+    borderRadius: 15,
+    overflow: "hidden",
+    alignSelf: "center",
+  },
+  participantListContainer: {
+    flex: 1,
+    padding: viewportWidth * 0.05,
+    width: viewportWidth * 0.95,
+  },
+  gridContainer: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    width: "100%",
+    gap: viewportHeight * 0.02,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: viewportWidth * 0.05,
+  },
+  modalContent: {
+    width: viewportWidth * 0.8,
+    maxHeight: viewportHeight * 0.6,
+    backgroundColor: "white",
+    borderRadius: 15,
+    paddingVertical: viewportHeight * 0.02,
+    paddingHorizontal: viewportWidth * 0.04,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  videoStream: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 15,
+  },
+  participantOverlay: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: viewportWidth * 0.04,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
+  },
+  participantName: {
+    color: "#fff",
+    fontSize: viewportWidth * 0.045,
+    fontWeight: "600",
   },
   controlButtonText: {
-    fontSize: 12,
+    fontSize: viewportWidth * 0.04,
+    color: "#fff",
+    textAlign: "center",
   },
-  } : {}
+  contactAvatar: {
+    width: viewportWidth * 0.1,
+    height: viewportWidth * 0.1,
+    borderRadius: viewportWidth * 0.05,
+    backgroundColor: "#f0f0f0",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: viewportWidth * 0.03,
+  },
+  contactName: {
+    fontSize: viewportWidth * 0.04,
+    color: "#333",
+    flex: 1,
+  },
+  closeButton: {
+    padding: viewportWidth * 0.03,
+  },
+  meetingViewContainer: {
+    flex: 1,
+    width: viewportWidth * 0.95,
+    height: viewportHeight * 0.9,
+    alignContent: "center",
+    backgroundColor: "white",
+    borderRadius: 20,
+    paddingTop: viewportHeight * 0.02,
+  },
+};
+
 
 const styles = StyleSheet.create({
   container: {
@@ -1219,6 +1349,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: '100%',
+    ...phoneStyles.container,
   },
   joinScreenContainer: {
     flex: 1,
@@ -1293,6 +1424,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: '600',
+    ...phoneStyles.participantName,
   },
   offlineText: {
     marginTop: 12,
@@ -1333,6 +1465,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    ...phoneStyles.controlsContainer,
   },
   controlButton: {
     paddingVertical: 16,
@@ -1351,6 +1484,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     minWidth: 160,
+    ...phoneStyles.controlButton,
   },
   controlButtonText: {
     color: 'white',
@@ -1379,6 +1513,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    ...phoneStyles.modalContent,
   },
   modalHeader: {
     flexDirection: 'row',
