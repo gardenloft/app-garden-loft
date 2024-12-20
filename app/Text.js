@@ -726,7 +726,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   messageContent: {
-    width: width > height ? width * 0.70 : width * 0.60,
+    width: width > height ? width * 0.70 : width * 0.50,
   },
   ownMessage: {
     backgroundColor: "#e1ffc7",
@@ -737,6 +737,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     alignSelf: "flex-start",
     marginRight: 120,
+    maxWidth: "70%",  // Limit maximum width to 70% of the screen
+    minWidth: "80%", 
   },
   messageText: {
     fontSize: 18,
