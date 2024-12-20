@@ -6,6 +6,7 @@ import {
   Modal,
   StyleSheet,
   Dimensions,
+  KeyboardAvoidingView, Platform, ScrollView
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -16,12 +17,12 @@ const OpenChat = ({ friendId, friendName }) => {
   const router = useRouter();
   const textComponentRef = useRef(null); // Ref for TextComponent
 
-  useEffect(() => {
-    // Ensure it scrolls to the bottom when the modal is first displayed
-    if (modalVisible && textComponentRef.current) {
-      textComponentRef.current.scrollToEnd();
-    }
-  }, [modalVisible]);
+  // useEffect(() => {
+  //   // Ensure it scrolls to the bottom when the modal is first displayed
+  //   if (modalVisible && textComponentRef.current) {
+  //     textComponentRef.current.scrollToEnd();
+  //   }
+  // }, [modalVisible]);
 
   return (
     <View style={styles.container}>
@@ -35,6 +36,10 @@ const OpenChat = ({ friendId, friendName }) => {
         transparent={false} // Optional: Set to true for a semi-transparent modal
       >
         <View style={styles.modalContainer}>
+        <KeyboardAvoidingView
+    style={styles.modalContainer}
+    behavior={Platform.OS === "ios" ? "padding" : ""}
+  >
           {/* Modal Header */}
           <View style={styles.modalHeader}>
             {/* <Text style={styles.modalTitle}>{friendName}'s Chat</Text> */}
@@ -52,8 +57,11 @@ const OpenChat = ({ friendId, friendName }) => {
 
           {/* TextComponent inside the modal */}
           <View style={styles.chatContainer}>
+            
             <TextComponent friendId={friendId} friendName={friendName} />
+          
           </View>
+          </KeyboardAvoidingView>
         </View>
       </Modal>
     </View>
@@ -99,6 +107,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     padding: 15,
+    marginTop: 20,
   },
   chatContainer: {
     flex: 1,
@@ -108,3 +117,4 @@ const styles = StyleSheet.create({
 });
 
 export default OpenChat;
+
