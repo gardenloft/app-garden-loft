@@ -3,10 +3,14 @@ import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } fr
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
 
-const CallAlertModal = ({ visible, callerId, callerUId, onAccept, onDecline }) => {
+const CallAlertModal = ({ visible, callerId, callerUId, callerImageUrl, onAccept, onDecline }) => {
   return (
     <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onDecline}>
       <View style={styles.modalView}>
+        {/* Display the caller's image */}
+        {callerImageUrl && (
+          <Image source={{ uri: callerImageUrl }} style={styles.callerImage} />
+        )}
         <Image source={require("../assets/garden-loft-logo2.png")} style={styles.logo} />
         <Text style={styles.callerText}>{`${callerId} is calling`}</Text>
         <View style={styles.buttonContainer}>
@@ -28,6 +32,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#FCF8E3",
+  },
+  callerImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60, // Makes the image circular
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: "#FFD700", // Optional border color
   },
   logo: {
     width: 300,
