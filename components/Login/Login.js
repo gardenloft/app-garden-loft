@@ -15,7 +15,8 @@ import {
 } from "react-native";
 import CheckBox from "expo-checkbox";
 import { FIREBASE_AUTH } from "../../FirebaseConfig";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "expo-router/build/useNavigation";
 import { FontAwesome } from "@expo/vector-icons";
@@ -25,6 +26,7 @@ const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
 
 const Login = () => {
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -116,12 +118,12 @@ const Login = () => {
         <Text style={styles.welcome}>Welcome Garden Loft Residents</Text>
 
         {/* <TextInput
-//           value={userName}
-//           style={styles.input}
-//           placeholder="Name"
-//           autoCapitalize="none"
-//           onChangeText={(text) => setUserName(text)}
-//         /> */}
+          value={userName}
+          style={styles.input}
+          placeholder="Name"
+          autoCapitalize="none"
+          onChangeText={(text) => setUserName(text)}
+        /> */}
         <TextInput
           value={email}
           style={styles.input}
@@ -214,8 +216,10 @@ const Login = () => {
         {loading ? (
           <ActivityIndicator size="large" color="orange" />
         ) : (
+          <>
           <Button title="Login" onPress={signIn} />
-          /* <Button title="Create Account" onPress={signUp} /> */
+          {/* <Button title="Create Account" onPress={signUp} /> */}
+          </>
         )}
       </KeyboardAvoidingView>
 
