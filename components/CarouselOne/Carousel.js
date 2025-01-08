@@ -345,6 +345,7 @@ import HowTo from "../HowTo";
 import GLClub from "../GLClub";
 import ComingSoon from "../ComingSoon";
 import Kosmi from "../Kosmi";
+import Lights from "../Lights";
 
 const data = [
   {
@@ -382,6 +383,13 @@ const data = [
     icon: "account-question",
     prompt: "Need Help With Your Garden Loft?",
   },
+  {
+    id: 7,
+        title: "LIGHTS",
+        icon: "lightbulb",
+        component: <Lights />,
+        prompt: "Change Lights?",
+      },
   {
     id: 8,
     title: "MY CALENDAR",

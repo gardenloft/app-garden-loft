@@ -51,7 +51,9 @@
     "extra": {
       "eas": {
         "projectId": "598d65e5-14db-479e-a297-3561c87ddbc5"
-      }
+      },
+      "HOME_ASSISTANT_URL": "${EXPO_PUBLIC_HOME_ASSISTANT_URL}",
+      "HOME_ASSISTANT_TOKEN": "${EXPO_PUBLIC_HOME_ASSISTANT_TOKEN}"
     },
     "plugins": ["expo-router"],
     "android": {
@@ -76,7 +78,9 @@
   "extra": {
     "eas": {
       "projectId": "598d65e5-14db-479e-a297-3561c87ddbc5"
-    }
+    },
+     "HOME_ASSISTANT_URL": "${EXPO_PUBLIC_HOME_ASSISTANT_URL}",
+      "HOME_ASSISTANT_TOKEN": "${EXPO_PUBLIC_HOME_ASSISTANT_TOKEN}"
   },
   "plugins": [
     "expo-notifications",
