@@ -2,6 +2,8 @@ import React, { useState, useRef } from "react";
 import { View, Text, Pressable, StyleSheet, Dimensions } from "react-native";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import Carousel from "react-native-reanimated-carousel";
+// import { toggleLight } from "../components/api/homeAssistant.js";
+import { toggleTV } from "../homeAssistant";
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
@@ -10,7 +12,10 @@ const Lights = () => {
   const [contacts, setContacts] = useState([
     {
       id: 1,
-      name: "All Lights",
+      // name: "All Lights",
+      // entityId: "light.all_lights", //CHANGE BASED ON SMART LIGHT NAME GIVEN
+      name: "TV",
+      entityId: "media_player.family_room_tv", 
       phoneNumber: "1234567890",
       prompt: "Turn all lights on?",
       active: false,
@@ -18,6 +23,7 @@ const Lights = () => {
     {
       id: 2,
       name: "Bedroom Lights",
+      // entityId: "light.bedroom_lights",
       phoneNumber: "0987654321",
       prompt: "Turn bedroom lights ON?",
       active: false,
@@ -25,7 +31,9 @@ const Lights = () => {
     {
       id: 3,
       name: "Kitchen Lights",
+      // entityId: "light.kitchen_lights",
       phoneNumber: "9876543210",
+
       prompt: "Turn kitchen lights OFF?",
       active: false,
     },
@@ -48,12 +56,45 @@ const Lights = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const carouselRef = useRef(null);
 
-  const toggleLight = (id) => {
-    setContacts((contacts) =>
-      contacts.map((contact) =>
-        contact.id === id ? { ...contact, active: !contact.active } : contact
-      )
-    );
+  // const toggleLight = (id) => {
+  //   setContacts((contacts) =>
+  //     contacts.map((contact) =>
+  //       contact.id === id ? { ...contact, active: !contact.active } : contact
+  //     )
+  //   );
+  // };
+
+
+// Add this in and remove above code for new Toggle Light Code
+  const handleToggleLight = async (id, entityId, isActive) => {
+    const toggleState = !isActive;
+    try {
+      await toggleLight(entityId, toggleState);
+      setContacts((contacts) =>
+        contacts.map((contact) =>
+          contact.id === id ? { ...contact, active: toggleState } : contact
+        )
+      );
+    } catch (error) {
+      console.error("Failed to toggle light.");
+    }
+  };
+
+  //Handles Toogle TV Home Assistant Green
+  const handleToggleTV = async (id, entityId, isActive) => {
+    const toggleState = !isActive;
+    try {
+      await toggleTV(entityId, toggleState);
+      setContacts((contacts) =>
+        contacts.map((contact) =>
+          contact.id === id ? { ...contact, active: toggleState } : contact
+        )
+      );
+    } catch (error) {
+      console.error("Failed to toggle TV.");
+//       console.log("HA URL:", HOME_ASSISTANT_URL);
+// console.log("HA Token:", HOME_ASSISTANT_TOKEN);
+    }
   };
 
   const renderItem = ({ item, index }) => (
@@ -72,7 +113,10 @@ const Lights = () => {
               : Math.round(Dimensions.get("window").height * 0.25),
         },
       ]}
-      onPress={() => toggleLight(item.id)}>
+      // onPress={() => toggleLight(item.id)}
+      // onPress={() => handleToggleLight(item.id, item.entityId, item.active)}
+      onPress={() => handleToggleTV(item.id, item.entityId, item.active)}
+      >
       <MaterialCommunityIcons
         name="lightbulb"
         size={94}
@@ -98,11 +142,6 @@ const Lights = () => {
         style={{ width: Math.round(viewportWidth * 0.9), height: Math.round(viewportWidth * 0.5) }} //width of the carousel
         loop={true}
         onSnapToItem={(index) => setActiveIndex(index)}
-        // mode="parallax"
-        // modeConfig={{
-        //   parallaxScrollingScale: 0.9,
-        //   parallaxScrollingOffset: 50,
-        // }}
       />
       {/* Prompt */}
       <Text style={[
