@@ -14,16 +14,19 @@ const Lights = () => {
       id: 1,
       // name: "All Lights",
       // entityId: "light.all_lights", //CHANGE BASED ON SMART LIGHT NAME GIVEN
-      name: "TV",
-      entityId: "media_player.family_room_tv", 
+      name: "Google TV",
+      entityId: "media_player.family_room_tv",
       phoneNumber: "1234567890",
       prompt: "Turn all lights on?",
       active: false,
     },
     {
       id: 2,
-      name: "Bedroom Lights",
+      // name: "Bedroom Lights",
+      // name: "Bedroom Lights",
       // entityId: "light.bedroom_lights",
+      name: "Samsung TV",
+      entityId: "media_player.75_qled",
       phoneNumber: "0987654321",
       prompt: "Turn bedroom lights ON?",
       active: false,
@@ -64,8 +67,7 @@ const Lights = () => {
   //   );
   // };
 
-
-// Add this in and remove above code for new Toggle Light Code
+  // Add this in and remove above code for new Toggle Light Code
   const handleToggleLight = async (id, entityId, isActive) => {
     const toggleState = !isActive;
     try {
@@ -92,8 +94,8 @@ const Lights = () => {
       );
     } catch (error) {
       console.error("Failed to toggle TV.");
-//       console.log("HA URL:", HOME_ASSISTANT_URL);
-// console.log("HA Token:", HOME_ASSISTANT_TOKEN);
+      //       console.log("HA URL:", HOME_ASSISTANT_URL);
+      // console.log("HA Token:", HOME_ASSISTANT_TOKEN);
     }
   };
 
@@ -104,7 +106,7 @@ const Lights = () => {
         styles.cardContainer,
         {
           backgroundColor: index === activeIndex ? "#f3b718" : "#f09030",
-          transform: index === activeIndex ? [{scale: 1}] : [{scale: 0.8}],  
+          transform: index === activeIndex ? [{ scale: 1 }] : [{ scale: 0.8 }],
         },
         {
           height:
@@ -116,7 +118,7 @@ const Lights = () => {
       // onPress={() => toggleLight(item.id)}
       // onPress={() => handleToggleLight(item.id, item.entityId, item.active)}
       onPress={() => handleToggleTV(item.id, item.entityId, item.active)}
-      >
+    >
       <MaterialCommunityIcons
         name="lightbulb"
         size={94}
@@ -126,30 +128,35 @@ const Lights = () => {
     </Pressable>
   );
 
-
-
   return (
-    <View style={[
-      styles.container,
-      { height: viewportWidth > viewportHeight ? 320 : 450 },
-    ]}>
+    <View
+      style={[
+        styles.container,
+        { height: viewportWidth > viewportHeight ? 320 : 450 },
+      ]}
+    >
       <Carousel
         ref={carouselRef}
         data={contacts}
         renderItem={renderItem}
         width={Math.round(viewportWidth * 0.3)}
         height={viewportHeight * 0.3} //width of carousel card
-        style={{ width: Math.round(viewportWidth * 0.9), height: Math.round(viewportWidth * 0.5) }} //width of the carousel
+        style={{
+          width: Math.round(viewportWidth * 0.9),
+          height: Math.round(viewportWidth * 0.5),
+        }} //width of the carousel
         loop={true}
         onSnapToItem={(index) => setActiveIndex(index)}
       />
       {/* Prompt */}
-      <Text style={[
+      <Text
+        style={[
           styles.prompt,
           {
             marginBottom: viewportWidth > viewportHeight ? 35 : 100,
           },
-        ]}>
+        ]}
+      >
         {contacts[activeIndex].prompt && contacts[activeIndex].prompt}
       </Text>
       <Pressable
@@ -160,9 +167,10 @@ const Lights = () => {
             top: viewportWidth > viewportHeight ? "40%" : "30%",
           },
         ]}
-        
         onPress={() => {
-          carouselRef.current?.scrollTo({ count: -1, animated: true });}}>
+          carouselRef.current?.scrollTo({ count: -1, animated: true });
+        }}
+      >
         <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
       </Pressable>
       <Pressable
@@ -174,8 +182,9 @@ const Lights = () => {
           },
         ]}
         onPress={() => {
-          carouselRef.current?.scrollTo({ count: 1, animated: true });}}
-        >
+          carouselRef.current?.scrollTo({ count: 1, animated: true });
+        }}
+      >
         <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
       </Pressable>
     </View>
