@@ -486,7 +486,7 @@ const Lights = () => {
   useEffect(() => {
     const fetchEntities = async () => {
       try {
-        const homeId = await fetchUserHomeId();; // Specify the correct Home Assistant instance ID
+        const homeId = await fetchUserHomeId(); // Specify the correct Home Assistant instance ID
         const domains = [
           "media_player",
           "light",
@@ -517,12 +517,13 @@ const Lights = () => {
   // Handle device toggle
   const handleToggleDevice = async (id, entityId, currentState) => {
     if (isToggling) return;
-
+    
+    console.log(currentState);
     setIsToggling(true);
     const turnOn = currentState === "off"; // Determine the toggle direction
 
     try {
-      const homeId = "home1"; // Specify the correct Home Assistant instance ID
+      const homeId = await fetchUserHomeId(); // Specify the correct Home Assistant instance ID
       await toggleTV(homeId, entityId, turnOn);
 
       // Update the state in the devices array
