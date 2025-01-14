@@ -57,6 +57,7 @@
     },
     "plugins": ["expo-router"],
     "android": {
+      "usesCleartextTraffic": true,
       "package": "com.sallydough.appgardenloft",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -66,7 +67,7 @@
         "FOREGROUND_SERVICE",
         "FOREGROUND_SERVICE_LOCATION",
         "FOREGROUND_LOCATION",
-        "WAKE_LOCK"
+        "WAKE_LOCK","INTERNET", "ACCESS_NETWORK_STATE"
       ],
       "googleServicesFile": "./google-services.json"
     }

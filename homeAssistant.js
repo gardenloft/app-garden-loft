@@ -281,17 +281,19 @@ const createApiClient = (homeId) => {
   }
   return axios.create({
     baseURL: config.url,
+    
     headers: {
       Authorization: `Bearer ${config.token}`,
-      "Content-Type": "application/json",
+      
     },
-    timeout: 15000,
+    timeout: 35000,
   });
 };
 
 // Get filtered entities from Home Assistant
 export const getFilteredEntities = async (homeId, domains) => {
   const apiClient = createApiClient(homeId);
+  console.log("API Client Configuration:", apiClient.defaults);
   try {
     const response = await apiClient.get("/api/states");
     const entities = response.data.filter((entity) =>
