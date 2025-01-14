@@ -1188,11 +1188,6 @@ const phoneStyles =
           alignItems: "center",
           paddingVertical: SCREEN_HEIGHT * 0.01,
           backgroundColor: "#fff",
-          shadowColor: "transparent", // Remove shadow
-          shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 0,
-          shadowRadius: 0,
-          elevation: 0,
         },
         image: {
           // width: 95, // Adjust size for phones
