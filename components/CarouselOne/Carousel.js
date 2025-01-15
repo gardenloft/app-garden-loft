@@ -385,8 +385,11 @@ const data = [
   },
   {
     id: 7,
-        title: "LIGHTS",
-        icon: "lightbulb",
+        title: "HOME CONTROLS",
+        // icon: "home-assistant",
+        icon: "home-automation",
+        // title: "LIGHTS",
+        // icon: "lightbulb",
         component: <Lights />,
         prompt: "Change Lights?",
       },
