@@ -405,7 +405,7 @@ const Lights = () => {
         action: actionToUse,
         value,
       });
-      console.log(`payload: ${payload}, action ${action}, value ${value},`);
+      console.log(`payload: ${payload.homeId} ${payload.domain}${payload.entityId}, action ${action}, value ${value},`);
 
       // Update state dynamically
       setDevices((prevDevices) =>
