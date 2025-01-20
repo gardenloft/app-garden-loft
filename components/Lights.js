@@ -195,8 +195,49 @@ const Lights = () => {
   const renderRemoteControls = () => {
     if (!selectedDevice) return null;
 
+    const togglePower = async () => {
+     // Optimistically update state
+     setSelectedDevice((prevDevice) => ({
+      ...prevDevice,
+      state: prevDevice.state === "on" ? "off" : "on", // Toggle state optimistically
+    }));
+
+    setDevices((prevDevices) =>
+      prevDevices.map((d) =>
+        d.id === selectedDevice.entityId
+          ? {
+              ...d,
+              state: selectedDevice.state === "on" ? "off" : "on",
+            }
+          : d
+      )
+    );
+
+    // Perform the action
+    await handleAction(selectedDevice, "toggle");
+
+    // Fetch the latest state for the selected device
+    const updatedEntities = await getFilteredEntities(
+      selectedDevice.homeId,
+      ["media_player", "remote", "light", "switch"]
+    );
+
+    const updatedDevice = updatedEntities.find(
+      (entity) => entity.entity_id === selectedDevice.entityId
+    );
+
+    if (updatedDevice) {
+      setSelectedDevice((prevDevice) => ({
+        ...prevDevice,
+        state: updatedDevice.state, // Sync the state with the updated device
+      }));
+    }
+  };
+
+
     return (
-      <View style={styles.modalContent}>
+      <View
+       style={styles.modalContent}>
         <Pressable style={styles.closeButton} onPress={closeModal}>
           <FontAwesome name="close" size={24} color="black" />
         </Pressable>
@@ -207,11 +248,12 @@ const Lights = () => {
           <View style={[styles.row, styles.navButton]}>
             <Pressable
               style={[styles.iconButton, styles.navButton]}
-              onPress={
-                () => handleAction(selectedDevice, "toggle") //
-              }
+              // onPress={
+              //   () => handleAction(selectedDevice, "toggle") //
+              // }
+              onPress={togglePower}
             >
-              <FontAwesome name="power-off" size={24} color="red" />
+              <FontAwesome name="power-off" size={24} color={selectedDevice.state === "on" ? "#0EC50E" : "red"} />
               <Text style={styles.iconButtonText}>Power</Text>
             </Pressable>
             <Pressable
