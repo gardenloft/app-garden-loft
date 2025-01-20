@@ -26,7 +26,7 @@ const Lights = () => {
       try {
         const homeId = await fetchUserHomeId(); // Specify the correct Home Assistant instance ID
         const domains = [
-          "media_player",
+          // "media_player",
           "light",
           "switch",
           "humidifier",
@@ -137,13 +137,14 @@ const Lights = () => {
   const renderItem = ({ item }) => {
     const icons = {
       light: "lightbulb",
-      media_player: "television",
+      // media_player: "television",
       climate: "air-conditioner",
       sensor: "thermometer",
       lock: "lock",
       switch: "lightbulb",
       camera: "camera",
-      remote: "remote",
+      // remote: "remote",
+      remote: "television",
     };
 
     const icon = icons[item.domain] || "camera-control";
