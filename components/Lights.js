@@ -241,8 +241,6 @@
 
 // export default Lights;
 
-
-
 ////////////// code that turns remote on and off and works with any device passed through it (so far tv, and remote)
 
 import React, { useState, useEffect, useRef } from "react";
@@ -330,24 +328,32 @@ const Lights = () => {
         ...payload,
         action: actionToUse,
         value,
+        value: actionToUse === "turn_on",
       });
       console.log(`payload: ${payload.homeId} ${payload.domain}${payload.entityId}, action ${action}, value ${value},`);
 
+
+
+// Fetch the updated state to sync with Home Assistant
+const updatedEntities = await getFilteredEntities(
+  payload.homeId,
+  ["media_player","remote", "light", "switch"] // Include switch domain for plug
+);
+
+
       // Update state dynamically
       setDevices((prevDevices) =>
-        prevDevices.map((d) =>
-          d.id === device.id
+        prevDevices.map((d) => {
+          const updatedDevice = updatedEntities.find(
+            (entity) => entity.entity_id === d.entityId
+          );
+          return updatedDevice
             ? {
                 ...d,
-                state:
-                  actionToUse === "turn_on"
-                    ? "on"
-                    : actionToUse === "turn_off"
-                    ? "off"
-                    : d.state,
+                state: updatedDevice.state, // Sync with the actual state
               }
-            : d
-        )
+            : d;
+        })
       );
     } catch (error) {
       console.error(`Failed to perform action on device ${device.id}`, error);
@@ -356,6 +362,8 @@ const Lights = () => {
     }
   };
 
+ 
+
   const renderItem = ({ item }) => {
     const icons = {
       light: "lightbulb",
@@ -363,7 +371,7 @@ const Lights = () => {
       climate: "air-conditioner",
       sensor: "thermometer",
       lock: "lock",
-      switch: "power-plug",
+      switch: "lightbulb",
       camera: "camera",
       remote: "remote",
     };
@@ -540,3 +548,13 @@ const styles = StyleSheet.create({
 });
 
 export default Lights;
+
+
+
+
+
+
+
+
+
+
