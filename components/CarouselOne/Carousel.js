@@ -385,22 +385,22 @@ const data = [
   },
   {
     id: 7,
-        title: "HOME CONTROLS",
-        // icon: "home-assistant",
-        icon: "home-automation",
-        // title: "LIGHTS",
-        // icon: "lightbulb",
-        component: <Lights />,
-        prompt: "Change Lights?",
-      },
-  {
-    id: 8,
     title: "MY CALENDAR",
     icon: "calendar-month",
     component: <ComingSoon />,
     prompt: "See What's Coming Up?",
   },
   { id: 9, title: "Games", icon: "gamepad", component: <Games /> },
+  {
+    id: 8,
+        title: "HOME CONTROLS",
+        // icon: "home-assistant",
+        icon: "home-automation",
+        // title: "LIGHTS",
+        // icon: "lightbulb",
+        component: <Lights />,
+        prompt: "Control Home Device?",
+      },
 ];
 
 const Home = () => {
