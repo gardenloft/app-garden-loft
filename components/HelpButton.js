@@ -136,6 +136,11 @@ const HelpButton = () => {
 
   return (
     <View style={[styles.container, phoneStyles.container]}>
+      {/* <View style={[styles.homecontainer, phoneStyles.container]}> */}
+       {/* <Image
+          source={require("../assets/GLLOGOSALLY.png")}
+          style={[styles.logoImage2, phoneStyles.logoImage2]}
+        /> */}
       <TouchableOpacity
         onPress={() => setBioModalVisible(true)}
         style={styles.profileContainer}
@@ -153,8 +158,11 @@ const HelpButton = () => {
           />
         )}
       </TouchableOpacity>
-
-      <TouchableOpacity style={[styles.callButton, phoneStyles.callButton]} onPress={handleEmergencyCall}>
+      {/* </View> */}
+      <TouchableOpacity
+        style={[styles.callButton, phoneStyles.callButton]}
+        onPress={handleEmergencyCall}
+      >
         <Text style={styles.emergencyButtonText}>Call Emergency</Text>
         <MaterialCommunityIcons
           name="hospital-box-outline"
@@ -164,12 +172,28 @@ const HelpButton = () => {
         />
       </TouchableOpacity>
 
-      <View style={[styles.logoContainer,phoneStyles.logoContainer]}>
+        {/* Potential Iot COntrols in Nav Bar */}
+      {/* <TouchableOpacity
+        onPress={() => setBioModalVisible(true)}
+        style={styles.profileContainer}
+      >
+        <MaterialCommunityIcons
+          name="home-automation"
+          size={50}
+          color="#f3b718"
+        />
+      </TouchableOpacity> */}
+
+      <View style={[styles.logoContainer, phoneStyles.logoContainer]}>
+        {/* <Image
+          source={require("../assets/GLLOGOSALLY.png")}
+          style={[styles.logoImage2, phoneStyles.logoImage2]}
+        /> */}
         <Image
           source={require("../assets/garden-loft-logo2.png")}
           style={[styles.logoImage, phoneStyles.logoImage]}
         />
-      </View>
+      </View> 
 
       {/* Bio Modal */}
       <Modal
@@ -178,7 +202,7 @@ const HelpButton = () => {
         transparent={true}
         onRequestClose={() => setBioModalVisible(false)}
       >
-        <View style={[styles.modalContainer,phoneStyles.modalContainer]}>
+        <View style={[styles.modalContainer, phoneStyles.modalContainer]}>
           <ScrollView
             contentContainerStyle={
               isPhone ? phoneStyles2.modalContent : styles.modalContent
@@ -299,21 +323,21 @@ const HelpButton = () => {
 };
 
 // Phone-specific styles
-const phoneStyles = SCREEN_WIDTH <= 513 ? {
-logoImage: {
-  width: SCREEN_WIDTH * 0.2,
-  resizeMode: "contain",
-},
-callButton: {},
-iconStyle: {
-},
-container: {
-  marginTop: 60,
-},
-modalContainer: {
-}
-
-} : {}
+const phoneStyles =
+  SCREEN_WIDTH <= 513
+    ? {
+        logoImage: {
+          width: SCREEN_WIDTH * 0.2,
+          resizeMode: "contain",
+        },
+        callButton: {},
+        iconStyle: {},
+        container: {
+          marginTop: 60,
+        },
+        modalContainer: {},
+      }
+    : {};
 const phoneStyles2 = StyleSheet.create({
   modalContent: {
     backgroundColor: "#fff",
@@ -325,11 +349,6 @@ const phoneStyles2 = StyleSheet.create({
     maxWidth: 450, // Ensure the modal doesn't become too wide
     alignItems: "center",
     justifyContent: "flex-start", // Align content to the top for phones
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 10,
   },
 });
 const styles = StyleSheet.create({
@@ -345,11 +364,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: "#FCF8E3",
     borderRadius: 10,
+    //  **** need this shadow for help button container
     shadowColor: "#000",
     shadowOffset: { width: 3, height: 7 },
     shadowOpacity: 0.25,
     shadowRadius: 6,
     elevation: 8,
+    ///////////////////////////////////////////
   },
   profileContainer: {
     justifyContent: "center",
@@ -361,6 +382,11 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 2,
     borderColor: "#f3b718",
+  },
+  homecontainer: {
+flex: 1,
+flexDirection: "row",
+gap: 20,
   },
   callButton: {
     backgroundColor: "#59ACCE",
@@ -428,8 +454,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logoImage: {
-    width: SCREEN_WIDTH < 375 ? 90 : SCREEN_WIDTH < 430 ? 110 : 130,
+    width: SCREEN_WIDTH < 375 ? 90 : SCREEN_WIDTH < 430 ? 110 : 122,
     height: SCREEN_WIDTH < 375 ? 40 : SCREEN_WIDTH < 430 ? 50 : 60,
+  },
+  logoImage2: {
+    width: SCREEN_WIDTH < 375 ? 90 : SCREEN_WIDTH < 430 ? 110 : 58,
+    height: SCREEN_WIDTH < 375 ? 40 : SCREEN_WIDTH < 430 ? 50 : 57,
   },
   modalContainer: {
     flex: 1,
