@@ -76,9 +76,6 @@
 //   }
 // };
 
-
-
-
 //////////////// Code with Unified Device Control Function /////////////
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -113,6 +110,9 @@ const homeAssistantConfig = {
   home1: {
     url: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME1_URL,
     token: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME1_TOKEN,
+    // url: "http://192.168.50.97:8123",
+    // token:
+    //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhMmZiMTkzNGNhODE0YzlhOGI3MmM5ZGJjODQ5MWZmYiIsImlhdCI6MTczNjI3MDk1MiwiZXhwIjoyMDUxNjMwOTUyfQ.qecEr6qYeKYzsfFLBCoFogF8C5BXssYP0gkbuDkddbs",
   },
   home2: {
     url: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME2_URL,
@@ -132,10 +132,9 @@ const createApiClient = (homeId) => {
   }
   return axios.create({
     baseURL: config.url,
-    
+
     headers: {
       Authorization: `Bearer ${config.token}`,
-      
     },
     timeout: 35000,
   });
@@ -197,8 +196,8 @@ export const controlDevice = async ({
   let service = "";
   const data = { entity_id: entityId };
   console.log(`Sending Request to Home Assistant:`);
-      console.log(`URL: ${apiClient.defaults.baseURL}`);
-      console.log(`Entity ID: ${entityId}`);
+  console.log(`URL: ${apiClient.defaults.baseURL}`);
+  console.log(`Entity ID: ${entityId}`);
 
   try {
     switch (domain) {
@@ -235,8 +234,8 @@ export const controlDevice = async ({
         } else {
           throw new Error(`Unsupported action for remote: ${action}`);
         }
-          console.log(`Sensors are read-only: ${service} & ${value}`)
-          console.log(`Service type remote: ${service}`);
+        console.log(`Sensors are read-only: ${service} & ${value}`);
+        console.log(`Service type remote: ${service}`);
         break;
       case "lock":
         service = value ? "lock" : "unlock";
