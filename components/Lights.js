@@ -202,7 +202,7 @@ const Lights = () => {
       state: prevDevice.state === "on" ? "off" : "on", // Toggle state optimistically
     }));
 
-    setDevices((prevDevices) =>
+   setDevices((prevDevices) =>
       prevDevices.map((d) =>
         d.id === selectedDevice.entityId
           ? {
@@ -233,6 +233,41 @@ const Lights = () => {
       }));
     }
   };
+
+  const toggleMute = async () => {
+    if (!selectedDevice) return;
+  
+    // Optimistically update the local state
+    setSelectedDevice((prevDevice) => ({
+      ...prevDevice,
+      isMuted: !prevDevice.isMuted,
+    }));
+  
+    // Send the mute toggle command to Home Assistant
+    await handleAction(
+      { domain: "remote", entityId: selectedDevice.entityId },
+      "send_command",
+      "KEY_MUTE"
+    );
+  
+    // Fetch updated state from Home Assistant to ensure synchronization
+    const updatedEntities = await getFilteredEntities(
+      await fetchUserHomeId(),
+      ["remote"]
+    );
+  
+    const updatedDevice = updatedEntities.find(
+      (entity) => entity.entity_id === selectedDevice.entityId
+    );
+  
+    if (updatedDevice) {
+      setSelectedDevice((prevDevice) => ({
+        ...prevDevice,
+        isMuted: updatedDevice.attributes.isMuted || prevDevice.isMuted, // Use updated mute state
+      }));
+    }
+  };
+  
 
 
     return (
@@ -334,20 +369,22 @@ const Lights = () => {
               </Pressable>
               <Pressable
                 style={styles.arrowButton}
-                onPress={() =>
-                  handleAction(
-                    { domain: "remote", entityId: selectedDevice.entityId },
-                    "send_command",
-                    "KEY_MUTE"
-                  )
-                }
+                // onPress={() =>
+                //   handleAction(
+                //     { domain: "remote", entityId: selectedDevice.entityId },
+                //     "send_command",
+                //     "KEY_MUTE"
+                //   )
+                // }
+                onPress={toggleMute}
               >
                 <MaterialCommunityIcons
-                  name="volume-mute"
+                  name={selectedDevice.isMuted ? "volume-mute" : "volume-high"}
                   size={24}
                   color="black"
+                 
                 />
-                <Text style={styles.iconButtonText}>Mute</Text>
+                <Text>{selectedDevice.isMuted ? "Muted" : "Unmuted"} </Text>
               </Pressable>
             </View>
 
