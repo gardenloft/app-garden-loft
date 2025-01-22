@@ -55,6 +55,8 @@
     "react-native-size-matters": "^0.4.2",
     "react-native-uuid": "^2.0.2",
     "react-native-vector-icons": "^10.1.0",
+    "react-native-video": "^6.9.1",
+    "react-native-vlc-media-player": "^1.0.77",
     "react-native-web": "~0.19.10",
     "react-native-webview": "13.8.6",
     "react-native-youtube-iframe": "^2.3.0",
