@@ -50,7 +50,6 @@ const createApiClient = (homeId) => {
   }
   return axios.create({
     baseURL: config.url,
-
     headers: {
       Authorization: `Bearer ${config.token}`,
     },
@@ -61,7 +60,6 @@ const createApiClient = (homeId) => {
 // Get filtered entities from Home Assistant
 export const getFilteredEntities = async (homeId, domains) => {
   const apiClient = createApiClient(homeId);
-  console.log("API Client Configuration:", apiClient.defaults);
   try {
     const response = await apiClient.get("/api/states");
     const entities = response.data.filter((entity) =>
@@ -75,6 +73,23 @@ export const getFilteredEntities = async (homeId, domains) => {
     );
     throw error;
   }
+};
+
+// Fetch the live stream URL for a camera
+export const fetchStreamUrl = async (homeId, cameraEntityId) => {
+  console.log(
+    `Fetching stream for homeId: ${homeId}, entityId: ${cameraEntityId}`
+  );
+  const config = homeAssistantConfig[homeId];
+
+  if (!config) {
+    throw new Error(`Configuration for homeId ${homeId} not found.`);
+  }
+
+  // Construct the RTSP URL for the camera
+  const rtspUrl = ""; // Replace with your RTSP URL
+  console.log(`Generated RTSP URL: ${rtspUrl}`);
+  return rtspUrl;
 };
 
 // Unified Device Control Function
@@ -117,10 +132,6 @@ export const controlDevice = async ({
         service = value ? "turn_on" : "turn_off";
         console.log(`Service type switch: ${service}`);
         break;
-      // case "remote":
-      //   service = value ? "turn_on" : "turn_off";
-      //   console.log(`Sensors are read-only: ${service} & ${value}`)
-      //   break;
       case "remote":
         if (action === "turn_on" || action === "turn_off") {
           service = action;
@@ -130,7 +141,6 @@ export const controlDevice = async ({
         } else {
           throw new Error(`Unsupported action for remote: ${action}`);
         }
-        console.log(`Sensors are read-only: ${service} & ${value}`);
         console.log(`Service type remote: ${service}`);
         break;
       case "lock":
@@ -138,6 +148,10 @@ export const controlDevice = async ({
         console.log(`Service type lock: ${service}`);
         break;
       case "camera":
+        service = action; // Example: snapshot
+        console.log(`Service type camera: ${service}`);
+        break;
+      case "binary_sensor":
         service = action; // Example: snapshot
         console.log(`Service type camera: ${service}`);
         break;
