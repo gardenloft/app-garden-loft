@@ -3,7 +3,11 @@
     "name": "GardenLoft",
     "slug": "app-garden-loft",
     "scheme": "app-garden-loft",
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "runtimeVersion": {
       "policy": "sdkVersion"
     },
@@ -22,7 +26,9 @@
       "googleServicesFile": "./GoogleService-Info.plist",
       "buildNumber": "23",
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"],
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
         "NSAppTransportSecurity": {
@@ -55,7 +61,10 @@
       "HOME_ASSISTANT_URL": "${EXPO_PUBLIC_HOME_ASSISTANT_URL}",
       "HOME_ASSISTANT_TOKEN": "${EXPO_PUBLIC_HOME_ASSISTANT_TOKEN}"
     },
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router",
+      "react-native-video"
+    ],
     "android": {
       "package": "com.sallydough.appgardenloft",
       "adaptiveIcon": {
@@ -66,7 +75,9 @@
         "FOREGROUND_SERVICE",
         "FOREGROUND_SERVICE_LOCATION",
         "FOREGROUND_LOCATION",
-        "WAKE_LOCK","INTERNET", "ACCESS_NETWORK_STATE"
+        "WAKE_LOCK",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
       ],
       "googleServicesFile": "./google-services.json"
     }
@@ -79,8 +90,8 @@
     "eas": {
       "projectId": "598d65e5-14db-479e-a297-3561c87ddbc5"
     },
-     "HOME_ASSISTANT_URL": "${EXPO_PUBLIC_HOME_ASSISTANT_URL}",
-      "HOME_ASSISTANT_TOKEN": "${EXPO_PUBLIC_HOME_ASSISTANT_TOKEN}"
+    "HOME_ASSISTANT_URL": "${EXPO_PUBLIC_HOME_ASSISTANT_URL}",
+    "HOME_ASSISTANT_TOKEN": "${EXPO_PUBLIC_HOME_ASSISTANT_TOKEN}"
   },
   "plugins": [
     "expo-notifications",
