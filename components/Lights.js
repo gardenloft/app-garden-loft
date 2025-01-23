@@ -69,9 +69,17 @@ const VideoPlayer = ({ streamUrl }) => {
       <VLCPlayer
         style={styles.videoPlayer}
         videoAspectRatio="16:9"
-        source={{ uri: streamUrl }}
-        hwDecoderEnabled={1} // Enable hardware acceleration
-  hwDecoderForced={1} // Force hardware acceleration
+        source={{ uri: streamUrl,
+          initOptions: [
+            "--rtsp-tcp", // Force RTSP to use TCP
+            "--network-caching=1000", // Adjust caching
+            "--clock-jitter=0", // Reduce clock jitter for smoother playback
+            "--file-caching=3000", // Caching for local files (if applicable)
+            "--live-caching=3000", // Caching for live streams
+          ],
+         }}
+  //       hwDecoderEnabled={1} // Enable hardware acceleration
+  // hwDecoderForced={1} // Force hardware acceleration
         onError={(error) => {
           console.error("Video Error:", error);
           alert("Failed to load video. Check the console for details.");
