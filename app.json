@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "GardenLoft",
+    "name": "Garden Loft",
     "slug": "app-garden-loft",
     "scheme": "app-garden-loft",
     "platforms": [
@@ -31,6 +31,8 @@
         ],
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
+        "NSLocalNetworkUsageDescription": "This app requires access to your local network to display the camera stream.",
+        "NSBonjourServices": ["_http._tcp", "_rtsp._tcp"],
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true,
           "NSExceptionDomains": {
@@ -57,13 +59,12 @@
     "extra": {
       "eas": {
         "projectId": "598d65e5-14db-479e-a297-3561c87ddbc5"
-      },
-      "HOME_ASSISTANT_URL": "${EXPO_PUBLIC_HOME_ASSISTANT_URL}",
-      "HOME_ASSISTANT_TOKEN": "${EXPO_PUBLIC_HOME_ASSISTANT_TOKEN}"
+      }
     },
     "plugins": [
       "expo-router",
-      "react-native-video"
+      "react-native-video",
+     ["@config-plugins/react-native-webrtc"]
     ],
     "android": {
       "package": "com.sallydough.appgardenloft",
@@ -96,6 +97,7 @@
   "plugins": [
     "expo-notifications",
     "expo-router",
+    "@config-plugins/react-native-webrtc",
     "expo-location",
     {
       "isAndroidBackgroundLocationEnabled": true,
