@@ -3,6 +3,8 @@ import { View, Text, Pressable, StyleSheet, Dimensions, Modal } from "react-nati
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import Carousel from "react-native-reanimated-carousel";
 import { VLCPlayer } from "react-native-vlc-media-player";
+import {WebView} from "react-native-webview"
+
 import {
   fetchUserHomeId,
   getFilteredEntities,
@@ -66,18 +68,30 @@ const [cameraStreamUrl, setCameraStreamUrl] = useState(null);
 const VideoPlayer = ({ streamUrl }) => {
   return (
     <View style={styles.videoContainer}>
+        {/* <WebView
+        source={{ uri: streamUrl }}
+        style={styles.webview}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        allowsInlineMediaPlayback={true}
+        mediaPlaybackRequiresUserAction={false}
+      /> */}
       <VLCPlayer
         style={styles.videoPlayer}
         videoAspectRatio="16:9"
         source={{ uri: streamUrl,
           initOptions: [
             "--rtsp-tcp", // Force RTSP to use TCP
-            "--network-caching=1000", // Adjust caching
+       
+            "--network-caching=10", // Adjust caching
             "--clock-jitter=0", // Reduce clock jitter for smoother playback
-            "--file-caching=3000", // Caching for local files (if applicable)
-            "--live-caching=3000", // Caching for live streams
+            "--live-caching=5", // Caching for live streams
+            "--clock-synchro=0",
+            // "--drop-late-frames", // Drop late frames to maintain real-time sync
+            // "--skip-frames", // Skip frames when decoding is slow
           ],
          }}
+      
   //       hwDecoderEnabled={1} // Enable hardware acceleration
   // hwDecoderForced={1} // Force hardware acceleration
         onError={(error) => {
@@ -433,6 +447,19 @@ binary_sensor: "camera",
                 <Text style={styles.iconButtonText}>Channel List</Text>
               </Pressable>
               <Pressable
+                style={styles.navButton}
+                onPress={() =>
+                  handleAction(
+                    { domain: "remote", entityId: selectedDevice.entityId },
+                    "send_command",
+                    "KEY_ENTER"
+                  )
+                }
+              >
+                <FontAwesome name="circle" size={24} color="black" />
+                <Text style={styles.iconButtonText}>OK</Text>
+              </Pressable>
+              <Pressable
                 style={styles.arrowButton}
                 // onPress={() =>
                 //   handleAction(
@@ -483,7 +510,7 @@ binary_sensor: "camera",
           </View>
 
           {/* Bottom Section */}
-          <View style={styles.navControls}>
+          {/* <View style={styles.navControls}>
             <View style={styles.navControlsTop}>
               <Pressable
                 style={styles.navButton}
@@ -553,9 +580,9 @@ binary_sensor: "camera",
                 <FontAwesome name="chevron-down" size={24} color="black" />
               </Pressable>
             </View>
-          </View>
+          </View> */}
 
-          <View style={styles.navControls}>
+          {/* <View style={styles.navControls}>
             <View style={styles.navControlsTop}>
               <Pressable
                 style={styles.navButton}
@@ -605,7 +632,7 @@ binary_sensor: "camera",
                 <Text style={styles.iconButtonText}>Exit</Text>
               </Pressable>
             </View>
-          </View>
+          </View> */}
         </View>
       </View>
     );

@@ -88,6 +88,7 @@ export const fetchStreamUrl = async (homeId, cameraEntityId) => {
 
   // Construct the RTSP URL for the camera
   const rtspUrl = ""; // Replace with your RTSP URL
+  ;
   console.log(`Generated RTSP URL: ${rtspUrl}`);
   return rtspUrl;
 };
