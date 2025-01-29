@@ -81,6 +81,7 @@ const VideoPlayer = ({ streamUrl }) => {
         videoAspectRatio="16:9"
         source={{ uri: streamUrl,
           initOptions: [
+
             "--rtsp-tcp", // Force RTSP to use TCP
        
             "--network-caching=10", // Adjust caching
@@ -94,6 +95,7 @@ const VideoPlayer = ({ streamUrl }) => {
       
   //       hwDecoderEnabled={1} // Enable hardware acceleration
   // hwDecoderForced={1} // Force hardware acceleration
+
         onError={(error) => {
           console.error("Video Error:", error);
           alert("Failed to load video. Check the console for details.");
@@ -478,6 +480,7 @@ binary_sensor: "camera",
                 />
                 <Text>{selectedDevice.isMuted ? "Muted" : "Unmuted"} </Text>
               </Pressable>
+
             </View>
 
             <View style={styles.column}>
@@ -509,8 +512,10 @@ binary_sensor: "camera",
             </View>
           </View>
 
+
           {/* Bottom Section */}
           {/* <View style={styles.navControls}>
+
             <View style={styles.navControlsTop}>
               <Pressable
                 style={styles.navButton}
