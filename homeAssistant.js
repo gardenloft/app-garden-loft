@@ -87,7 +87,9 @@ export const fetchStreamUrl = async (homeId, cameraEntityId) => {
   }
 
   // Construct the RTSP URL for the camera
+
   const rtspUrl = `rtsp://admin:Gardenloftrocks@192.168.1.100:554/Preview_01_main`; // Replace with your RTSP URL
+
   console.log(`Generated RTSP URL: ${rtspUrl}`);
   return rtspUrl;
 };
