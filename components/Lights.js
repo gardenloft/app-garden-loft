@@ -3,6 +3,8 @@ import { View, Text, Pressable, StyleSheet, Dimensions, Modal } from "react-nati
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import Carousel from "react-native-reanimated-carousel";
 import { VLCPlayer } from "react-native-vlc-media-player";
+import {WebView} from "react-native-webview"
+
 import {
   fetchUserHomeId,
   getFilteredEntities,
@@ -66,23 +68,34 @@ const [cameraStreamUrl, setCameraStreamUrl] = useState(null);
 const VideoPlayer = ({ streamUrl }) => {
   return (
     <View style={styles.videoContainer}>
+        {/* <WebView
+        source={{ uri: streamUrl }}
+        style={styles.webview}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        allowsInlineMediaPlayback={true}
+        mediaPlaybackRequiresUserAction={false}
+      /> */}
       <VLCPlayer
         style={styles.videoPlayer}
         videoAspectRatio="16:9"
         source={{ uri: streamUrl,
           initOptions: [
-            "--network-caching=10", // Lower caching for reduced latency
-            "--live-caching=5",
-            "--rtsp-tcp", // Force TCP (may improve stability)
-            "--drop-late-frames", // Drop late frames to maintain real-time sync
-            "--skip-frames", // Skip frames when decoding is slow
-            "--no-stats", // Disable stats for better performance
-            "--clock-jitter=0", // Reduce clock jitter
-            "--clock-synchro=0", // Synchronize playback
+
+            "--rtsp-tcp", // Force RTSP to use TCP
+       
+            "--network-caching=10", // Adjust caching
+            "--clock-jitter=0", // Reduce clock jitter for smoother playback
+            "--live-caching=5", // Caching for live streams
+            "--clock-synchro=0",
+            // "--drop-late-frames", // Drop late frames to maintain real-time sync
+            // "--skip-frames", // Skip frames when decoding is slow
           ],
          }}
-         hwDecoderEnabled={1} // Enable hardware acceleration
-         hwDecoderForced={1} // Force hardware acceleration
+      
+  //       hwDecoderEnabled={1} // Enable hardware acceleration
+  // hwDecoderForced={1} // Force hardware acceleration
+
         onError={(error) => {
           console.error("Video Error:", error);
           alert("Failed to load video. Check the console for details.");
@@ -499,8 +512,10 @@ binary_sensor: "camera",
             </View>
           </View>
 
-          {/* Bottom Section
-          <View style={styles.navControls}>
+
+          {/* Bottom Section */}
+          {/* <View style={styles.navControls}>
+
             <View style={styles.navControlsTop}>
               <Pressable
                 style={styles.navButton}
@@ -570,9 +585,9 @@ binary_sensor: "camera",
                 <FontAwesome name="chevron-down" size={24} color="black" />
               </Pressable>
             </View>
-          </View>
+          </View> */}
 
-          <View style={styles.navControls}>
+          {/* <View style={styles.navControls}>
             <View style={styles.navControlsTop}>
               <Pressable
                 style={styles.navButton}
