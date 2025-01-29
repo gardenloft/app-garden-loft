@@ -30,7 +30,7 @@ export const fetchUserHomeId = async () => {
 const homeAssistantConfig = {
   home1: {
     url: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME1_URL,
-    token: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME1_TOKEN,
+    token: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME1_TOKEN, // Replace with your token
   },
   home2: {
     url: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME2_URL,
@@ -87,7 +87,7 @@ export const fetchStreamUrl = async (homeId, cameraEntityId) => {
   }
 
   // Construct the RTSP URL for the camera
-  const rtspUrl = ""; // Replace with your RTSP URL
+  const rtspUrl = `rtsp://admin:Gardenloftrocks@192.168.1.100:554/Preview_01_main`; // Replace with your RTSP URL
   console.log(`Generated RTSP URL: ${rtspUrl}`);
   return rtspUrl;
 };

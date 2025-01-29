@@ -69,9 +69,20 @@ const VideoPlayer = ({ streamUrl }) => {
       <VLCPlayer
         style={styles.videoPlayer}
         videoAspectRatio="16:9"
-        source={{ uri: streamUrl }}
-        hwDecoderEnabled={1} // Enable hardware acceleration
-  hwDecoderForced={1} // Force hardware acceleration
+        source={{ uri: streamUrl,
+          initOptions: [
+            "--network-caching=10", // Lower caching for reduced latency
+            "--live-caching=5",
+            "--rtsp-tcp", // Force TCP (may improve stability)
+            "--drop-late-frames", // Drop late frames to maintain real-time sync
+            "--skip-frames", // Skip frames when decoding is slow
+            "--no-stats", // Disable stats for better performance
+            "--clock-jitter=0", // Reduce clock jitter
+            "--clock-synchro=0", // Synchronize playback
+          ],
+         }}
+         hwDecoderEnabled={1} // Enable hardware acceleration
+         hwDecoderForced={1} // Force hardware acceleration
         onError={(error) => {
           console.error("Video Error:", error);
           alert("Failed to load video. Check the console for details.");
@@ -425,6 +436,19 @@ binary_sensor: "camera",
                 <Text style={styles.iconButtonText}>Channel List</Text>
               </Pressable>
               <Pressable
+                style={styles.navButton}
+                onPress={() =>
+                  handleAction(
+                    { domain: "remote", entityId: selectedDevice.entityId },
+                    "send_command",
+                    "KEY_ENTER"
+                  )
+                }
+              >
+                <FontAwesome name="circle" size={24} color="black" />
+                <Text style={styles.iconButtonText}>OK</Text>
+              </Pressable>
+              <Pressable
                 style={styles.arrowButton}
                 // onPress={() =>
                 //   handleAction(
@@ -443,6 +467,7 @@ binary_sensor: "camera",
                 />
                 <Text>{selectedDevice.isMuted ? "Muted" : "Unmuted"} </Text>
               </Pressable>
+
             </View>
 
             <View style={styles.column}>
@@ -474,7 +499,7 @@ binary_sensor: "camera",
             </View>
           </View>
 
-          {/* Bottom Section */}
+          {/* Bottom Section
           <View style={styles.navControls}>
             <View style={styles.navControlsTop}>
               <Pressable
@@ -597,7 +622,7 @@ binary_sensor: "camera",
                 <Text style={styles.iconButtonText}>Exit</Text>
               </Pressable>
             </View>
-          </View>
+          </View> */}
         </View>
       </View>
     );

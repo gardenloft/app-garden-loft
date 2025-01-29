@@ -63,9 +63,11 @@ export default function Home() {
     // Listener for notification taps
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        const { type, friendId, friendName } =
+        const { type, friendId, friendName,stream_url } =
           response.notification.request.content.data;
         console.log("Notification tapped:", { type, friendId, friendName });
+        
+      
 
         if (type === "text") {
           // Navigate to the opened chat and update state
@@ -78,7 +80,16 @@ export default function Home() {
           });
             setMessageModalVisible(false); // Ensure the modal is closed
         }
-      });
+
+        if (type === "doorbell") {
+          console.log("Doorbell notification tapped. Opening Lights.js...");
+          router.push({
+            pathname: "/DoorbellLive",
+            params: { streamUrl: stream_url },
+          });
+        }
+  });
+
 
     return () => {
       if (notificationListener.current) {
