@@ -108,7 +108,7 @@ export const fetchStreamUrl = async (homeId, cameraEntityId) => {
   }
 
   // Fallback to RTSP stream
-  const rtspUrl = ""; // Enter RTSP URL here
+  const rtspUrl = "rtsp://admin:Gardenloftrocks@192.168.58.106:554/Preview_01_main"; // Add RTSP URL 
   // const rtspUrl = config.reolinkRTSP; // Sally's House
   console.log(`Fallback RTSP URL: ${rtspUrl}`);
   return rtspUrl;
@@ -117,7 +117,7 @@ export const fetchStreamUrl = async (homeId, cameraEntityId) => {
 // // Setting up custom frame and bitrate for reolink camera
 // const REOLINK_IP = "192.168.1.100"; // Change this to your camera's IP
 // const REOLINK_USERNAME = "admin"; // Update with your username
-// const REOLINK_PASSWORD = "Gardenloftrocks"; // Update with your password
+// const REOLINK_PASSWORD = ""; // Update with your password
 
 // // Function to login and get the session token from Reolink API
 // export const getReolinkToken = async () => {
