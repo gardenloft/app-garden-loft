@@ -9,7 +9,8 @@ import {
   fetchUserHomeId,
   getFilteredEntities,
   controlDevice,
-  fetchStreamUrl
+  fetchStreamUrl,
+  setReolinkVideoSettings
 } from "../homeAssistant";
 
 const { width: viewportWidth, height: viewportHeight } =
@@ -64,38 +65,103 @@ const [cameraStreamUrl, setCameraStreamUrl] = useState(null);
     fetchEntities();
   }, []);
 
-    // VideoPlayer component for VLCPlayer
+
+  // useEffect(() => {
+  //   // Automatically adjust video settings when component mounts
+  //   setReolinkVideoSettings(25, 2048); // Example: 25 FPS, 2048 Kbps bitrate
+  // }, []);
+
+
+// VideoPlayer component for VLCPlayer
+// const VideoPlayer = ({ streamUrl }) => {
+//   return (
+//     <View style={styles.videoContainer}>
+//         {/* <WebView
+//         source={{ uri: streamUrl }}
+//         style={styles.webview}
+//         javaScriptEnabled={true}
+//         domStorageEnabled={true}
+//         allowsInlineMediaPlayback={true}
+//         mediaPlaybackRequiresUserAction={false}
+//       /> */}
+//       <VLCPlayer
+//         style={styles.videoPlayer}
+//         videoAspectRatio="16:9"
+//         source={{ uri: streamUrl,
+//           initOptions: [
+
+//             "--rtsp-tcp", // Force RTSP to use TCP
+       
+//             "--network-caching=10", // Adjust caching
+//             "--clock-jitter=0", // Reduce clock jitter for smoother playback
+//             "--live-caching=5", // Caching for live streams
+//             "--clock-synchro=0",
+//             // "--drop-late-frames", // Drop late frames to maintain real-time sync
+//             // "--skip-frames", // Skip frames when decoding is slow
+//           ],
+//          }}
+      
+//   //       hwDecoderEnabled={1} // Enable hardware acceleration
+//   // hwDecoderForced={1} // Force hardware acceleration
+
+//         onError={(error) => {
+//           console.error("Video Error:", error);
+//           alert("Failed to load video. Check the console for details.");
+//         }}
+//         onBuffering={(event) => {
+//           console.log("Buffering:", event);
+//         }}
+//         onPlaying={(event) => {
+//           console.log("Playing:", event);
+//         }}
+//         onStopped={(event) => {
+//           console.log("Stopped:", event);
+//         }}
+//       />
+//     </View>
+//   );
+// };
+
+// VideoPlayer component for VLCPlayer
 const VideoPlayer = ({ streamUrl }) => {
+const isHlsStream = streamUrl?.includes(".m3u8"); // Check if it's an HLS stream
+
+  if (isHlsStream) {
+    // Use WebView for HLS playback
+    return (
+      <View style={styles.videoContainer}>
+        <WebView
+          source={{ uri: streamUrl }}
+          style={styles.videoPlayer}
+          javaScriptEnabled
+          allowsFullscreenVideo
+          mediaPlaybackRequiresUserAction={false}
+        />
+      </View>
+    );
+  }
+
+  // Default to VLCPlayer for RTSP streams
   return (
     <View style={styles.videoContainer}>
-        {/* <WebView
-        source={{ uri: streamUrl }}
-        style={styles.webview}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        allowsInlineMediaPlayback={true}
-        mediaPlaybackRequiresUserAction={false}
-      /> */}
       <VLCPlayer
         style={styles.videoPlayer}
         videoAspectRatio="16:9"
-        source={{ uri: streamUrl,
+        source={{
+          uri: streamUrl,
           initOptions: [
-
-            "--rtsp-tcp", // Force RTSP to use TCP
-       
-            "--network-caching=10", // Adjust caching
-            "--clock-jitter=0", // Reduce clock jitter for smoother playback
-            "--live-caching=5", // Caching for live streams
-            "--clock-synchro=0",
-            // "--drop-late-frames", // Drop late frames to maintain real-time sync
-            // "--skip-frames", // Skip frames when decoding is slow
+            "--network-caching=10", // Lower caching for reduced latency
+            "--live-caching=5",
+            "--rtsp-tcp", // Force TCP (may improve stability)
+            "--drop-late-frames", // Drop late frames to maintain real-time sync
+            "--skip-frames", // Skip frames when decoding is slow
+            "--no-stats", // Disable stats for better performance
+            "--clock-jitter=0", // Reduce clock jitter
+            "--clock-synchro=0", // Synchronize playback
           ],
-         }}
-      
-  //       hwDecoderEnabled={1} // Enable hardware acceleration
-  // hwDecoderForced={1} // Force hardware acceleration
-
+        }}
+        hwDecoderEnabled={1} // Enable hardware acceleration
+        hwDecoderForced={1} // Force hardware acceleration
         onError={(error) => {
           console.error("Video Error:", error);
           alert("Failed to load video. Check the console for details.");
@@ -192,6 +258,7 @@ const VideoPlayer = ({ streamUrl }) => {
 const openCameraModal = async (device) => {
   console.log("Opening Camera Modal for:", device);
   try {
+      // await setReolinkVideoSettings(30, 3072); // Set new frame rate and bitrate
     const homeId = await fetchUserHomeId();
     const streamUrl = await fetchStreamUrl(homeId, device.entityId);
     setCameraStreamUrl(streamUrl);

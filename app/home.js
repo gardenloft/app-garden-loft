@@ -15,9 +15,8 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 import * as Device from "expo-device";
 import CallAlertModal from "../components/CallAlertModal";
 import { useLocalSearchParams } from "expo-router";
-import VideoCall from "../components/VideoCall"; // Import VideoCall component
 import MessageModalHandler from "../components/MessageModalHandler";
-import { useNavigation } from "@react-navigation/native";
+
 
 export default function Home() {
   const auth = getAuth();
@@ -54,11 +53,6 @@ export default function Home() {
           }
         }
       });
-      //   if (type === "text") {
-      //     setMessageData({ senderName: friendName, text, friendId });
-      //     setMessageModalVisible(true);
-      //   }
-      // });
 
     // Listener for notification taps
     responseListener.current =
@@ -82,7 +76,7 @@ export default function Home() {
         }
 
         if (type === "doorbell") {
-          console.log("Doorbell notification tapped. Opening Lights.js...");
+          console.log("Doorbell notification tapped. Opening DoorbellLive.js...");
           router.push({
             pathname: "/DoorbellLive",
             params: { streamUrl: stream_url },
@@ -176,8 +170,7 @@ export default function Home() {
             setCalleeUid(calleeUid);
 
             if (response.actionIdentifier === "ACCEPT_CALL") {
-              // Linking.openURL(`app-garden-loft://VideoSDK2?meetingId=${meetingId}&caller=${callerUid}&autoJoin=true`);
-              // await handleAcceptCall(meetingId, callerUid, callee);
+        
             } else if (response.actionIdentifier === "DECLINE_CALL") {
               handleDecline();
             }
@@ -369,10 +362,6 @@ export default function Home() {
           senderId={messageData.friendId}
           onOpenChat={(friendId, friendName) => {
             setMessageModalVisible(false);
-            // navigation.navigate("Text", {
-            //   friendId: messageData.senderId,
-            //   friendName: messageData.senderName,
-            // });
             router.push({
               pathname: "/OpenedChat",
               params: { friendId, friendName },
@@ -387,3 +376,4 @@ export default function Home() {
     </GestureHandlerRootView>
   );
 }
+
