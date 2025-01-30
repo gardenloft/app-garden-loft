@@ -31,14 +31,17 @@ const homeAssistantConfig = {
   home1: {
     url: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME1_URL,
     token: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME1_TOKEN, // Replace with your token
+    reolinkRTSP: process.env.EXPO_PUBLIC_HOME_ASSISTANT_REOLINK_RSTP_URL_SALLY
   },
   home2: {
     url: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME2_URL,
     token: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME2_TOKEN,
+    reolinkRTSP: process.env.EXPO_PUBLIC_HOME_ASSISTANT_REOLINK_RSTP_URL_MESSI
   },
   home3: {
     url: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME3_URL,
     token: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME3_TOKEN,
+    reolinkRTSP: process.env.EXPO_PUBLIC_HOME_ASSISTANT_REOLINK_RSTP_URL_GL
   },
 };
 
@@ -86,13 +89,105 @@ export const fetchStreamUrl = async (homeId, cameraEntityId) => {
     throw new Error(`Configuration for homeId ${homeId} not found.`);
   }
 
-  // Construct the RTSP URL for the camera
+  // Attempt to fetch HLS stream first
+  // const hlsUrl = `https://${cameraEntityId}/hls/stream.m3u8`; // Replace with your HLS URL logic
+  const hlsUrl = `http://192.168.1.100:8123/local/hls/stream.m3u8`; // Replace with your HLS URL logic
+  try {
+    const hlsResponse = await axios.get(hlsUrl, {
+      httpsAgent: new https.Agent({
+        rejectUnauthorized: false, // Allow self-signed certificates
+      }),
+    });
 
-  const rtspUrl = `rtsp://admin:Gardenloftrocks@192.168.1.100:554/Preview_01_main`; // Replace with your RTSP URL
+    if (hlsResponse.status === 200) {
+      console.log("HLS Stream Found:", hlsUrl);
+      return hlsUrl;
+    }
+  } catch (error) {
+    console.warn("HLS Stream not available, falling back to RTSP.");
+  }
 
-  console.log(`Generated RTSP URL: ${rtspUrl}`);
+  // Fallback to RTSP stream
+  const rtspUrl = "rtsp://admin:Gardenloftrocks@192.168.58.106:554/Preview_01_main"; // Messi's House
+  // const rtspUrl = config.reolinkRTSP; // Sally's House
+  console.log(`Fallback RTSP URL: ${rtspUrl}`);
   return rtspUrl;
 };
+
+// // Setting up custom frame and bitrate for reolink camera
+// const REOLINK_IP = "192.168.1.100"; // Change this to your camera's IP
+// const REOLINK_USERNAME = "admin"; // Update with your username
+// const REOLINK_PASSWORD = "Gardenloftrocks"; // Update with your password
+
+// // Function to login and get the session token from Reolink API
+// export const getReolinkToken = async () => {
+//   try {
+//     const response = await axios.post(
+//       // `https://${REOLINK_IP}/api.cgi?cmd=Login`,
+//       {
+//         cmd: "Login",
+//         // action: "0",
+//         param: {
+//           User: {
+//             version: "0",
+//             userName: REOLINK_USERNAME,
+//             password: REOLINK_PASSWORD,
+//           },
+//         },
+//       },
+//       { httpsAgent: { rejectUnauthorized: false } } // Bypass SSL certificate issues
+//     );
+
+//     if (response.data && response.data[0].code === 0) {
+//       const token = response.data[0].value.Token.name;
+//       console.log("Reolink Token:", token);
+//       return token;
+//     } else {
+//       console.error("Failed to authenticate with Reolink:", response.data);
+//       return null;
+//     }
+//   } catch (error) {
+//     console.error("Error fetching Reolink token:", error);
+//     return null;
+//   }
+// };
+
+// // Function to set the frame rate and bitrate dynamically
+// export const setReolinkVideoSettings = async (frameRate = 20, bitRate = 4096) => {
+//   const token = await getReolinkToken();
+//   if (!token) {
+//     console.error("No token received. Unable to set video settings.");
+//     return;
+//   }
+
+//   try {
+//     const response = await axios.post(
+//       `https://${REOLINK_IP}/api.cgi?cmd=SetEnc`,
+//       {
+//         cmd: "SetEnc",
+//         token,
+//         param: {
+//           Enc: {
+//             channel: 0,
+//             mainStream: {
+//               frameRate,
+//               bitRate,
+//             },
+//           },
+//         },
+//       },
+//       { httpsAgent: { rejectUnauthorized: false } } // Bypass SSL certificate issues
+//     );
+
+//     if (response.data && response.data[0].code === 0) {
+//       console.log(`Successfully updated video settings: FrameRate=${frameRate}, BitRate=${bitRate}`);
+//     } else {
+//       console.error("Failed to update video settings:", response.data);
+//     }
+//   } catch (error) {
+//     console.error("Error updating Reolink video settings:", error);
+//   }
+// };
 
 // Unified Device Control Function
 export const controlDevice = async ({
