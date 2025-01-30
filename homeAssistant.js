@@ -31,17 +31,17 @@ const homeAssistantConfig = {
   home1: {
     url: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME1_URL,
     token: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME1_TOKEN, // Replace with your token
-    reolinkRTSP: process.env.EXPO_PUBLIC_HOME_ASSISTANT_REOLINK_RSTP_URL_SALLY
+    reolinkRTSP: process.env.EXPO_PUBLIC_HOME_ASSISTANT_REOLINK_RSTP_URL_SALLY,
   },
   home2: {
     url: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME2_URL,
     token: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME2_TOKEN,
-    reolinkRTSP: process.env.EXPO_PUBLIC_HOME_ASSISTANT_REOLINK_RSTP_URL_MESSI
+    reolinkRTSP: process.env.EXPO_PUBLIC_HOME_ASSISTANT_REOLINK_RSTP_URL_MESSI,
   },
   home3: {
     url: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME3_URL,
     token: process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME3_TOKEN,
-    reolinkRTSP: process.env.EXPO_PUBLIC_HOME_ASSISTANT_REOLINK_RSTP_URL_GL
+    reolinkRTSP: process.env.EXPO_PUBLIC_HOME_ASSISTANT_REOLINK_RSTP_URL_GL,
   },
 };
 
@@ -91,7 +91,7 @@ export const fetchStreamUrl = async (homeId, cameraEntityId) => {
 
   // Attempt to fetch HLS stream first
   // const hlsUrl = `https://${cameraEntityId}/hls/stream.m3u8`; // Replace with your HLS URL logic
-  const hlsUrl = `http://192.168.1.100:8123/local/hls/stream.m3u8`; // Replace with your HLS URL logic
+  const hlsUrl = `http://<IP_ADDRESS>:8123/local/hls/stream.m3u8`; // Replace with your HLS URL logic
   try {
     const hlsResponse = await axios.get(hlsUrl, {
       httpsAgent: new https.Agent({
@@ -108,7 +108,7 @@ export const fetchStreamUrl = async (homeId, cameraEntityId) => {
   }
 
   // Fallback to RTSP stream
-  const rtspUrl = "rtsp://admin:Gardenloftrocks@192.168.58.106:554/Preview_01_main"; // Messi's House
+  const rtspUrl = ""; // Enter RTSP URL here
   // const rtspUrl = config.reolinkRTSP; // Sally's House
   console.log(`Fallback RTSP URL: ${rtspUrl}`);
   return rtspUrl;

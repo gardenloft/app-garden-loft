@@ -17,7 +17,6 @@ import CallAlertModal from "../components/CallAlertModal";
 import { useLocalSearchParams } from "expo-router";
 import MessageModalHandler from "../components/MessageModalHandler";
 
-
 export default function Home() {
   const auth = getAuth();
   const [user, setUser] = useState(null);
@@ -57,11 +56,9 @@ export default function Home() {
     // Listener for notification taps
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        const { type, friendId, friendName,stream_url } =
+        const { type, friendId, friendName, stream_url } =
           response.notification.request.content.data;
         console.log("Notification tapped:", { type, friendId, friendName });
-        
-      
 
         if (type === "text") {
           // Navigate to the opened chat and update state
@@ -72,18 +69,19 @@ export default function Home() {
             pathname: "/OpenedChat",
             params: { friendId, friendName },
           });
-            setMessageModalVisible(false); // Ensure the modal is closed
+          setMessageModalVisible(false); // Ensure the modal is closed
         }
 
         if (type === "doorbell") {
-          console.log("Doorbell notification tapped. Opening DoorbellLive.js...");
+          console.log(
+            "Doorbell notification tapped. Opening DoorbellLive.js..."
+          );
           router.push({
             pathname: "/DoorbellLive",
             params: { streamUrl: stream_url },
           });
         }
-  });
-
+      });
 
     return () => {
       if (notificationListener.current) {
@@ -170,7 +168,6 @@ export default function Home() {
             setCalleeUid(calleeUid);
 
             if (response.actionIdentifier === "ACCEPT_CALL") {
-        
             } else if (response.actionIdentifier === "DECLINE_CALL") {
               handleDecline();
             }
@@ -195,18 +192,19 @@ export default function Home() {
   useEffect(() => {
     const notificationListener = Notifications.addNotificationReceivedListener(
       async (notification) => {
-        const { callerUid } =
-          notification.request.content.data;
-        
+        const { callerUid } = notification.request.content.data;
+
         // Fetch caller's imageUrl from Firestore
         const callerDoc = await getDoc(doc(FIRESTORE_DB, "users", callerUid));
-        const callerImageUrl = callerDoc.exists() ? callerDoc.data().imageUrl : null;
+        const callerImageUrl = callerDoc.exists()
+          ? callerDoc.data().imageUrl
+          : null;
         setCallerImageUrl(callerImageUrl); // Set caller image URL
-      
       }
     );
-  
-    return () => Notifications.removeNotificationSubscription(notificationListener);
+
+    return () =>
+      Notifications.removeNotificationSubscription(notificationListener);
   }, []);
 
   const handleAcceptCall = async (meetingId, callerUid, callee) => {
@@ -376,4 +374,3 @@ export default function Home() {
     </GestureHandlerRootView>
   );
 }
-
