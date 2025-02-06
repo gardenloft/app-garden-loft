@@ -104,11 +104,11 @@ export const fetchStreamUrl = async (homeId, cameraEntityId) => {
       return hlsUrl;
     }
   } catch (error) {
-    console.warn("HLS Stream not available, falling back to RTSP.");
+    // console.warn("HLS Stream not available, falling back to RTSP.");
   }
 
   // Fallback to RTSP stream
-  const rtspUrl = "rtsp://admin:Gardenloftrocks@192.168.58.106:554/Preview_01_main"; // Add RTSP URL 
+ 
   // const rtspUrl = config.reolinkRTSP; // Sally's House
   console.log(`Fallback RTSP URL: ${rtspUrl}`);
   return rtspUrl;
