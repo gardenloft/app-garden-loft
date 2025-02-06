@@ -40,7 +40,7 @@ const DoorbellLive = () => {
           source={{
             uri: streamUrl,
             initOptions: [
-              "--network-caching=200",
+              "--network-caching=20",
               "--rtsp-tcp",
               "--no-stats",
               "--clock-jitter=0",
