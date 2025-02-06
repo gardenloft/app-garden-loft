@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   Modal,
+  ActivityIndicator
 } from "react-native";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import Carousel from "react-native-reanimated-carousel";
@@ -33,6 +34,45 @@ const Lights = () => {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const carouselRef = useRef(null);
   const [cameraStreamUrl, setCameraStreamUrl] = useState(null);
+  const [sensiboModalVisible, setSensiboModalVisible] = useState(false);
+  const [sensiboData, setSensiboData] = useState(null);
+  const [sensiboLoading, setSensiboLoading] = useState(false);
+
+  const fetchSensiboData = async () => {
+    setSensiboLoading(true);
+    try {
+      const homeId = await fetchUserHomeId();
+      const entities = await getFilteredEntities(homeId, ["sensor"]);
+
+      const co2 = entities.find(
+        (entity) => entity.entity_id === "sensor.sally_s_device_airq_co2"
+      );
+      const tvoc = entities.find(
+        (entity) => entity.entity_id === "sensor.sally_s_device_airq_tvoc"
+      );
+      const temperature = entities.find(
+        (entity) => entity.entity_id.includes("ensor.sally_current_temperature")
+      );
+      const humidity = entities.find(
+        (entity) => entity.entity_id.includes("sensor.sally_current_humidity")
+      );
+
+      setSensiboData({ co2, tvoc, temperature, humidity });
+    } catch (error) {
+      console.error("Failed to fetch Sensibo data:", error);
+    } finally {
+      setSensiboLoading(false);
+    }
+  };
+
+  const openSensiboModal = () => {
+    fetchSensiboData();
+    setSensiboModalVisible(true);
+  };
+
+  const closeSensiboModal = () => {
+    setSensiboModalVisible(false);
+  };
 
   const videoRef = useRef(null);
 
@@ -114,8 +154,8 @@ const Lights = () => {
               "--clock-synchro=0", // Synchronize playback
             ],
           }}
-          hwDecoderEnabled={1} // Enable hardware acceleration
-          hwDecoderForced={1} // Force hardware acceleration
+          // hwDecoderEnabled={1} // Enable hardware acceleration
+          // hwDecoderForced={1} // Force hardware acceleration
           onError={(error) => {
             console.error("Video Error:", error);
             alert("Failed to load video. Check the console for details.");
@@ -180,7 +220,7 @@ const Lights = () => {
       // Fetch the updated state to sync with Home Assistant
       const updatedEntities = await getFilteredEntities(
         payload.homeId,
-        ["media_player", "remote", "light", "switch", "camera"] // Include switch domain for plug
+        ["media_player", "remote", "light", "switch", "camera", "climate"] // Include switch domain for plug
       );
 
       // Update state dynamically
@@ -261,7 +301,8 @@ const Lights = () => {
       } else if (item.domain === "lock") {
         handleAction(item, item.state === "locked" ? "unlock" : "lock");
       } else if (item.domain === "climate") {
-        handleAction(item, "set_temperature", 22); // Example for setting temperature
+        // handleAction(item, "set_temperature", 22); // Example for setting temperature
+        openSensiboModal(item);
       } else if (item.domain === "lock") {
         handleDeviceAction(item, "toggle", item.state === "unlocked");
       }
@@ -769,6 +810,27 @@ const Lights = () => {
             //   }}
             // />
             <Text>Loading camera feed...</Text>
+          )}
+        </View>
+      </Modal>
+
+      {/* sensibo modal */}
+      <Modal visible={sensiboModalVisible} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <Pressable style={styles.closeButton} onPress={closeSensiboModal}>
+            <FontAwesome name="close" size={24} color="black" />
+          </Pressable>
+
+          {sensiboLoading ? (
+            <ActivityIndicator size="large" color="#f3b718" />
+          ) : (
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Sensibo Data</Text>
+              <Text>CO2: {sensiboData?.co2?.state || "N/A"} ppm</Text>
+              <Text>TVOC: {sensiboData?.tvoc?.state || "N/A"} ppb</Text>
+              <Text>Temperature: {sensiboData?.temperature?.state || "N/A"} °C</Text>
+              <Text>Humidity: {sensiboData?.humidity?.state || "N/A"} %</Text>
+            </View>
           )}
         </View>
       </Modal>
