@@ -22,7 +22,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sallydough.appgardenloft",
+      "bundleIdentifier": "com.gardenloft.appgardenloft",
       "googleServicesFile": "./GoogleService-Info.plist",
       "buildNumber": "23",
       "infoPlist": {
@@ -67,7 +67,7 @@
      ["@config-plugins/react-native-webrtc"]
     ],
     "android": {
-      "package": "com.sallydough.appgardenloft",
+      "package": "com.gardenloft.appgardenloft",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -130,7 +130,7 @@
       }
     ]
   ],
-  "owner": "sallydough",
+  "owner": "garden-loft-app-team",
   "updates": {
     "url": "https://u.expo.dev/598d65e5-14db-479e-a297-3561c87ddbc5",
     "requestHeaders": {
