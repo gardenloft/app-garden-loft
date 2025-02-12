@@ -108,7 +108,7 @@ export const fetchStreamUrl = async (homeId, cameraEntityId) => {
   }
 
   // Fallback to RTSP stream
- 
+
   // const rtspUrl = config.reolinkRTSP; // Sally's House
   console.log(`Fallback RTSP URL: ${rtspUrl}`);
   return rtspUrl;

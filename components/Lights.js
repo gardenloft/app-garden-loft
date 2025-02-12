@@ -578,7 +578,7 @@ const Lights = () => {
           </View>
 
           {/* Bottom Section */}
-          {/* <View style={styles.navControls}>
+          <View style={styles.navControls}>
 
             <View style={styles.navControlsTop}>
               <Pressable
@@ -649,9 +649,9 @@ const Lights = () => {
                 <FontAwesome name="chevron-down" size={24} color="black" />
               </Pressable>
             </View>
-          </View> */}
+          </View>
 
-          {/* <View style={styles.navControls}>
+          <View style={styles.navControls}>
             <View style={styles.navControlsTop}>
               <Pressable
                 style={styles.navButton}
@@ -701,7 +701,7 @@ const Lights = () => {
                 <Text style={styles.iconButtonText}>Exit</Text>
               </Pressable>
             </View>
-          </View> */}
+          </View>
         </View>
       </View>
     );
