@@ -32,7 +32,10 @@
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
         "NSLocalNetworkUsageDescription": "This app requires access to your local network to display the camera stream.",
-        "NSBonjourServices": ["_http._tcp", "_rtsp._tcp"],
+        "NSBonjourServices": [
+          "_http._tcp",
+          "_rtsp._tcp"
+        ],
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true,
           "NSExceptionDomains": {
@@ -54,7 +57,8 @@
             }
           }
         }
-      }
+      },
+      "bitcode": false
     },
     "extra": {
       "eas": {
@@ -64,7 +68,9 @@
     "plugins": [
       "expo-router",
       "react-native-video",
-     ["@config-plugins/react-native-webrtc"]
+      [
+        "@config-plugins/react-native-webrtc"
+      ]
     ],
     "android": {
       "package": "com.gardenloft.appgardenloft",
@@ -78,10 +84,19 @@
         "FOREGROUND_LOCATION",
         "WAKE_LOCK",
         "INTERNET",
-        "ACCESS_NETWORK_STATE"
+        "ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.CAMERA",
+        "android.permission.INTERNET",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.WAKE_LOCK",
+        "android.permission.BLUETOOTH"
       ],
       "googleServicesFile": "./google-services.json"
-    }
+    },
+    "owner": "garden-loft-app-team"
   },
   "web": {
     "favicon": "./assets/favicon.png",
