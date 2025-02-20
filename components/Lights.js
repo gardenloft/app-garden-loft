@@ -6,7 +6,8 @@ import {
   StyleSheet,
   Dimensions,
   Modal,
-  ActivityIndicator
+  ActivityIndicator,
+  Button,
 } from "react-native";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import Carousel from "react-native-reanimated-carousel";
@@ -33,16 +34,28 @@ const Lights = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedDevice, setSelectedDevice] = useState(null);
   const carouselRef = useRef(null);
+  // doorbell camera states:
   const [cameraStreamUrl, setCameraStreamUrl] = useState(null);
+  // sensibo states
   const [sensiboModalVisible, setSensiboModalVisible] = useState(false);
   const [sensiboData, setSensiboData] = useState(null);
   const [sensiboLoading, setSensiboLoading] = useState(false);
+  const [acState, setAcState] = useState("off");
+  const [currentMode, setCurrentMode] = useState("off");
+  const [targetTemp, setTargetTemp] = useState(20);
 
   const fetchSensiboData = async () => {
     setSensiboLoading(true);
     try {
       const homeId = await fetchUserHomeId();
-      const entities = await getFilteredEntities(homeId, ["sensor"]);
+      const entities = await getFilteredEntities(homeId, ["climate", "sensor"]);
+
+      const climateDevice = entities.find(
+        (entity) => entity.entity_id === "climate.sally_s_device"
+      );
+
+      // const hvacModes = climateDevice?.attributes?.hvac_modes || [];
+      const hvacModes = climateDevice?.attributes?.hvac_modes || [];
 
       const co2 = entities.find(
         (entity) => entity.entity_id === "sensor.sally_s_device_airq_co2"
@@ -50,14 +63,29 @@ const Lights = () => {
       const tvoc = entities.find(
         (entity) => entity.entity_id === "sensor.sally_s_device_airq_tvoc"
       );
-      const temperature = entities.find(
-        (entity) => entity.entity_id.includes("ensor.sally_current_temperature")
+      const temperature = entities.find((entity) =>
+        entity.entity_id.includes("sensor.sally_current_temperature")
       );
-      const humidity = entities.find(
-        (entity) => entity.entity_id.includes("sensor.sally_current_humidity")
+      const humidity = entities.find((entity) =>
+        entity.entity_id.includes("sensor.sally_current_humidity")
       );
 
-      setSensiboData({ co2, tvoc, temperature, humidity });
+      const targetTemperatureEntity = entities.find((entity) =>
+        entity.entity_id.includes("sensor.sally_temperature")
+      );
+
+      setSensiboData({
+        co2,
+        tvoc,
+        temperature,
+        humidity,
+        hvacModes,
+        targetTemperatureEntity,
+        entityId: climateDevice?.entity_id,
+      });
+      setTargetTemp(parseFloat(targetTemperatureEntity?.state) || 20);
+      setAcState(climateDevice?.state);
+      setCurrentMode(climateDevice?.state);
     } catch (error) {
       console.error("Failed to fetch Sensibo data:", error);
     } finally {
@@ -72,6 +100,59 @@ const Lights = () => {
 
   const closeSensiboModal = () => {
     setSensiboModalVisible(false);
+  };
+
+  // Sensibo Air conditioning Controls
+  const adjustTemperature = async (adjustment) => {
+    try {
+      const homeId = await fetchUserHomeId();
+      const currentTemp = parseFloat(targetTemp); // Use local state for smoother updates
+      const newTemp = currentTemp + adjustment;
+
+      if (newTemp >= 8 && newTemp <= 30) {
+        setTargetTemp(newTemp);
+
+        await controlDevice({
+          homeId: homeId,
+          domain: "climate",
+          entityId: sensiboData?.entityId, // This points to "climate.sally_s_device"
+          action: "set_temperature",
+          value: newTemp,
+        });
+
+        console.log(`Temperature set to ${newTemp}°C`);
+      } else {
+        console.warn("Temperature out of range (8°C - 30°C)");
+      }
+    } catch (error) {
+      console.error("Failed to adjust temperature:", error);
+    }
+  };
+
+  const toggleAC = async () => {
+    const newState = acState === "off" ? "on" : "off";
+    setAcState(newState);
+
+    await controlDevice({
+      homeId: await fetchUserHomeId(),
+      domain: "climate",
+      entityId: sensiboData?.entityId,
+      action: newState === "on" ? "turn_on" : "turn_off", // Correct action call
+    });
+  };
+
+  const changeMode = async (mode) => {
+    setCurrentMode(mode);
+    await controlDevice({
+      homeId: await fetchUserHomeId(),
+      domain: "climate",
+      entityId: sensiboData.entityId,
+      action: "set_hvac_mode",
+      data: {
+        entity_id: sensiboData.entityId,
+        hvac_mode: mode,
+      },
+    });
   };
 
   const videoRef = useRef(null);
@@ -579,7 +660,6 @@ const Lights = () => {
 
           {/* Bottom Section */}
           <View style={styles.navControls}>
-
             <View style={styles.navControlsTop}>
               <Pressable
                 style={styles.navButton}
@@ -815,7 +895,11 @@ const Lights = () => {
       </Modal>
 
       {/* sensibo modal */}
-      <Modal visible={sensiboModalVisible} transparent={true} animationType="slide">
+      <Modal
+        visible={sensiboModalVisible}
+        transparent={true}
+        animationType="slide"
+      >
         <View style={styles.modalContainer}>
           <Pressable style={styles.closeButton} onPress={closeSensiboModal}>
             <FontAwesome name="close" size={24} color="black" />
@@ -828,8 +912,54 @@ const Lights = () => {
               <Text style={styles.modalTitle}>Sensibo Data</Text>
               <Text>CO2: {sensiboData?.co2?.state || "N/A"} ppm</Text>
               <Text>TVOC: {sensiboData?.tvoc?.state || "N/A"} ppb</Text>
-              <Text>Temperature: {sensiboData?.temperature?.state || "N/A"} °C</Text>
-              <Text>Humidity: {sensiboData?.humidity?.state || "N/A"} %</Text>
+              <Text>
+                Current Temperature: {sensiboData?.temperature?.state || "N/A"}{" "}
+                °C
+              </Text>
+              <Text>
+                Current Humidity: {sensiboData?.humidity?.state || "N/A"} %
+              </Text>
+
+              <Text style={styles.modalTitle}>Air Conditioning Controls</Text>
+              <Button
+                title={acState === "off" ? "Turn On AC" : "Turn Off AC"}
+                onPress={toggleAC}
+              />
+
+              
+              <Text style={styles.modalTitle}>Set Temperature:</Text>
+              <View style={styles.tempControlsCircle}>
+                <Pressable
+                  style={styles.circleButton}
+                  onPress={() => adjustTemperature(-1)}
+                >
+                  <Text style={styles.buttonText}>-</Text>
+                </Pressable>
+                <Text>{targetTemp}°C</Text>
+                <Pressable
+                  style={styles.circleButton}
+                  onPress={() => adjustTemperature(1)}
+                >
+                  <Text style={styles.buttonText}>+</Text>
+                </Pressable>
+              </View>
+
+              <Text style={styles.modalTitle}>Mode:</Text>
+              <View style={styles.modeContainer}>
+              {sensiboData?.hvacModes?.map((mode) => (
+                <Pressable
+                  key={mode}
+                  style={[
+                    styles.modeButton,
+                    currentMode === mode && styles.activeMode,
+                  ]}
+                  onPress={() => changeMode(mode)}
+                >
+                  <Text>{mode}</Text>
+                </Pressable>
+            
+              ))}
+              </View>
             </View>
           )}
         </View>
@@ -987,9 +1117,42 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  modeContainer: {
+    flexDirection: "row",
+    gap: 3,
+    justifyContent: "center",
+    flexWrap: "wrap",
+    marginTop: 10,
+  },
+  modeButton: {
+    padding: 10,
+    marginVertical: 5,
+    backgroundColor: "#e0e0e0",
+    borderRadius: 5,
+  },
+  activeMode: {
+    backgroundColor: "#f3b718",
+  },
+  tempControlsCircle: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  circleButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#f3b718",
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 10,
+  },
+  buttonText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#fff",
+  },
 });
 
 export default Lights;
-
-
-
