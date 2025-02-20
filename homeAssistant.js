@@ -115,7 +115,7 @@ export const fetchStreamUrl = async (homeId, cameraEntityId) => {
 };
 
 // // Setting up custom frame and bitrate for reolink camera
-// const REOLINK_IP = "192.168.1.100"; // Change this to your camera's IP
+// const REOLINK_IP = ""; // Change this to your camera's IP
 // const REOLINK_USERNAME = "admin"; // Update with your username
 // const REOLINK_PASSWORD = ""; // Update with your password
 
