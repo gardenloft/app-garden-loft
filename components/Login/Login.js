@@ -21,6 +21,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "expo-router/build/useNavigation";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
+import { createClient } from "@supabase/supabase-js";
+
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
@@ -57,6 +59,139 @@ const Login = () => {
     checkRememberedUser();
   }, []);
 
+  // const signIn = async () => {
+  //   if (!acceptEULA) {
+  //     alert("You must accept the EULA to proceed.");
+  //     return;
+  //   }
+  //   setLoading(true);
+  //   try {
+  //     const response = await signInWithEmailAndPassword(
+  //       auth,
+  //       email.trim(),
+  //       password
+  //     );
+  //     if (rememberMe) {
+  //       await AsyncStorage.setItem(
+  //         "rememberedUser",
+  //         JSON.stringify({ email, password })
+  //       );
+  //     }
+  //     console.log(response);
+  //     navigation.navigate("home");
+  //   } catch (error) {
+  //     console.log(error);
+  //     alert("Sign in failed: " + error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // const signUp = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await createUserWithEmailAndPassword(
+  //       auth,
+  //       email.trim(),
+  //       password
+  //     );
+  //     const user = response.user;
+  //     await setDoc(doc(FIRESTORE_DB, "users", user.uid), {
+  //       email: email,
+  //       userName: userName,
+  //       uid: user.uid, // Ensure the UID is saved
+  //     });
+  //     alert("Account created successfully! Check your email.");
+  //   } catch (error) {
+  //     console.error(error);
+  //     alert("Sign up failed: " + error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const signUp = async () => {
+    setLoading(true);
+    try {
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email.trim(),
+        password
+      );
+      const user = response.user; // ✅ Keeping this as 'user'
+  
+      // 🔄 Save user data in Firestore
+      await setDoc(doc(FIRESTORE_DB, "users", user.uid), {
+        email: email,
+        userName: userName,
+        uid: user.uid,
+      });
+  
+      // ✅ Insert into Supabase residents table
+      let { data, error } = await supabase
+        .from("residents") // ✅ Ensure you're using `residents`
+        .insert([{ 
+          firebase_uid: user.uid, // ✅ Using 'user.uid' as before
+          name: userName,
+          email: email,
+        }], { returning: "representation" })// ✅ Force return inserted data
+        .select("resident_id"); // ✅ Get the resident ID
+        console.log("Supabase Insert Response:", data); // 🔍 Debugging
+  
+      if (error) throw error;
+  
+      alert("Account created successfully!");
+  
+      // ✅ Log signup activity
+      await logResidentActivity(user.uid, "New resident registered");
+  
+    } catch (error) {
+      console.error("Sign up failed:", error);
+      alert("Sign up failed: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+
+  //     // 🔄 Sync user to Supabase
+  //     await syncUserWithSupabase(user.uid, email, userName);
+
+  //     alert("Account created successfully! Check your email.");
+  //   } catch (error) {
+  //     console.error(error);
+  //     alert("Sign up failed: " + error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const logResidentActivity = async (firebaseUid, eventType, metadata = {}) => {
+    // Find resident ID using Firebase UID
+    let { data: resident, error } = await supabase
+      .from("residents")
+      .select("resident_id")
+      .eq("firebase_uid", firebaseUid)
+      .single();
+  
+    if (error || !resident) {
+      console.error("Error fetching resident ID:", error);
+      return;
+    }
+  
+    // Insert activity log
+    await supabase.from("activities").insert([
+      {
+        resident_id: resident.resident_id,
+        event_type: eventType,
+        metadata: metadata,
+      }
+    ]);
+  };
+  
+
+  
+
+  // ✅ Sign In (Firebase Auth + Supabase Check)
   const signIn = async () => {
     if (!acceptEULA) {
       alert("You must accept the EULA to proceed.");
@@ -69,14 +204,21 @@ const Login = () => {
         email.trim(),
         password
       );
+      const user = response.user;
+
+      // 🔄 Ensure user exists in Supabase (Sync Firebase UID)
+      await syncUserWithSupabase(user.uid, email);
+
       if (rememberMe) {
         await AsyncStorage.setItem(
           "rememberedUser",
           JSON.stringify({ email, password })
         );
       }
-      console.log(response);
       navigation.navigate("home");
+
+      // 📜 Log user login in Supabase
+      await logUserActivity(user.uid, "User signed in");
     } catch (error) {
       console.log(error);
       alert("Sign in failed: " + error.message);
@@ -85,27 +227,43 @@ const Login = () => {
     }
   };
 
-  const signUp = async () => {
-    setLoading(true);
-    try {
-      const response = await createUserWithEmailAndPassword(
-        auth,
-        email.trim(),
-        password
-      );
-      const user = response.user;
-      await setDoc(doc(FIRESTORE_DB, "users", user.uid), {
-        email: email,
-        userName: userName,
-        uid: user.uid, // Ensure the UID is saved
-      });
-      alert("Account created successfully! Check your email.");
-    } catch (error) {
-      console.error(error);
-      alert("Sign up failed: " + error.message);
-    } finally {
-      setLoading(false);
+  // ✅ Sync Firebase User to Supabase (Ensures UID Linking)
+  const syncUserWithSupabase = async (firebase_uid, email, userName = "") => {
+    // 🔎 Check if user exists in Supabase
+    const { data, error } = await supabase
+      .from("residents")
+      .select("firebase_uid")
+      .eq("firebase_uid", firebase_uid)
+      .single();
+
+    if (error || !data) {
+      // 🔄 User doesn't exist, create new record in Supabase
+      const { error: insertError } = await supabase.from("residents").insert([
+        {
+          firebase_uid,  // ✅ Ensure correct column name
+        email,
+        name: userName, // ✅ Ensure correct column name
+        created_at: new Date(),
+        },
+      ]);
+
+      if (insertError) {
+        console.error("Error inserting user into Supabase:", insertError);
+      } else {
+        console.log("User synced with Supabase:", firebase_uid);
+      }
     }
+  };
+
+  // 📜 Log User Activity in Supabase
+  const logUserActivity = async (uid, activity) => {
+    await supabase.from("activities").insert([
+      {
+        uid,
+        activity,
+        timestamp: new Date(),
+      },
+    ]);
   };
 
   return (
@@ -187,6 +345,16 @@ const Login = () => {
                   Linking.openURL("https://www.youtube.com/t/terms")
                 }
               >
+              <Text
+                style={styles.link}
+                onPress={() =>
+                  Linking.openURL(
+                    "https://developers.google.com/youtube/terms/api-services-terms-of-service"
+                  )
+                }
+              >
+                YouTube API Services Terms of Service
+              </Text>
                 YouTube Terms of Service
               </Text>
               ,{" "}
@@ -199,16 +367,6 @@ const Login = () => {
                 Google Privacy Policy
               </Text>
               , and{" "}
-              <Text
-                style={styles.link}
-                onPress={() =>
-                  Linking.openURL(
-                    "https://developers.google.com/youtube/terms/api-services-terms-of-service"
-                  )
-                }
-              >
-                YouTube API Services Terms of Service
-              </Text>
               .
             </Text>
           </View>
@@ -1003,3 +1161,4 @@ export default Login;
 //     fontSize: 18,
 //   },
 // });
+
