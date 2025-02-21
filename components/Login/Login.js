@@ -21,7 +21,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "expo-router/build/useNavigation";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
-import { createClient } from "@supabase/supabase-js";
+import supabase from "../../SupabaseConfig";
+
+
 
 
 const { width: viewportWidth, height: viewportHeight } =
