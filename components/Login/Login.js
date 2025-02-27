@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -21,7 +21,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "expo-router/build/useNavigation";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
-import supabase from "../../SupabaseConfig";
+import { createClient } from "@supabase/supabase-js";
+import supabase from "../../SupabaseConfig"; // ✅ Correct import
+import { getResidentId, createNewResident } from "../SupabaseService";
+import { logUserActivity } from "../EventLogger";
+
+
 
 
 
@@ -129,30 +134,43 @@ const Login = () => {
         uid: user.uid,
       });
   
-      // ✅ Insert into Supabase residents table
-      let { data, error } = await supabase
-        .from("residents") // ✅ Ensure you're using `residents`
-        .insert([{ 
-          firebase_uid: user.uid, // ✅ Using 'user.uid' as before
-          name: userName,
-          email: email,
-        }], { returning: "representation" })// ✅ Force return inserted data
-        .select("resident_id"); // ✅ Get the resident ID
-        console.log("Supabase Insert Response:", data); // 🔍 Debugging
+     // ✅ Insert into Supabase `residents` table
+     await createNewResident(user.uid, email);
+
+     alert("Account created successfully!");
+
+     // ✅ Log Signup Activity
+     await logUserActivity(user.uid, "New resident registered");
+   } catch (error) {
+     console.error("Sign up failed:", error);
+     alert("Sign up failed: " + error.message);
+   } finally {
+     setLoading(false);
+   }
+    //   // ✅ Insert into Supabase residents table
+    //   let { data, error } = await supabase
+    //     .from("residents") // ✅ Ensure you're using `residents`
+    //     .insert([{ 
+    //       firebase_uid: user.uid, // ✅ Using 'user.uid' as before
+    //       name: userName,
+    //       email: email,
+    //     }], { returning: "representation" })// ✅ Force return inserted data
+    //     .select("resident_id"); // ✅ Get the resident ID
+    //     console.log("Supabase Insert Response:", data); // 🔍 Debugging
   
-      if (error) throw error;
+    //   if (error) throw error;
   
-      alert("Account created successfully!");
+    //   alert("Account created successfully!");
   
-      // ✅ Log signup activity
-      await logResidentActivity(user.uid, "New resident registered");
+    //   // ✅ Log signup activity
+    //   await logResidentActivity(user.uid, "New resident registered");
   
-    } catch (error) {
-      console.error("Sign up failed:", error);
-      alert("Sign up failed: " + error.message);
-    } finally {
-      setLoading(false);
-    }
+    // } catch (error) {
+    //   console.error("Sign up failed:", error);
+    //   alert("Sign up failed: " + error.message);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
   
 
@@ -167,28 +185,28 @@ const Login = () => {
   //     setLoading(false);
   //   }
   // };
-  const logResidentActivity = async (firebaseUid, eventType, metadata = {}) => {
-    // Find resident ID using Firebase UID
-    let { data: resident, error } = await supabase
-      .from("residents")
-      .select("resident_id")
-      .eq("firebase_uid", firebaseUid)
-      .single();
+  // const logResidentActivity = async (firebaseUid, eventType, metadata = {}) => {
+  //   // Find resident ID using Firebase UID
+  //   let { data: resident, error } = await supabase
+  //     .from("residents")
+  //     .select("resident_id")
+  //     .eq("firebase_uid", firebaseUid)
+  //     .single();
   
-    if (error || !resident) {
-      console.error("Error fetching resident ID:", error);
-      return;
-    }
+  //   if (error || !resident) {
+  //     console.error("Error fetching resident ID:", error);
+  //     return;
+  //   }
   
-    // Insert activity log
-    await supabase.from("activities").insert([
-      {
-        resident_id: resident.resident_id,
-        event_type: eventType,
-        metadata: metadata,
-      }
-    ]);
-  };
+  //   // Insert activity log
+  //   await supabase.from("activities").insert([
+  //     {
+  //       resident_id: resident.resident_id,
+  //       event_type: eventType,
+  //       metadata: metadata,
+  //     }
+  //   ]);
+  // };
   
 
   
@@ -209,7 +227,10 @@ const Login = () => {
       const user = response.user;
 
       // 🔄 Ensure user exists in Supabase (Sync Firebase UID)
-      await syncUserWithSupabase(user.uid, email);
+      // await syncUserWithSupabase(user.uid, email);
+
+      // 🔄 Ensure user exists in Supabase (Sync Firebase UID)
+      await getResidentId(user.uid, email);
 
       if (rememberMe) {
         await AsyncStorage.setItem(
@@ -257,15 +278,19 @@ const Login = () => {
     }
   };
 
-  // 📜 Log User Activity in Supabase
-  const logUserActivity = async (uid, activity) => {
-    await supabase.from("activities").insert([
-      {
-        uid,
-        activity,
-        timestamp: new Date(),
-      },
-    ]);
+ // ✅ Function to Log User Activity in Supabase
+const logUserActivity = async (firebaseUid, eventType) => {
+  const residentId = await getResidentId(firebaseUid, "");
+
+  if (!residentId) return;
+
+  await supabase.from("activities").insert([
+    {
+      resident_id: residentId,
+      event_type: eventType,
+      timestamp: new Date(),
+    },
+  ]);
   };
 
   return (
@@ -1163,4 +1188,5 @@ export default Login;
 //     fontSize: 18,
 //   },
 // });
+
 

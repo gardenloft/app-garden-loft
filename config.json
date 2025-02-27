@@ -1,0 +1,160 @@
+{
+  "expo": {
+    "name": "Garden Loft",
+    "slug": "app-garden-loft",
+    "scheme": "app-garden-loft",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "version": "1.2.0",
+    "orientation": "default",
+    "icon": "./assets/garden loft logo app.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/garden loft logo app.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gardenloft.appgardenloft",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "buildNumber": "23",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
+        "NSLocalNetworkUsageDescription": "This app requires access to your local network to display the camera stream.",
+        "NSBonjourServices": [
+          "_http._tcp",
+          "_rtsp._tcp"
+        ],
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true,
+          "NSExceptionDomains": {
+            "youtube.com": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSIncludesSubdomains": true,
+              "NSExceptionRequiresForwardSecrecy": false
+            },
+            "UISupportedInterfaceOrientations": [
+              "UIInterfaceOrientationPortrait",
+              "UIInterfaceOrientationPortraitUpsideDown",
+              "UIInterfaceOrientationLandscapeLeft",
+              "UIInterfaceOrientationLandscapeRight"
+            ],
+            "ytimg.com": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSIncludesSubdomains": true,
+              "NSExceptionRequiresForwardSecrecy": false
+            }
+          }
+        }
+      },
+      "bitcode": false
+    },
+    "extra": {
+      "eas": {
+        "projectId": "598d65e5-14db-479e-a297-3561c87ddbc5"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "react-native-video",
+      [
+        "@config-plugins/react-native-webrtc"
+      ]
+    ],
+    "android": {
+      "package": "com.gardenloft.appgardenloft",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION",
+        "FOREGROUND_LOCATION",
+        "WAKE_LOCK",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.CAMERA",
+        "android.permission.INTERNET",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.WAKE_LOCK",
+        "android.permission.BLUETOOTH"
+      ],
+      "googleServicesFile": "./google-services.json"
+    },
+    "owner": "garden-loft-app-team"
+  },
+  "web": {
+    "favicon": "./assets/favicon.png",
+    "bundler": "metro"
+  },
+  "extra": {
+    "eas": {
+      "projectId": "598d65e5-14db-479e-a297-3561c87ddbc5"
+    },
+    "HOME_ASSISTANT_URL": "${EXPO_PUBLIC_HOME_ASSISTANT_URL}",
+    "HOME_ASSISTANT_TOKEN": "${EXPO_PUBLIC_HOME_ASSISTANT_TOKEN}",
+    "SUPABASE_URL": "process.env.EXPO_PUBLIC_SUPABASE_URL",
+    "SUPABASE_ANON_KEY": "process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY"
+
+ 
+  
+  },
+  "plugins": [
+    "expo-notifications",
+    "expo-router",
+    "@config-plugins/react-native-webrtc",
+    "expo-location",
+    {
+      "isAndroidBackgroundLocationEnabled": true,
+      "isAndroidForegroundServiceEnabled": true
+    },
+    "@videosdk.live/expo-config-plugin",
+    [
+      "@config-plugins/react-native-webrtc",
+      {
+        "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+        "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone"
+      }
+    ],
+    [
+      "@config-plugins/react-native-callkeep",
+      {
+        "ios": {
+          "appName": "GardenLoft",
+          "supportsVideo": true,
+          "maximumCallGroups": "5",
+          "maximumCallsPerCallGroup": "5"
+        },
+        "android": {
+          "alertTitle": "Permissions required",
+          "alertDescription": "This application needs to access your phone accounts",
+          "cancelButton": "Cancel",
+          "okButton": "OK",
+          "additionalPermissions": []
+        }
+      }
+    ]
+  ],
+  "owner": "garden-loft-app-team",
+  "updates": {
+    "url": "https://u.expo.dev/598d65e5-14db-479e-a297-3561c87ddbc5",
+    "requestHeaders": {
+      "expo-channel-name": "main"
+    }
+  }
+}
