@@ -24,6 +24,7 @@ import {
 import { FIRESTORE_DB } from "../FirebaseConfig"; // Import your Firestore instance
 import { getAuth } from "firebase/auth";
 import YouTubeVideoPlayer from "../components/YouTubeVideoPlayer.js";
+import { logAppUsageEvent } from "../components/EventLogger"; // ✅ Import updated logger
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
@@ -343,18 +344,107 @@ const Entertainment = ({ videoId, onClose }) => {
     }
   };
 
-  const openEpisodeModal = (episode) => {
-    setSelectedVideoId(episode.videoId);
-    setIsVideoModalVisible(true);
-    updateWatchedVideos(episode.videoId, episode.name, episode.title);
-    updateAlreadyWatched(episode.videoId, episode.title);
+//   const openEpisodeModal = (episode) => {
+//     setSelectedVideoId(episode.videoId);
+//     setIsVideoModalVisible(true);
+//     updateWatchedVideos(episode.videoId, episode.name, episode.title);
+//     updateAlreadyWatched(episode.videoId, episode.title);
 
-    setSelectedEpisodes((prevEpisodes) =>
-      prevEpisodes.map((ep) =>
-        ep.id === episode.id ? { ...ep, isWatched: true } : ep
-      )
-    );
-  };
+//     setSelectedEpisodes((prevEpisodes) =>
+//       prevEpisodes.map((ep) =>
+//         ep.id === episode.id ? { ...ep, isWatched: true } : ep
+//       )
+//     );
+//   };
+
+//    // 📜 Log YouTube video play in `app_usage_event_log`
+//    if (user) {
+//     await logAppUsageEvent(
+//       user.uid,                 // Firebase User UID
+//       "Youtube_video_clicked",  // Event Type
+//       "Expo App",               // Source
+//       {
+//         video_title: episode.title,
+//         video_url: `https://www.youtube.com/watch?v=${episode.videoId}`,
+//       }
+//     );
+//   }
+// };
+
+
+const openEpisodeModal = async (episode) => {  // ✅ Add 'async' here
+  setSelectedVideoId(episode.videoId);
+  setIsVideoModalVisible(true);
+
+  // 🔄 Update Firebase watch history
+  updateWatchedVideos(episode.videoId, episode.name, episode.title);
+  updateAlreadyWatched(episode.videoId, episode.title);
+
+  setSelectedEpisodes((prevEpisodes) =>
+    prevEpisodes.map((ep) =>
+      ep.id === episode.id ? { ...ep, isWatched: true } : ep
+    )
+  );
+
+  // ✅ Ensure this is inside an async function
+  if (user) {
+    try {
+      await logAppUsageEvent(  
+        user.uid,                 // Firebase User UID
+        "Youtube_video_clicked",
+        // Event Type
+        "Expo App",               // Source
+        {
+          video_title: episode.title,
+          video_url: `https://www.youtube.com/watch?v=${episode.videoId}`,
+        }
+      );
+      console.log("YouTube video play logged successfully!");
+    } catch (error) {
+      console.error("Error logging YouTube video play:", error);
+    }
+  }
+};
+
+const [watchStartTime, setWatchStartTime] = useState(null);
+
+// When they start watching (YouTube play button is clicked)
+const handleVideoStart = () => {
+  setWatchStartTime(new Date()); // Store the time they started watching
+};
+
+const handleVideoEnd = async () => {
+  if (!watchStartTime) {
+    console.log("🚨 Watch start time is null. Video start event may not have been logged.");
+    return;
+  }
+
+  const watchEndTime = new Date();
+  const watchDuration = Math.floor((watchEndTime - watchStartTime) / 1000); // Convert to seconds
+
+  console.log("Watch Duration:", watchDuration, "seconds"); // Debugging
+
+  if (user) {
+    try {
+      await logAppUsageEvent(
+        user.uid,                   // Firebase User UID
+        "Youtube_watch_duration",    // Event Type
+        "Expo App",                  // Source
+        {
+          video_title: selectedVideoId,  // Use `selectedVideoId` instead of `episode.title`
+          video_url: `https://www.youtube.com/watch?v=${selectedVideoId}`,
+          watch_time_seconds: watchDuration
+        }
+      );
+      console.log("YouTube watch duration logged successfully!");
+    } catch (error) {
+      console.error("Error logging YouTube watch duration:", error);
+    }
+  }
+};
+
+
+
 
   const closeVideoModal = () => {
     setIsVideoModalVisible(false);
@@ -782,6 +872,8 @@ const Entertainment = ({ videoId, onClose }) => {
           
           <YouTubeVideoPlayer
             videoId={selectedVideoId}
+            onStart={handleVideoStart}   // Track when video starts
+            onEnd={handleVideoEnd}  
             onClose={closeVideoModal}
           />
           <Pressable style={styles.closeButton} onPress={closeVideoModal}>
