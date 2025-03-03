@@ -59,7 +59,6 @@
     "react-native-video": "^6.9.1",
     "react-native-vlc-media-player": "^1.0.77",
     "react-native-web": "~0.19.10",
-    "react-native-webrtc": "^124.0.5",
     "react-native-webview": "13.8.6",
     "react-native-youtube-iframe": "^2.3.0",
     "typescript": "~5.3.3"
