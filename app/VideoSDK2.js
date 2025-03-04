@@ -642,8 +642,11 @@ import { useLocalSearchParams } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import CallDeclineModal from "./CallDeclineModal";
+import { logAppUsageEvent } from "../components/EventLogger";  // Import the logger
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
+
+let callStartTime = null; // Global variable to store start time
 
 let auth = getAuth();
 
@@ -654,6 +657,8 @@ const callUser = async (calleeUid, user) => {
   }
 
   const newMeetingId = await createMeeting({ token });
+  callStartTime = new Date(); // Store call start time
+
 
   const callerDoc = await getDoc(doc(FIRESTORE_DB, "users", user.uid));
   const caller = callerDoc.data().userName;
@@ -666,6 +671,15 @@ const callUser = async (calleeUid, user) => {
   const calleeData = calleeDoc.data();
   const calleePushToken = calleeData.pushToken;
   const callee = calleeDoc.data().userName;
+
+
+   // ✅ Log Call Start Event
+   await logAppUsageEvent(user.uid, "video_call_started", {
+    caller: caller,
+    callee: callee,
+    meeting_id: newMeetingId,
+    call_start_time: new Date().toISOString(),
+  });
 
   await setDoc(
     doc(FIRESTORE_DB, "users", user.uid),
@@ -945,18 +959,86 @@ function MeetingView({ autoJoin, setAutoJoin, onMeetingEnd, customVideoTrack }) 
     };
   }, []);
 
-  const handleEnd = async () => {
-    try {
-      if (typeof leave === "function") await leave();
-      console.log("handleend leave activated");
-      if (typeof end === "function") await end();
-      console.log("handleend end activated");
-    } catch (error) {
-      console.error("Error ending meeting:", error);
-    } finally {
-      setAutoJoin(false);
+//   const handleEnd = async () => {
+
+//     const auth = getAuth();
+//   const user = auth.currentUser;
+//   if (!user) return;
+
+//    try {
+//     if (!callStartTime) {
+//       console.error("Call start time is undefined. Cannot calculate duration.");
+//       return;
+//     }
+
+//   const callEndTime = new Date();
+//   const callDurationSeconds = Math.floor(
+//     (callEndTime - callStartTime) / 1000
+//   ); // Calculate duration
+    
+//   try {
+//       if (typeof leave === "function") await leave();
+//       console.log("handleend leave activated");
+//       if (typeof end === "function") await end();
+//       console.log("handleend end activated");
+//       // ✅ Log Call End Event
+//     await logAppUsageEvent(user.uid, "video_call_ended", {
+//       call_end_time: callEndTime.toISOString(),
+//       call_duration_seconds: callDurationSeconds,
+//     });
+
+//     console.log("Call ended, duration:", callDurationSeconds, "seconds");
+
+//  } catch (error) {
+//       console.error("Error ending meeting:", error);
+//     } finally {
+//       setAutoJoin(false);
+//     }
+//   };
+
+const handleEnd = async () => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (!user) {
+    console.error("No authenticated user found.");
+    return;
+  }
+
+  if (!callStartTime) {
+    console.error("Call start time is undefined. Cannot calculate duration.");
+    return;
+  }
+
+  const callEndTime = new Date();
+  const callDurationSeconds = Math.floor(
+    (callEndTime - callStartTime) / 1000
+  ); // Calculate duration
+
+  try {
+    if (typeof leave === "function") {
+      await leave();
+      console.log("handleEnd: leave activated");
     }
-  };
+    
+    if (typeof end === "function") {
+      await end();
+      console.log("handleEnd: end activated");
+    }
+
+    // ✅ Log Call End in Supabase
+    await logAppUsageEvent(user.uid, "video_call_ended", "Expo App", {
+      call_duration_seconds: callDurationSeconds,
+    });
+
+    console.log("Call ended, duration:", callDurationSeconds, "seconds");
+  } catch (error) {
+    console.error("Error ending meeting:", error);
+  } finally {
+    setAutoJoin(false);
+    callStartTime = null; // Reset call start time
+  }
+};
+
 
   const handleJoin = () => {
     if (typeof join === "function") {
