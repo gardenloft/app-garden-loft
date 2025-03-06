@@ -37,6 +37,7 @@ import moment from "moment";
 import * as Notifications from "expo-notifications";
 import { FontAwesome } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
+import { logAppUsageEvent } from "../components/EventLogger";  // Import the logger
 
 const { width, height } = Dimensions.get("window");
 const isLandscape = width > height;
@@ -141,13 +142,31 @@ const TextComponent = (props) => {
         orderBy("timestamp", "asc")
       );
 
-      const unsubscribe = onSnapshot(q, (snapshot) => {
+      const unsubscribe = onSnapshot(q, async (snapshot) => {
         const loadedMessages = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
           formattedDate: moment(doc.data().timestamp.toDate()).format("DD MMM YYYY"),
           formattedTime: moment(doc.data().timestamp.toDate()).format("h:mm a"),
         }));
+       
+        // ✅ Find new messages received by the user
+      const newReceivedMessages = loadedMessages.filter(
+        (msg) => msg.receiverId === user.uid && !msg.isRead
+      );
+
+      // ✅ Log received messages to Supabase
+      for (const message of newReceivedMessages) {
+        await logAppUsageEvent(user.uid, "text_message_received", {
+          sender_id: message.senderId,
+          message_text: message.text,
+        });
+
+        // Mark messages as read in Firestore
+        await updateDoc(doc(FIRESTORE_DB, `chats/${chatId}/messages`, message.id), {
+          isRead: true,
+        });
+      }
         setMessages(loadedMessages);
         setLoading(false);
         console.log("TextComponent received:", { friendId, friendName });
@@ -182,6 +201,12 @@ const TextComponent = (props) => {
         collection(FIRESTORE_DB, `chats/${chatId}/messages`),
         messageData
       );
+
+      // ✅ Log message sent to Supabase
+    await logAppUsageEvent(user.uid, "text_message_sent", {
+      recipient_id: friendId,
+      message_text: newMessage,
+    });
 
        // Increment the unread count for the recipient
     const friendRef = doc(FIRESTORE_DB, `users/${friendId}/friends`, user.uid);
