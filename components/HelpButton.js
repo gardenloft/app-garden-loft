@@ -21,6 +21,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../FirebaseConfig";
+import supabase from "../SupabaseConfig";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -30,6 +31,7 @@ const isPhone = SCREEN_WIDTH <= 514;
 const HelpButton = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [bioModalVisible, setBioModalVisible] = useState(false);
+  const [iotModalVisible, setIotModalVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false); // For missing emergency contact
   const [passkeyModalVisible, setPasskeyModalVisible] = useState(false);
   const [digits, setDigits] = useState(["", "", "", "", "", ""]);
@@ -37,6 +39,48 @@ const HelpButton = () => {
   const inputs = useRef([]);
   const navigation = useNavigation();
   const correctPasskey = "112112";
+
+  //iot message sent and recieved use effect to fetch from supabase
+  const [messageData, setMessageData] = useState({
+    sent: 0,
+    received: 0,
+    logs: [],
+  });
+
+  useEffect(() => {
+    if (iotModalVisible) {
+      fetchMessageLogs();
+    }
+  }, [iotModalVisible]);
+
+  const fetchMessageLogs = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("app_usage_event_log")
+        .select("event_type, event_time")
+        .in("event_type", ["text_message_sent", "text_message_received"]);
+
+      if (error) {
+        console.error("Error fetching message logs:", error);
+        return;
+      }
+
+      const sentCount = data.filter(
+        (log) => log.event_type === "text_message_sent"
+      ).length;
+      const receivedCount = data.filter(
+        (log) => log.event_type === "text_message_received"
+      ).length;
+
+      setMessageData({
+        sent: sentCount,
+        received: receivedCount,
+        logs: data,
+      });
+    } catch (error) {
+      console.error("Error fetching logs:", error);
+    }
+  };
 
   const FACETIME_LINK =
     "https://facetime.apple.com/join#v=1&p=XEhJ9qklEe+Nf97v/61Iyg&k=8EJy-2zZvED8dUqzwNbZ_A-h7g0EEzEKTLWTh63K0KU";
@@ -137,7 +181,7 @@ const HelpButton = () => {
   return (
     <View style={[styles.container, phoneStyles.container]}>
       {/* <View style={[styles.homecontainer, phoneStyles.container]}> */}
-       {/* <Image
+      {/* <Image
           source={require("../assets/GLLOGOSALLY.png")}
           style={[styles.logoImage2, phoneStyles.logoImage2]}
         /> */}
@@ -172,9 +216,9 @@ const HelpButton = () => {
         />
       </TouchableOpacity>
 
-        {/* Potential Iot COntrols in Nav Bar */}
-      {/* <TouchableOpacity
-        onPress={() => setBioModalVisible(true)}
+      {/* Iot Controls in Nav Bar */}
+      <TouchableOpacity
+        onPress={() => setIotModalVisible(true)}
         style={styles.profileContainer}
       >
         <MaterialCommunityIcons
@@ -182,7 +226,36 @@ const HelpButton = () => {
           size={50}
           color="#f3b718"
         />
-      </TouchableOpacity> */}
+      </TouchableOpacity>
+
+      <Modal
+        visible={iotModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setIotModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>IoT Dashboard</Text>
+            <Text style={styles.modalText}>Messages Sent: {messageData.sent}</Text>
+            <Text style={styles.modalText}>Messages Received: {messageData.received}</Text>
+
+            <ScrollView style={styles.logContainer}>
+              {messageData.logs.map((log, index) => (
+                <Text key={index} style={styles.logText}>
+                  {new Date(log.event_time).toLocaleString()} - {log.event_type}
+                </Text>
+              ))}
+            </ScrollView>
+            <TouchableOpacity
+              onPress={() => setIotModalVisible(false)}
+              style={styles.modalButton}
+            >
+              <Text style={styles.modalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       <View style={[styles.logoContainer, phoneStyles.logoContainer]}>
         {/* <Image
@@ -193,7 +266,7 @@ const HelpButton = () => {
           source={require("../assets/garden-loft-logo2.png")}
           style={[styles.logoImage, phoneStyles.logoImage]}
         />
-      </View> 
+      </View>
 
       {/* Bio Modal */}
       <Modal
@@ -384,9 +457,9 @@ const styles = StyleSheet.create({
     borderColor: "#f3b718",
   },
   homecontainer: {
-flex: 1,
-flexDirection: "row",
-gap: 20,
+    flex: 1,
+    flexDirection: "row",
+    gap: 20,
   },
   callButton: {
     backgroundColor: "#59ACCE",
