@@ -48,46 +48,56 @@ const YouTubeVideoPlayer = ({ videoId, onClose, onStart, onEnd }) => {
     //   />
     // </View>
     <View style={styles.container}>
-    <WebView
-      source={{ uri: videoUrl }}
-      style={[{ height: viewportHeight * 0.7, width: viewportWidth * 0.8 }]}
-      javaScriptEnabled={true}
-      domStorageEnabled={true}
-      allowsInlineMediaPlayback
-      onMessage={(event) => {
-        console.log("WebView message:", event.nativeEvent.data);
-        if (event.nativeEvent.data === "VIDEO_STARTED") {
-          if (onStart) onStart(); // ✅ Calls start tracking
-        }
-        if (event.nativeEvent.data === "VIDEO_ENDED") {
-          if (onEnd) onEnd(); // ✅ Calls end tracking
-        }
-      }}
-      injectedJavaScript={`
-        function sendMessage(message) {
-          window.ReactNativeWebView.postMessage(message);
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-          let player;
-          function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-              events: {
-                'onStateChange': function(event) {
-                  if (event.data === 1) { // Video started
-                    sendMessage("VIDEO_STARTED");
-                  }
-                  if (event.data === 0) { // Video ended
-                    sendMessage("VIDEO_ENDED");
+      <WebView
+        source={{ uri: videoUrl }}
+        style={[{
+          height: viewportHeight * 0.7,
+          width: viewportWidth * 0.8, 
+        },phoneStyles.video]}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        allowsInlineMediaPlayback
+        onMessage={(event) => {
+          console.log("WebView message:", event.nativeEvent.data);
+          if (event.nativeEvent.data === "VIDEO_STARTED") {
+            if (onStart) onStart(); // ✅ Calls start tracking
+          }
+          if (event.nativeEvent.data === "VIDEO_ENDED") {
+            if (onEnd) onEnd(); // ✅ Calls end tracking
+          }
+        }}
+        injectedJavaScript={`
+          function sendMessage(message) {
+            window.ReactNativeWebView.postMessage(message);
+          }
+  
+          document.addEventListener("DOMContentLoaded", function() {
+            let player;
+            function onYouTubeIframeAPIReady() {
+              player = new YT.Player('player', {
+                events: {
+                  'onStateChange': function(event) {
+                    if (event.data === 1) { // Video started
+                      sendMessage("VIDEO_STARTED");
+                    }
+                    if (event.data === 0) { // Video ended
+                      sendMessage("VIDEO_ENDED");
+                    }
                   }
                 }
-              }
-            });
-          }
-        });
-      `}
-    />
-  </View>
+              });
+            }
+          });
+        `}
+        // onNavigationStateChange={(event) => {
+        //   if (event.url.includes("watch")) {
+        //     console.log("Video ended");
+        //     onClose(); // Trigger close modal when video ends
+        //   }
+        // }}
+
+      />
+    </View>
   );
 };
 const phoneStyles = viewportWidth <= 513 ? {

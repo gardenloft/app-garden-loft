@@ -24,7 +24,7 @@ import {
 import { FIRESTORE_DB } from "../FirebaseConfig"; // Import your Firestore instance
 import { getAuth } from "firebase/auth";
 import YouTubeVideoPlayer from "../components/YouTubeVideoPlayer.js";
-import { logAppUsageEvent } from "../components/EventLogger"; // ✅ Import updated logger
+import { logAppUsageEvent } from "./EventLogger"; // ✅ Import updated logger
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");

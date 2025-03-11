@@ -34,10 +34,33 @@ const createNewResident = async (firebaseUid) => {
 };
 
 // ✅ Function to Log YouTube Video Play Event in `app_usage_event_log`
+// export const logAppUsageEvent = async (
+//   firebaseUid,
+//   eventType,
+//   source,
+//   metadata = {}
+// ) => {
+//   const residentId = await getResidentId(firebaseUid);
+//   if (!residentId) return;
+
+//   const { error } = await supabase.from("app_usage_event_log").insert([
+//     {
+//       resident_id: residentId,
+//       event_type: eventType,
+//       source: source,
+//       metadata: metadata,
+//     },
+//   ]);
+
+//   if (error) {
+//     console.error("Error logging app usage event:", error);
+//   }
+// };
+
+// ✅ Function to Log Call and Other Events in `app_usage_event_log`
 export const logAppUsageEvent = async (
   firebaseUid,
   eventType,
-  source,
   metadata = {}
 ) => {
   const residentId = await getResidentId(firebaseUid);
@@ -47,12 +70,14 @@ export const logAppUsageEvent = async (
     {
       resident_id: residentId,
       event_type: eventType,
-      source: source,
+      source: "Expo App",
       metadata: metadata,
     },
   ]);
 
   if (error) {
-    console.error("Error logging app usage event:", error);
+    console.error(`Error logging event: ${eventType}`, error);
+  } else {
+    console.log(`✅ Event Logged: ${eventType}`);
   }
 };
