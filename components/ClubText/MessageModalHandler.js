@@ -22,7 +22,7 @@ const MessageModalHandler = ({
   return (
     <Modal animationType="slide" transparent={true} visible={visible}>
       <View style={styles.modalView}>
-      <Image source={require('../assets/garden-loft-logo2.png')} style={styles.logo} />
+      <Image source={require('../../assets/garden-loft-logo2.png')} style={styles.logo} />
         <Text style={styles.title}>{senderName} sent you a message</Text>
         <Text style={styles.messageText}>{messageText}</Text>
         <View style={styles.buttonContainer}>

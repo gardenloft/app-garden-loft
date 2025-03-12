@@ -10,12 +10,12 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Carousel from "react-native-reanimated-carousel";
-import { FIRESTORE_DB } from "../FirebaseConfig";
+import { FIRESTORE_DB } from "../../FirebaseConfig";
 import { collection, getDocs, onSnapshot } from "firebase/firestore"; // Add onSnapshot for real-time updates
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "expo-router";
 import * as Notifications from "expo-notifications";
-import { callUser } from "../app/VideoSDK2";
+import { callUser } from "../../app/VideoSDK2";
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");

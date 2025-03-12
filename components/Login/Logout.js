@@ -14,7 +14,7 @@ import { getAuth, signOut } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { doc, updateDoc } from "firebase/firestore";
-import { FIRESTORE_DB } from "../FirebaseConfig";
+import { FIRESTORE_DB } from "../../FirebaseConfig";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 

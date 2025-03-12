@@ -21,10 +21,10 @@ import {
   setDoc,
   getDoc,
 } from "firebase/firestore";
-import { FIRESTORE_DB } from "../FirebaseConfig"; // Import your Firestore instance
+import { FIRESTORE_DB } from "../../FirebaseConfig"; // Import your Firestore instance
 import { getAuth } from "firebase/auth";
-import YouTubeVideoPlayer from "../components/YouTubeVideoPlayer.js";
-import { logAppUsageEvent } from "./EventLogger"; // ✅ Import updated logger
+import YouTubeVideoPlayer from "../Entertainment/YouTubeVideoPlayer";
+import { logAppUsageEvent } from "../Supabase/EventLogger"; // ✅ Import updated logger
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");

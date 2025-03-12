@@ -1,4 +1,4 @@
-import supabase from "../SupabaseConfig";
+import supabase from "../../SupabaseConfig";
 
 // ✅ Function to Fetch `resident_id` from Supabase using Firebase UID
 const getResidentId = async (firebaseUid) => {
