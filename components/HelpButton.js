@@ -249,9 +249,15 @@ const HelpButton = () => {
           labels: ["Sent", "Received"],
           datasets: [{ data: [messageData.sent, messageData.received] }],
         }}
-        width={SCREEN_WIDTH * 0.8}
+        width={SCREEN_WIDTH * 0.4}
         height={220}
         yAxisLabel=""
+        // yAxisInterval={1} // Set a manual interval
+        yAxisProps={{
+          fromZero: true,
+          min: 0,
+          max: Math.max(messageData.sent, messageData.received) + 2, // Ensures no duplicates
+        }}
         chartConfig={{
           backgroundColor: "#fff",
           backgroundGradientFrom: "#f3b718",
@@ -260,7 +266,7 @@ const HelpButton = () => {
           color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
         }}
-        style={{ marginVertical: 10, borderRadius: 10 }}
+        style={{ marginVertical: 10, borderRadius: 20 }}
       />
 {/* 
       Message Logs */}
@@ -271,6 +277,8 @@ const HelpButton = () => {
           </Text>
         ))}
       </ScrollView> */}
+
+{/* <TochTech /> */}
 
       <TouchableOpacity
         onPress={() => setIotModalVisible(false)}
@@ -541,19 +549,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    height: SCREEN_WIDTH * 1.94,
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 20,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 10,
+    backgroundColor: "rgba(117, 94, 4, 0.5)",
   },
   modalText: {
     fontSize: 18,
@@ -590,34 +586,13 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH < 375 ? 90 : SCREEN_WIDTH < 430 ? 110 : 58,
     height: SCREEN_WIDTH < 375 ? 40 : SCREEN_WIDTH < 430 ? 50 : 57,
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  // modalContent: {
-  //   backgroundColor: "#fff",
-  //   borderRadius: 20,
-  //   padding: 20,
-  //   marginTop: 20,
-  //   width: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.8,
-  //   height: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.98,
-  //   alignItems: "center",
-  //   shadowColor: "#000",
-  //   shadowOffset: { width: 0, height: 4 },
-  //   shadowOpacity: 0.3,
-  //   shadowRadius: 5,
-  //   elevation: 10,
-  // },
   modalContent: {
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
-    marginTop: isPhone ? 20 : 50, // Smaller margin for phones
-    width: isPhone ? "70%" : Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.98, // Adjust width for phones
-    height: isPhone ? "75%" : Math.max(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.58, // Adjust height for phones
-    maxWidth: 550, // Limit width for smaller devices
+    marginTop: isPhone ? 20 : 30, // Smaller margin for phones
+    width: isPhone ? "70%" : Math.max(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.95, // Adjust width for phones
+    height: isPhone ? "75%" : Math.max(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.68, // Adjust height for phones
     alignItems: "center",
     justifyContent: "flex-start", // Ensure top alignment for phones
     shadowColor: "#000",
