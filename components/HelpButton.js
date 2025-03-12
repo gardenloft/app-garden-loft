@@ -22,6 +22,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../FirebaseConfig";
 import supabase from "../SupabaseConfig";
+import TochTech from "./IotDevices/TochTech/TochTech";
 import { BarChart } from "react-native-chart-kit";
 
 
@@ -237,6 +238,7 @@ const HelpButton = () => {
   animationType="slide"
   onRequestClose={() => setIotModalVisible(false)}
 >
+
   <View style={styles.modalContainer}>
     <View style={styles.modalContent}>
       <Text style={styles.modalText}>IoT Dashboard</Text>
@@ -292,14 +294,15 @@ const HelpButton = () => {
             <Text style={styles.modalText}>IoT Dashboard</Text>
             <Text style={styles.modalText}>Messages Sent: {messageData.sent}</Text>
             <Text style={styles.modalText}>Messages Received: {messageData.received}</Text>
-
-            <ScrollView style={styles.logContainer}>
+            {/* {message data} */}
+            {/* <ScrollView style={styles.logContainer}>
               {messageData.logs.map((log, index) => (
                 <Text key={index} style={styles.logText}>
                   {new Date(log.event_time).toLocaleString()} - {log.event_type}
                 </Text>
               ))}
-            </ScrollView>
+            </ScrollView> */}
+            {/* <TochTech />
             <TouchableOpacity
               onPress={() => setIotModalVisible(false)}
               style={styles.modalButton}
@@ -308,7 +311,7 @@ const HelpButton = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal> */}
+      </Modal> */} 
 
       <View style={[styles.logoContainer, phoneStyles.logoContainer]}>
         {/* <Image

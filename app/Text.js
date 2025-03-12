@@ -37,7 +37,7 @@ import moment from "moment";
 import * as Notifications from "expo-notifications";
 import { FontAwesome } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
-import { logAppUsageEvent } from "../components/EventLogger";  // Import the logger
+import { logAppUsageEvent } from "../components/Supabase/EventLogger";  // Import the logger
 
 const { width, height } = Dimensions.get("window");
 const isLandscape = width > height;

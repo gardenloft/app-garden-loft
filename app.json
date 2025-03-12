@@ -22,6 +22,7 @@
     },
     "ios": {
       "supportsTablet": true,
+      "usesNonExemptEncryption": false,
       "bundleIdentifier": "com.gardenloft.appgardenloft",
       "googleServicesFile": "./GoogleService-Info.plist",
       "buildNumber": "23",
@@ -70,7 +71,8 @@
       "react-native-video",
       [
         "@config-plugins/react-native-webrtc"
-      ]
+      ],
+      "expo-secure-store"
     ],
     "android": {
       "package": "com.gardenloft.appgardenloft",
@@ -110,7 +112,6 @@
     "HOME_ASSISTANT_TOKEN": "${EXPO_PUBLIC_HOME_ASSISTANT_TOKEN}",
     "SUPABASE_URL": "${EXPO_PUBLIC_SUPABASE_URL}",
     "SUPABASE_ANON_KEY": "${EXPO_PUBLIC_SUPABASE_ANON_KEY}"
-  
   },
   "plugins": [
     "expo-notifications",

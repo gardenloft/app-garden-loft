@@ -23,8 +23,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
 import { createClient } from "@supabase/supabase-js";
 import supabase from "../../SupabaseConfig"; // ✅ Correct import
-import { getResidentId, createNewResident } from "../SupabaseService";
-import { logUserActivity } from "../EventLogger";
+import { getResidentId, createNewResident } from "../Supabase/SupabaseService";
+import { logUserActivity } from "../Supabase/EventLogger";
 
 
 
