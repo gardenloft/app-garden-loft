@@ -22,6 +22,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../FirebaseConfig";
 import supabase from "../SupabaseConfig";
+import { BarChart } from "react-native-chart-kit";
+
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -228,7 +230,58 @@ const HelpButton = () => {
         />
       </TouchableOpacity>
 
+
       <Modal
+  visible={iotModalVisible}
+  transparent={true}
+  animationType="slide"
+  onRequestClose={() => setIotModalVisible(false)}
+>
+  <View style={styles.modalContainer}>
+    <View style={styles.modalContent}>
+      <Text style={styles.modalText}>IoT Dashboard</Text>
+
+      {/* Bar Chart for Messages Sent vs. Received */}
+      <BarChart
+        data={{
+          labels: ["Sent", "Received"],
+          datasets: [{ data: [messageData.sent, messageData.received] }],
+        }}
+        width={SCREEN_WIDTH * 0.8}
+        height={220}
+        yAxisLabel=""
+        chartConfig={{
+          backgroundColor: "#fff",
+          backgroundGradientFrom: "#f3b718",
+          backgroundGradientTo: "#f09030",
+          decimalPlaces: 0,
+          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        }}
+        style={{ marginVertical: 10, borderRadius: 10 }}
+      />
+{/* 
+      Message Logs */}
+      {/* <ScrollView style={styles.logContainer}>
+        {messageData.logs.map((log, index) => (
+          <Text key={index} style={styles.logText}>
+            {new Date(log.event_time).toLocaleString()} - {log.event_type}
+          </Text>
+        ))}
+      </ScrollView> */}
+
+      <TouchableOpacity
+        onPress={() => setIotModalVisible(false)}
+        style={styles.modalButton}
+      >
+        <Text style={styles.modalButtonText}>Close</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
+
+
+      {/* <Modal
         visible={iotModalVisible}
         transparent={true}
         animationType="slide"
@@ -255,7 +308,7 @@ const HelpButton = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
 
       <View style={[styles.logoContainer, phoneStyles.logoContainer]}>
         {/* <Image
