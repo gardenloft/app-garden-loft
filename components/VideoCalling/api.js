@@ -1,3 +1,5 @@
+// VideoSDK API 
+
 // initiate videosdk
 import { register } from "@videosdk.live/react-native-sdk";
 register();

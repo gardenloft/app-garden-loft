@@ -20,7 +20,7 @@ import {
   controlDevice,
   fetchStreamUrl,
   setReolinkVideoSettings,
-} from "../homeAssistant";
+} from "../../homeAssistant";
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");

@@ -11,7 +11,7 @@ const CallAlertModal = ({ visible, callerId, callerUId, callerImageUrl, onAccept
         {callerImageUrl && (
           <Image source={{ uri: callerImageUrl }} style={styles.callerImage} />
         )}
-        <Image source={require("../assets/garden-loft-logo2.png")} style={styles.logo} />
+        <Image source={require("../../assets/garden-loft-logo2.png")} style={styles.logo} />
         <Text style={styles.callerText}>{`${callerId} is calling`}</Text>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={onAccept}>

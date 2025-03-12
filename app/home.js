@@ -13,9 +13,9 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../FirebaseConfig";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import * as Device from "expo-device";
-import CallAlertModal from "../components/CallAlertModal";
+import CallAlertModal from "../components/VideoCalling/CallAlertModal";
 import { useLocalSearchParams } from "expo-router";
-import MessageModalHandler from "../components/MessageModalHandler";
+import MessageModalHandler from "../components/ClubText/MessageModalHandler";
 
 export default function Home() {
   const auth = getAuth();

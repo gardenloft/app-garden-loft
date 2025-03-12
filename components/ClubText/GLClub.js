@@ -24,23 +24,23 @@ import {
   onSnapshot,
   getDoc,
 } from "firebase/firestore";
-import { FIRESTORE_DB, FIREBASE_STORAGE } from "../FirebaseConfig";
+import { FIRESTORE_DB, FIREBASE_STORAGE } from "../../FirebaseConfig";
 import { getAuth } from "firebase/auth";
 import { useRouter } from "expo-router";
 import * as Notifications from "expo-notifications"; // Import for notifications
-import { callUser } from "../app/VideoSDK2"; // Import from VideoCall
+import { callUser } from "../../app/VideoSDK2"; // Import from VideoCall
 import { getDownloadURL, ref } from "firebase/storage"; // Firebase Storage methods
-import TextComponent from "../app/Text.js";
-import ComingSoon from "./ComingSoon";
+import TextComponent from "../../app/Text.js";
+import ComingSoon from "../ComingSoon";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const defaultImage = {
-  elizabeth: require("../assets/images/pexels-anna-nekrashevich-8993561.jpg"),
-  shari: require("../assets/images/portrait2.jpg"),
-  pat: require("../assets/images/portrait4.jpg"),
-  john: require("../assets/images/portrait3.jpg"),
-  matthew: require("../assets/images/portrait5.jpg"),
+  elizabeth: require("../../assets/images/pexels-anna-nekrashevich-8993561.jpg"),
+  shari: require("../../assets/images/portrait2.jpg"),
+  pat: require("../../assets/images/portrait4.jpg"),
+  john: require("../../assets/images/portrait3.jpg"),
+  matthew: require("../../assets/images/portrait5.jpg"),
 };
 
 const GLClub = () => {
@@ -1137,7 +1137,7 @@ const GLClub = () => {
           <View style={styles.modalContainer}>
             <ActivityIndicator size="large" color="#f3b718" />
             <Image
-              source={require("../assets/garden-loft-logo2.png")}
+              source={require("../../assets/garden-loft-logo2.png")}
               style={styles.logo}
             />
             <Text style={styles.modalTextCall}>Calling . . .</Text>
@@ -1153,7 +1153,7 @@ const GLClub = () => {
         <Modal animationType="slide" transparent={true} visible={isDeclined}>
           <View style={styles.modalContainer}>
             <Image
-              source={require("../assets/garden-loft-logo2.png")}
+              source={require("../../assets/garden-loft-logo2.png")}
               style={styles.logo}
             />
             <Text style={styles.modalTextCall}>
