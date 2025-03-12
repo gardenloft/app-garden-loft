@@ -11,14 +11,14 @@ import {
 import Carousel from "react-native-reanimated-carousel";
 import { MaterialCommunityIcons, FontAwesome } from "@expo/vector-icons";
 import Activities2 from "../Activities";
-import Entertainment from "../Entertainment";
+import Entertainment from "../Entertainment/Entertainment";
 import Games from "../Games";
 import CalendarComponent from "../Calender";
 import HowTo from "../HowTo";
-import GLClub from "../GLClub";
+import GLClub from "../ClubText/GLClub";
 import ComingSoon from "../ComingSoon";
 import Kosmi from "../Kosmi";
-import Lights from "../Lights";
+import Lights from "../IotDevices/Lights";
 
 const data = [
   {

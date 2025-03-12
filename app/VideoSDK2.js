@@ -20,7 +20,7 @@ import {
   RTCView,
   createCameraVideoTrack,
 } from "@videosdk.live/react-native-sdk";
-import { createMeeting, token } from "../components/api";
+import { createMeeting, token } from "../components/VideoCalling/api";
 import { FIRESTORE_DB } from "../FirebaseConfig";
 import { doc, getDoc, setDoc, collection, getDocs } from "firebase/firestore";
 import * as Notifications from "expo-notifications";
@@ -29,7 +29,7 @@ import { useLocalSearchParams } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import CallDeclineModal from "./CallDeclineModal";
-import { logAppUsageEvent } from "../components/EventLogger";  // Import the logger
+import { logAppUsageEvent } from "../components/Supabase/EventLogger";  // Import the logger
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
 
@@ -413,8 +413,9 @@ const handleEnd = async () => {
     }
 
     // ✅ Log Call End in Supabase
-    await logAppUsageEvent(user.uid, "video_call_ended", "Expo App", {
+    await logAppUsageEvent(user.uid, "video_call_ended",  {
       call_duration_seconds: callDurationSeconds,
+      source: "Expo App",
     });
 
     console.log("Call ended, duration:", callDurationSeconds, "seconds");
