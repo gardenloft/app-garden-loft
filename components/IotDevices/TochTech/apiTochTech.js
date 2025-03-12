@@ -4,6 +4,7 @@ import CryptoJS from 'crypto-js';
 
 //API KEYS AND CODES GO HERE
 
+
 // Function to generate Secure HMAC Nonce Authentication (Recommended)
 const generateHMACNonce = () => {
   const nonce = Math.floor(Date.now() / 1000).toString(); // Current Unix timestamp
