@@ -1,7 +1,7 @@
 import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import HelpButton from "../components/HelpButton";
+import NavBar from "../components/NavBar";
 import Carousel from "../components/CarouselOne/Carousel";
 import React, { useEffect, useState, useRef } from "react";
 import { View, Platform, Alert } from "react-native";
@@ -343,7 +343,7 @@ export default function Home() {
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#FCF8E3" }}>
       <SafeAreaProvider>
-        <HelpButton />
+        <NavBar />
         <Carousel />
         <CallAlertModal
           visible={modalVisible}
