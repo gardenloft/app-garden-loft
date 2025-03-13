@@ -27,7 +27,6 @@
 //         <View style={styles.modalContent}>
 //           <Text style={styles.modalText}>IoT Dashboard</Text>
 
-
 //           {/* Displays the App Usage Data */}
 //           <AppUsageDash />
 
@@ -97,7 +96,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  Pressable,
 } from "react-native";
+import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import AppUsageDash from "./AppUsageDash"; // Import AppUsageDash
 import TochTech from "../IotDevices/TochTech/TochTech"; // Placeholder for Sleep
 // Import other components when available
@@ -111,21 +112,30 @@ const Dashboard = ({ visible, onClose }) => {
   // Mapping components to the selected tab
   const renderContent = () => {
     switch (selectedTab) {
-      case "AppUsage":
+      case "App Usage":
         return <AppUsageDash />;
       case "Sleep":
         return <TochTech onClose={onClose} />; // Placeholder for Sleep component
       case "Movement":
-        return <Text style={styles.placeholderText}>Movement Data Coming Soon</Text>;
+        return (
+          <Text style={styles.placeholderText}>Movement Data Coming Soon</Text>
+        );
       case "Health":
-        return <Text style={styles.placeholderText}>Health Data Coming Soon</Text>;
+        return (
+          <Text style={styles.placeholderText}>Health Data Coming Soon</Text>
+        );
       default:
         return <Text style={styles.placeholderText}>Overview Coming Soon</Text>;
     }
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={onClose}
+    >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Text style={styles.modalText}>IoT Dashboard</Text>
@@ -133,27 +143,29 @@ const Dashboard = ({ visible, onClose }) => {
           <View style={styles.dashboardContainer}>
             {/* Left-side Buttons */}
             <View style={styles.buttonContainer}>
-              {["Overview", "App Usage", "Sleep", "Movement", "Health"].map((tab) => (
-                <TouchableOpacity
-                  key={tab}
-                  style={[
-                    styles.tabButton,
-                    selectedTab === tab && styles.activeTab, // Highlight active tab
-                  ]}
-                  onPress={() => setSelectedTab(tab)}
-                >
-                  <Text style={styles.tabText}>{tab}</Text>
-                </TouchableOpacity>
-              ))}
+              {["Overview", "App Usage", "Sleep", "Movement", "Health"].map(
+                (tab) => (
+                  <TouchableOpacity
+                    key={tab}
+                    style={[
+                      styles.tabButton,
+                      selectedTab === tab && styles.activeTab, // Highlight active tab
+                    ]}
+                    onPress={() => setSelectedTab(tab)}
+                  >
+                    <Text style={styles.tabText}>{tab}</Text>
+                  </TouchableOpacity>
+                )
+              )}
             </View>
 
             {/* Right-side Content */}
             <View style={styles.contentContainer}>{renderContent()}</View>
           </View>
-
-          <TouchableOpacity onPress={onClose} style={styles.modalButton}>
-            <Text style={styles.modalButtonText}>Close</Text>
-          </TouchableOpacity>
+              {/* Close Button */}
+          <Pressable style={styles.closeButton} onPress={onClose}>
+            <FontAwesome name="close" size={24} color="black" />
+          </Pressable>
         </View>
       </View>
     </Modal>
@@ -166,7 +178,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(117, 94, 4, 0.5)",
-
   },
   modalContent: {
     backgroundColor: "#fff",
@@ -231,12 +242,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#555",
   },
-  modalButton: {
-    backgroundColor: "#59ACCE",
-    padding: 10,
-    borderRadius: 10,
-    alignItems: "center",
-    marginTop: 10,
+  closeButton: {
+    position: "absolute",
+    top: 30,
+    right: 30,
+    backgroundColor: "lightblue",
+    padding: 13,
+    borderRadius: 5,
   },
   modalButtonText: {
     color: "#fff",
@@ -245,4 +257,3 @@ const styles = StyleSheet.create({
 });
 
 export default Dashboard;
-

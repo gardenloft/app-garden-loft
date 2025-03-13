@@ -8,7 +8,11 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const AppUsageDash = () => {
 
   // Text Message App Usage Collection
-  const [messageData, setMessageData] = useState({ sent: 0, received: 0 });
+  const [messageData, setMessageData] = useState({
+    sent: 0,
+    received: 0,
+    logs: [],
+  });
   
 
   useEffect(() => {
@@ -31,6 +35,7 @@ const AppUsageDash = () => {
         received: data.filter(
           (log) => log.event_type === "text_message_received"
         ).length,
+        logs: data,
       });
     } catch (error) {
       console.error("Error fetching logs:", error);
@@ -39,12 +44,12 @@ const AppUsageDash = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>App Usage Data</Text>
-      <Text style={styles.title}>Text Messages:</Text>
+      <Text style={styles.title1}>App Usage Data</Text>
+      <Text style={styles.title2}>Text Messages:</Text>
       <Text style={styles.modalText}>Messages Sent: {messageData.sent}</Text>
       <Text style={styles.modalText}>Messages Received: {messageData.received}</Text>
 
-      <BarChart
+      {/* <BarChart
         data={{
           labels: ["Sent", "Received"],
           datasets: [{ data: [messageData.sent, messageData.received] }],
@@ -61,16 +66,16 @@ const AppUsageDash = () => {
           labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
         }}
         style={{ marginVertical: 10, borderRadius: 20 }}
-      />
+      /> */}
 
        {/* Message Logs in raw format */}
-          {/* <ScrollView style={styles.logContainer}>
+          <ScrollView style={styles.logContainer}>
         {messageData.logs.map((log, index) => (
           <Text key={index} style={styles.logText}>
             {new Date(log.event_time).toLocaleString()} - {log.event_type}
           </Text>
         ))}
-      </ScrollView> */}
+      </ScrollView>
     </View>
   );
 };
@@ -80,7 +85,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
-  title: {
+  title1: {
+    fontSize: 28,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  title2: {
+    fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  modalText: {
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
