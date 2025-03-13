@@ -65,20 +65,38 @@ const YouTubeVideoPlayer = ({ videoId, onClose, onStart, onEnd }) => {
           if (event.nativeEvent.data === "VIDEO_ENDED") {
             if (onEnd) onEnd(); // ✅ Calls end tracking
           }
+           // ✅ Detect when video is paused
+           if (event.nativeEvent.data === "VIDEO_PAUSED") {
+            if (onPause) onPause();
+          }
         }}
+        onNavigationStateChange={(event) => {
+          setCurrentUrl(event.url);
+
+          // ✅ Detect when user navigates away from YouTube
+          if (videoStarted && event.url !== currentUrl && !event.url.includes("youtube.com/embed")) {
+            console.log("🚨 User navigated away before finishing the video");
+            if (onClose) onClose(); // Call onClose if they leave
+          }
+        }}
+
+
         injectedJavaScript={`
           function sendMessage(message) {
             window.ReactNativeWebView.postMessage(message);
           }
-  
-          document.addEventListener("DOMContentLoaded", function() {
+        
+          function checkYouTubePlayer() {
             let player;
-            function onYouTubeIframeAPIReady() {
-              player = new YT.Player('player', {
+            if (typeof YT !== "undefined" && YT.Player) {
+              player = new YT.Player("player", {
                 events: {
-                  'onStateChange': function(event) {
-                    if (event.data === 1) { // Video started
+                  "onStateChange": function(event) {
+                    if (event.data === 1) { // Video started playing
                       sendMessage("VIDEO_STARTED");
+                    }
+                    if (event.data === 2) { // Video paused
+                      sendMessage("VIDEO_PAUSED");
                     }
                     if (event.data === 0) { // Video ended
                       sendMessage("VIDEO_ENDED");
@@ -87,8 +105,38 @@ const YouTubeVideoPlayer = ({ videoId, onClose, onStart, onEnd }) => {
                 }
               });
             }
-          });
+          }
+        
+          document.addEventListener("DOMContentLoaded", checkYouTubePlayer);
+          setTimeout(checkYouTubePlayer, 2000); // Retry if YouTube API isn't ready
         `}
+        
+        // injectedJavaScript={`
+        //   function sendMessage(message) {
+        //     window.ReactNativeWebView.postMessage(message);
+        //   }
+  
+        //   document.addEventListener("DOMContentLoaded", function() {
+        //     let player;
+        //     function onYouTubeIframeAPIReady() {
+        //       player = new YT.Player('player', {
+        //         events: {
+        //           'onStateChange': function(event) {
+        //             if (event.data === 1) { // Video started
+        //               sendMessage("VIDEO_STARTED");
+        //             }
+        //                if (event.data === 2) { // Video paused
+        //               sendMessage("VIDEO_PAUSED");
+        //             }
+        //             if (event.data === 0) { // Video ended
+        //               sendMessage("VIDEO_ENDED");
+        //             }
+        //           }
+        //         }
+        //       });
+        //     }
+        //   });
+        // `}
         // onNavigationStateChange={(event) => {
         //   if (event.url.includes("watch")) {
         //     console.log("Video ended");

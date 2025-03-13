@@ -4,16 +4,6 @@ import CryptoJS from "crypto-js";
 
 //API KEYS AND CODES GO HERE
 
-// const API_URL = "https://your-vericare-api-url.com"; // Replace with actual API URL
-// const API_KEY = "your_api_key"; // Replace with your API key
-// const API_SECRET = "your_api_secret"; // Replace with your API secret
-const API_URL = "https://bpconnect.tochtech.com/api/v1"; // Replace with actual API URL
-const API_KEY = "aaf4f446-3f6f-4489-90d2-a4c84b9d7ffd"; // Replace with your API key
-const API_SECRET = "H4SzNZ6gat79WTKYJfcP2B8L"; // Replace with your API secret
-const ENTITY_ID = "a5dc95e8b0a97a5d72c734fc"; // Replace with your API secret
-const RESIDENT_ID = "67c0f6bbcd9fda1450292729"; // Replace with your API secret
-const DATE = "2025-03-12"; // Replace with your API secret
-
 // Function to generate Secure HMAC Nonce Authentication (Recommended)
 const generateHMACNonce = () => {
   const nonce = Math.floor(Date.now() / 1000).toString(); // Current Unix timestamp
