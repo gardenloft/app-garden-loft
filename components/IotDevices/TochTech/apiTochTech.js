@@ -4,6 +4,11 @@ import CryptoJS from "crypto-js";
 
 //API KEYS AND CODES GO HERE
 
+// const API_URL = "https://your-vericare-api-url.com"; // Replace with actual API URL
+// const API_KEY = "your_api_key"; // Replace with your API key
+// const API_SECRET = "your_api_secret"; // Replace with your API secret
+
+
 // Function to generate Secure HMAC Nonce Authentication (Recommended)
 const generateHMACNonce = () => {
   const nonce = Math.floor(Date.now() / 1000).toString(); // Current Unix timestamp
@@ -105,7 +110,7 @@ export const fetchResidentDataDaily = async () => {
     );
 
     const data = await response.json();
-    console.log("resident data daily", JSON.stringify(data, null, 2), DATE);
+    // console.log("resident data daily", JSON.stringify(data, null, 2), DATE);
     // console.log("Report data:", JSON.stringify(data.data[0].report, null, 2)); //this is the way you can get object of "report"
 
     return data;
