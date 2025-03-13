@@ -23,15 +23,15 @@ import { useNavigation } from "@react-navigation/native";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../FirebaseConfig";
 import supabase from "../SupabaseConfig";
 import TochTech from "./IotDevices/TochTech/TochTech";
+import Dashboard from "../components/Dashboard/Dashboard";
 import { BarChart } from "react-native-chart-kit";
-
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 // Threshold for detecting phones
 const isPhone = SCREEN_WIDTH <= 514;
 
-const HelpButton = () => {
+const NavBar = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [bioModalVisible, setBioModalVisible] = useState(false);
   const [iotModalVisible, setIotModalVisible] = useState(false);
@@ -42,48 +42,6 @@ const HelpButton = () => {
   const inputs = useRef([]);
   const navigation = useNavigation();
   const correctPasskey = "112112";
-
-  //iot message sent and recieved use effect to fetch from supabase
-  const [messageData, setMessageData] = useState({
-    sent: 0,
-    received: 0,
-    logs: [],
-  });
-
-  useEffect(() => {
-    if (iotModalVisible) {
-      fetchMessageLogs();
-    }
-  }, [iotModalVisible]);
-
-  const fetchMessageLogs = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("app_usage_event_log")
-        .select("event_type, event_time")
-        .in("event_type", ["text_message_sent", "text_message_received"]);
-
-      if (error) {
-        console.error("Error fetching message logs:", error);
-        return;
-      }
-
-      const sentCount = data.filter(
-        (log) => log.event_type === "text_message_sent"
-      ).length;
-      const receivedCount = data.filter(
-        (log) => log.event_type === "text_message_received"
-      ).length;
-
-      setMessageData({
-        sent: sentCount,
-        received: receivedCount,
-        logs: data,
-      });
-    } catch (error) {
-      console.error("Error fetching logs:", error);
-    }
-  };
 
   const FACETIME_LINK =
     "https://facetime.apple.com/join#v=1&p=XEhJ9qklEe+Nf97v/61Iyg&k=8EJy-2zZvED8dUqzwNbZ_A-h7g0EEzEKTLWTh63K0KU";
@@ -183,11 +141,13 @@ const HelpButton = () => {
 
   return (
     <View style={[styles.container, phoneStyles.container]}>
-      {/* <View style={[styles.homecontainer, phoneStyles.container]}> */}
+
       {/* <Image
           source={require("../assets/GLLOGOSALLY.png")}
           style={[styles.logoImage2, phoneStyles.logoImage2]}
         /> */}
+
+      {/* User Icon */}
       <TouchableOpacity
         onPress={() => setBioModalVisible(true)}
         style={styles.profileContainer}
@@ -205,7 +165,8 @@ const HelpButton = () => {
           />
         )}
       </TouchableOpacity>
-      {/* </View> */}
+
+      {/* Call Emergency Button */}
       <TouchableOpacity
         style={[styles.callButton, phoneStyles.callButton]}
         onPress={handleEmergencyCall}
@@ -219,7 +180,7 @@ const HelpButton = () => {
         />
       </TouchableOpacity>
 
-      {/* Iot Controls in Nav Bar */}
+      {/* Iot Dashboard Button */}
       <TouchableOpacity
         onPress={() => setIotModalVisible(true)}
         style={styles.profileContainer}
@@ -231,87 +192,8 @@ const HelpButton = () => {
         />
       </TouchableOpacity>
 
-
-      <Modal
-  visible={iotModalVisible}
-  transparent={true}
-  animationType="slide"
-  onRequestClose={() => setIotModalVisible(false)}
->
-
-  <View style={styles.modalContainer}>
-    <View style={styles.modalContent}>
-      <Text style={styles.modalText}>IoT Dashboard</Text>
-
-      {/* Bar Chart for Messages Sent vs. Received */}
-      <BarChart
-        data={{
-          labels: ["Sent", "Received"],
-          datasets: [{ data: [messageData.sent, messageData.received] }],
-        }}
-        width={SCREEN_WIDTH * 0.8}
-        height={220}
-        yAxisLabel=""
-        chartConfig={{
-          backgroundColor: "#fff",
-          backgroundGradientFrom: "#f3b718",
-          backgroundGradientTo: "#f09030",
-          decimalPlaces: 0,
-          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        }}
-        style={{ marginVertical: 10, borderRadius: 10 }}
-      />
-{/* 
-      Message Logs */}
-      {/* <ScrollView style={styles.logContainer}>
-        {messageData.logs.map((log, index) => (
-          <Text key={index} style={styles.logText}>
-            {new Date(log.event_time).toLocaleString()} - {log.event_type}
-          </Text>
-        ))}
-      </ScrollView> */}
-
-      <TouchableOpacity
-        onPress={() => setIotModalVisible(false)}
-        style={styles.modalButton}
-      >
-        <Text style={styles.modalButtonText}>Close</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
-
-
-      {/* <Modal
-        visible={iotModalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setIotModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>IoT Dashboard</Text>
-            <Text style={styles.modalText}>Messages Sent: {messageData.sent}</Text>
-            <Text style={styles.modalText}>Messages Received: {messageData.received}</Text>
-            {/* {message data} */}
-            {/* <ScrollView style={styles.logContainer}>
-              {messageData.logs.map((log, index) => (
-                <Text key={index} style={styles.logText}>
-                  {new Date(log.event_time).toLocaleString()} - {log.event_type}
-                </Text>
-              ))}
-            </ScrollView> */}
-            {/* <TochTech />
-            <TouchableOpacity
-              onPress={() => setIotModalVisible(false)}
-              style={styles.modalButton}
-            >
-              <Text style={styles.modalButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal> */} 
+      {/* IoT Dashboard Modal (Moved to Dashboard.js) */}
+      <Dashboard visible={iotModalVisible} onClose={() => setIotModalVisible(false)} />
 
       <View style={[styles.logoContainer, phoneStyles.logoContainer]}>
         {/* <Image
@@ -541,19 +423,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    height: SCREEN_WIDTH * 1.94,
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 20,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 10,
+    backgroundColor: "rgba(117, 94, 4, 0.5)",
   },
   modalText: {
     fontSize: 18,
@@ -590,34 +460,13 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH < 375 ? 90 : SCREEN_WIDTH < 430 ? 110 : 58,
     height: SCREEN_WIDTH < 375 ? 40 : SCREEN_WIDTH < 430 ? 50 : 57,
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  // modalContent: {
-  //   backgroundColor: "#fff",
-  //   borderRadius: 20,
-  //   padding: 20,
-  //   marginTop: 20,
-  //   width: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.8,
-  //   height: Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.98,
-  //   alignItems: "center",
-  //   shadowColor: "#000",
-  //   shadowOffset: { width: 0, height: 4 },
-  //   shadowOpacity: 0.3,
-  //   shadowRadius: 5,
-  //   elevation: 10,
-  // },
   modalContent: {
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
-    marginTop: isPhone ? 20 : 50, // Smaller margin for phones
-    width: isPhone ? "70%" : Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.98, // Adjust width for phones
-    height: isPhone ? "75%" : Math.max(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.58, // Adjust height for phones
-    maxWidth: 550, // Limit width for smaller devices
+    marginTop: isPhone ? 20 : 30, // Smaller margin for phones
+    width: isPhone ? "70%" : Math.max(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.95, // Adjust width for phones
+    height: isPhone ? "75%" : Math.max(SCREEN_WIDTH, SCREEN_HEIGHT) * 0.68, // Adjust height for phones
     alignItems: "center",
     justifyContent: "flex-start", // Ensure top alignment for phones
     shadowColor: "#000",
@@ -755,4 +604,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HelpButton;
+export default NavBar;
