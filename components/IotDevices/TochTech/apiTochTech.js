@@ -5,6 +5,8 @@ import CryptoJS from 'crypto-js';
 //API KEYS AND CODES GO HERE
 
 
+console.log(DATE); // Example output: "2025-03-12"
+
 // Function to generate Secure HMAC Nonce Authentication (Recommended)
 const generateHMACNonce = () => {
   const nonce = Math.floor(Date.now() / 1000).toString(); // Current Unix timestamp
@@ -98,7 +100,7 @@ export const fetchResidentDataDaily = async () => {
     });
 
     const data = await response.json();
-    console.log("resident data daily", JSON.stringify(data, null, 2), DATE);
+    // console.log("resident data daily", JSON.stringify(data, null, 2), DATE);
     // console.log("Report data:", JSON.stringify(data.data[0].report, null, 2)); //this is the way you can get object of "report"
 
     return data;

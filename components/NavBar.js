@@ -23,15 +23,15 @@ import { useNavigation } from "@react-navigation/native";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../FirebaseConfig";
 import supabase from "../SupabaseConfig";
 import TochTech from "./IotDevices/TochTech/TochTech";
+import Dashboard from "../components/Dashboard/Dashboard";
 import { BarChart } from "react-native-chart-kit";
-
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 // Threshold for detecting phones
 const isPhone = SCREEN_WIDTH <= 514;
 
-const HelpButton = () => {
+const NavBar = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [bioModalVisible, setBioModalVisible] = useState(false);
   const [iotModalVisible, setIotModalVisible] = useState(false);
@@ -42,48 +42,6 @@ const HelpButton = () => {
   const inputs = useRef([]);
   const navigation = useNavigation();
   const correctPasskey = "112112";
-
-  //iot message sent and recieved use effect to fetch from supabase
-  const [messageData, setMessageData] = useState({
-    sent: 0,
-    received: 0,
-    logs: [],
-  });
-
-  useEffect(() => {
-    if (iotModalVisible) {
-      fetchMessageLogs();
-    }
-  }, [iotModalVisible]);
-
-  const fetchMessageLogs = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("app_usage_event_log")
-        .select("event_type, event_time")
-        .in("event_type", ["text_message_sent", "text_message_received"]);
-
-      if (error) {
-        console.error("Error fetching message logs:", error);
-        return;
-      }
-
-      const sentCount = data.filter(
-        (log) => log.event_type === "text_message_sent"
-      ).length;
-      const receivedCount = data.filter(
-        (log) => log.event_type === "text_message_received"
-      ).length;
-
-      setMessageData({
-        sent: sentCount,
-        received: receivedCount,
-        logs: data,
-      });
-    } catch (error) {
-      console.error("Error fetching logs:", error);
-    }
-  };
 
   const FACETIME_LINK =
     "https://facetime.apple.com/join#v=1&p=XEhJ9qklEe+Nf97v/61Iyg&k=8EJy-2zZvED8dUqzwNbZ_A-h7g0EEzEKTLWTh63K0KU";
@@ -183,11 +141,13 @@ const HelpButton = () => {
 
   return (
     <View style={[styles.container, phoneStyles.container]}>
-      {/* <View style={[styles.homecontainer, phoneStyles.container]}> */}
+
       {/* <Image
           source={require("../assets/GLLOGOSALLY.png")}
           style={[styles.logoImage2, phoneStyles.logoImage2]}
         /> */}
+
+      {/* User Icon */}
       <TouchableOpacity
         onPress={() => setBioModalVisible(true)}
         style={styles.profileContainer}
@@ -205,7 +165,8 @@ const HelpButton = () => {
           />
         )}
       </TouchableOpacity>
-      {/* </View> */}
+
+      {/* Call Emergency Button */}
       <TouchableOpacity
         style={[styles.callButton, phoneStyles.callButton]}
         onPress={handleEmergencyCall}
@@ -219,7 +180,7 @@ const HelpButton = () => {
         />
       </TouchableOpacity>
 
-      {/* Iot Controls in Nav Bar */}
+      {/* Iot Dashboard Button */}
       <TouchableOpacity
         onPress={() => setIotModalVisible(true)}
         style={styles.profileContainer}
@@ -231,95 +192,8 @@ const HelpButton = () => {
         />
       </TouchableOpacity>
 
-
-      <Modal
-  visible={iotModalVisible}
-  transparent={true}
-  animationType="slide"
-  onRequestClose={() => setIotModalVisible(false)}
->
-
-  <View style={styles.modalContainer}>
-    <View style={styles.modalContent}>
-      <Text style={styles.modalText}>IoT Dashboard</Text>
-
-      {/* Bar Chart for Messages Sent vs. Received */}
-      <BarChart
-        data={{
-          labels: ["Sent", "Received"],
-          datasets: [{ data: [messageData.sent, messageData.received] }],
-        }}
-        width={SCREEN_WIDTH * 0.4}
-        height={220}
-        yAxisLabel=""
-        // yAxisInterval={1} // Set a manual interval
-        yAxisProps={{
-          fromZero: true,
-          min: 0,
-          max: Math.max(messageData.sent, messageData.received) + 2, // Ensures no duplicates
-        }}
-        chartConfig={{
-          backgroundColor: "#fff",
-          backgroundGradientFrom: "#f3b718",
-          backgroundGradientTo: "#f09030",
-          decimalPlaces: 0,
-          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        }}
-        style={{ marginVertical: 10, borderRadius: 20 }}
-      />
-{/* 
-      Message Logs */}
-      {/* <ScrollView style={styles.logContainer}>
-        {messageData.logs.map((log, index) => (
-          <Text key={index} style={styles.logText}>
-            {new Date(log.event_time).toLocaleString()} - {log.event_type}
-          </Text>
-        ))}
-      </ScrollView> */}
-
-{/* <TochTech /> */}
-
-      <TouchableOpacity
-        onPress={() => setIotModalVisible(false)}
-        style={styles.modalButton}
-      >
-        <Text style={styles.modalButtonText}>Close</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
-
-
-      {/* <Modal
-        visible={iotModalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setIotModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>IoT Dashboard</Text>
-            <Text style={styles.modalText}>Messages Sent: {messageData.sent}</Text>
-            <Text style={styles.modalText}>Messages Received: {messageData.received}</Text>
-            {/* {message data} */}
-            {/* <ScrollView style={styles.logContainer}>
-              {messageData.logs.map((log, index) => (
-                <Text key={index} style={styles.logText}>
-                  {new Date(log.event_time).toLocaleString()} - {log.event_type}
-                </Text>
-              ))}
-            </ScrollView> */}
-            {/* <TochTech />
-            <TouchableOpacity
-              onPress={() => setIotModalVisible(false)}
-              style={styles.modalButton}
-            >
-              <Text style={styles.modalButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal> */} 
+      {/* IoT Dashboard Modal (Moved to Dashboard.js) */}
+      <Dashboard visible={iotModalVisible} onClose={() => setIotModalVisible(false)} />
 
       <View style={[styles.logoContainer, phoneStyles.logoContainer]}>
         {/* <Image
@@ -730,4 +604,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HelpButton;
+export default NavBar;
