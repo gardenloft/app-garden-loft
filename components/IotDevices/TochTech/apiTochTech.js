@@ -4,8 +4,10 @@ import CryptoJS from 'crypto-js';
 
 //API KEYS AND CODES GO HERE
 
+// const API_URL = "https://your-vericare-api-url.com"; // Replace with actual API URL
+// const API_KEY = "your_api_key"; // Replace with your API key
+// const API_SECRET = "your_api_secret"; // Replace with your API secret
 
-console.log(DATE); // Example output: "2025-03-12"
 
 // Function to generate Secure HMAC Nonce Authentication (Recommended)
 const generateHMACNonce = () => {
