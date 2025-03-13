@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Image,
   TouchableOpacity,
+  videoLength,
 } from "react-native";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import Carousel from "react-native-reanimated-carousel";
@@ -129,6 +130,8 @@ const Entertainment = ({ videoId, onClose }) => {
   const [isNoFavoritesModalVisible, setIsNoFavoritesModalVisible] =
     useState(false);
   const [playing, setPlaying] = useState(true);
+  const [hasEnded, setHasEnded] = useState(false);  // ✅ Track if the video ended properly
+
 
   const onStateChange = useCallback(
     (state) => {
@@ -375,6 +378,7 @@ const Entertainment = ({ videoId, onClose }) => {
 const openEpisodeModal = async (episode) => {  // ✅ Add 'async' here
   setSelectedVideoId(episode.videoId);
   setIsVideoModalVisible(true);
+  setWatchStartTime(new Date()); // ✅ Start tracking watch time
 
   // 🔄 Update Firebase watch history
   updateWatchedVideos(episode.videoId, episode.name, episode.title);
@@ -393,15 +397,16 @@ const openEpisodeModal = async (episode) => {  // ✅ Add 'async' here
         user.uid,                 // Firebase User UID
         "Youtube_video_clicked",
         // Event Type
-        "Expo App",               // Source
+       
         {
           video_title: episode.title,
           video_url: `https://www.youtube.com/watch?v=${episode.videoId}`,
+          source: "Expo App",
         }
       );
-      console.log("YouTube video play logged successfully!");
+      console.log("YouTube video click logged successfully!");
     } catch (error) {
-      console.error("Error logging YouTube video play:", error);
+      console.error("Error logging YouTube video click:", error);
     }
   }
 };
@@ -427,29 +432,114 @@ const handleVideoEnd = async () => {
   if (user) {
     try {
       await logAppUsageEvent(
-        user.uid,                   // Firebase User UID
-        "Youtube_watch_duration",    // Event Type
-        "Expo App",                  // Source
+        user.uid,   // Firebase User UID
+        "Youtube_watch_ended",  // 🔥 New event to indicate full completion
         {
-          video_title: selectedVideoId,  // Use `selectedVideoId` instead of `episode.title`
+          video_title: selectedVideoId,
           video_url: `https://www.youtube.com/watch?v=${selectedVideoId}`,
-          watch_time_seconds: watchDuration
+          watch_time_seconds: watchDuration,
+          status: "completed"  // 🟢 Status: Watched until the end
+        } 
+
+      );
+      console.log("✅ Full watch event logged!");
+    } catch (error) {
+      console.error("❌ Error logging full video watch:", error);
+    }
+
+     // ✅ Set a flag so `closeVideoModal` doesn't log it as abandoned
+  setHasEnded(true);
+    //                     // Firebase User UID
+    //     "Youtube_watch_duration",    // Event Type
+    //     "Expo App",                  // Source
+    //     {
+    //       video_title: selectedVideoId,  // Use `selectedVideoId` instead of `episode.title`
+    //       video_url: `https://www.youtube.com/watch?v=${selectedVideoId}`,
+    //       watch_time_seconds: watchDuration
+    //     }
+    //   );
+    //   console.log("Full watch event logged!");
+    // } catch (error) {
+    //   console.error("Error logging full video watch:", error);
+    // }
+  }
+};
+
+const closeVideoModal = async () => {
+  console.log("🚪 User is closing video modal...");
+
+  if (!watchStartTime) {
+    console.log("🚨 No watch start time recorded. Skipping logging.");
+    setIsVideoModalVisible(false);
+    return;
+  }
+
+  const watchEndTime = new Date();
+  const watchDuration = Math.floor((watchEndTime - watchStartTime) / 1000); // Convert to seconds
+
+  // ✅ If video ended correctly, DO NOT log it as abandoned
+  if (hasEnded) {
+    console.log("🟢 Video was fully watched. Not marking as abandoned.");
+    setIsVideoModalVisible(false);
+    return;
+  }
+
+  console.log("❌ User exited early. Watch duration:", watchDuration, "seconds");
+
+  if (user) {
+    try {
+      await logAppUsageEvent(
+        user.uid,
+        "Youtube_watch_ended", // 🔥 New event for early exit
+        {
+          video_title: selectedVideoId,
+          video_url: `https://www.youtube.com/watch?v=${selectedVideoId}`,
+          watch_time_seconds: watchDuration,
+          status: watchDuration > 10 ? "partial" : "abandoned", // 🔴 Abandoned if <10 seconds
         }
       );
-      console.log("YouTube watch duration logged successfully!");
+      console.log("❌ Early exit logged. Watch duration:", watchDuration, "seconds");
     } catch (error) {
-      console.error("Error logging YouTube watch duration:", error);
+      console.error("❌ Error logging abandoned watch:", error);
+    }
+  }
+
+  // Reset state and close modal
+  setIsVideoModalVisible(false);
+  setSelectedVideoId("");
+  setWatchStartTime(null); // Reset start time
+  setHasEnded(false); // Reset the flag
+};
+
+const handleVideoPause = async () => {
+  console.log("⏸ Video paused by user.");
+
+  if (!watchStartTime) return; // If no start time, skip logging
+
+  const currentTime = new Date();
+  const watchDuration = Math.floor((currentTime - watchStartTime) / 1000);
+
+  if (user) {
+    try {
+      await logAppUsageEvent(
+        user.uid,
+        "Youtube_video_paused",
+        {
+          video_title: selectedVideoId,
+          video_url: `https://www.youtube.com/watch?v=${selectedVideoId}`,
+          watch_time_seconds: watchDuration,
+          status: "paused",
+        }
+      );
+      console.log("⏸ Video pause event logged!");
+    } catch (error) {
+      console.error("❌ Error logging pause event:", error);
     }
   }
 };
 
 
-
-
-  const closeVideoModal = () => {
-    setIsVideoModalVisible(false);
-    setSelectedVideoId("");
-  };
+  
 
   const handleSurpriseMe = () => {
     if (categories.length > 0) {
@@ -873,7 +963,8 @@ const handleVideoEnd = async () => {
           <YouTubeVideoPlayer
             videoId={selectedVideoId}
             onStart={handleVideoStart}   // Track when video starts
-            onEnd={handleVideoEnd}  
+            onEnd={handleVideoEnd} 
+            onPause={handleVideoPause}  
             onClose={closeVideoModal}
           />
           <Pressable style={styles.closeButton} onPress={closeVideoModal}>
