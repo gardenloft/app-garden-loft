@@ -1,13 +1,25 @@
-import { encode as base64Encode } from 'base-64';
-import * as SecureStore from 'expo-secure-store';
-import CryptoJS from 'crypto-js';
+import { encode as base64Encode } from "base-64";
+import * as SecureStore from "expo-secure-store";
+import CryptoJS from "crypto-js";
 
 //API KEYS AND CODES GO HERE
+
+// const API_URL = "https://your-vericare-api-url.com"; // Replace with actual API URL
+// const API_KEY = "your_api_key"; // Replace with your API key
+// const API_SECRET = "your_api_secret"; // Replace with your API secret
+const API_URL = "https://bpconnect.tochtech.com/api/v1"; // Replace with actual API URL
+const API_KEY = "aaf4f446-3f6f-4489-90d2-a4c84b9d7ffd"; // Replace with your API key
+const API_SECRET = "H4SzNZ6gat79WTKYJfcP2B8L"; // Replace with your API secret
+const ENTITY_ID = "a5dc95e8b0a97a5d72c734fc"; // Replace with your API secret
+const RESIDENT_ID = "67c0f6bbcd9fda1450292729"; // Replace with your API secret
+const DATE = "2025-03-12"; // Replace with your API secret
 
 // Function to generate Secure HMAC Nonce Authentication (Recommended)
 const generateHMACNonce = () => {
   const nonce = Math.floor(Date.now() / 1000).toString(); // Current Unix timestamp
-  const signature = CryptoJS.HmacSHA1(API_KEY + nonce, API_SECRET).toString(CryptoJS.enc.Hex);
+  const signature = CryptoJS.HmacSHA1(API_KEY + nonce, API_SECRET).toString(
+    CryptoJS.enc.Hex
+  );
   return { nonce, signature };
 };
 
@@ -56,30 +68,32 @@ export const getValidAccessToken = async () => {
   return token;
 };
 
-
 // Retrieve a list of all Residents under a business entity.
 export const fetchResidentData = async () => {
   try {
     const token = await getValidAccessToken();
     if (!token) throw new Error("No valid access token available");
 
-    const response = await fetch(`${API_URL}/residents?entity_id=${ENTITY_ID}`, { // Retrieve a list of all Residents under a business entity.
-    // const response = await fetch(`${API_URL}/groups`, { // Retrieve a list of all Residents Groups under a business entity.
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `${API_URL}/residents?entity_id=${ENTITY_ID}`,
+      {
+        // Retrieve a list of all Residents under a business entity.
+        // const response = await fetch(`${API_URL}/groups`, { // Retrieve a list of all Residents Groups under a business entity.
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const data = await response.json();
-    console.log("resident data", data)
+    console.log("resident data", data);
     return data;
   } catch (error) {
     console.error("Failed to fetch resident data:", error);
   }
 };
-
 
 // Get daily report for a resident or all residents of a business entity.
 export const fetchResidentDataDaily = async () => {
@@ -87,14 +101,18 @@ export const fetchResidentDataDaily = async () => {
     const token = await getValidAccessToken();
     if (!token) throw new Error("No valid access token available");
 
-    const response = await fetch(`${API_URL}/daily_reports?entity_id=${ENTITY_ID}&resident_id=${RESIDENT_ID}&date=${DATE}`, { // Retrieve a list of all Residents under a business entity.
-    // const response = await fetch(`${API_URL}/groups`, { // Retrieve a list of all Residents Groups under a business entity.
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `${API_URL}/daily_reports?entity_id=${ENTITY_ID}&resident_id=${RESIDENT_ID}&date=${DATE}`,
+      {
+        // Retrieve a list of all Residents under a business entity.
+        // const response = await fetch(`${API_URL}/groups`, { // Retrieve a list of all Residents Groups under a business entity.
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const data = await response.json();
     console.log("resident data daily", JSON.stringify(data, null, 2), DATE);
@@ -112,13 +130,16 @@ export const fetchResidentDailySleep = async () => {
     const token = await getValidAccessToken();
     if (!token) throw new Error("No valid access token available");
 
-    const response = await fetch(`${API_URL}/daily_reports?entity_id=${ENTITY_ID}&resident_id=${RESIDENT_ID}&date=${DATE}`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `${API_URL}/daily_reports?entity_id=${ENTITY_ID}&resident_id=${RESIDENT_ID}&date=${DATE}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const data = await response.json();
 
