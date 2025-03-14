@@ -8,7 +8,26 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:561295329634:android:73f932c401a0834450443b",
+        "mobilesdk_app_id": "1:561295329634:android:92df0b0b8ecd9b4150443b",
+        "android_client_info": {
+          "package_name": "com.gardenloft.appgardenloft"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUBS5au0ehm2dvbYzX8Hdnv30nFz7fClY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:561295329634:android:308ba50e102f0e8a50443b",
         "android_client_info": {
           "package_name": "com.sallydough.appgardenloft"
         }

@@ -1,12 +1,14 @@
 {
   "cli": {
-    "version": ">= 9.0.8"
+    "version": ">= 9.0.8",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
       "developmentClient": true,
       "channel": "development",
       "distribution": "internal"
+      
     },
     "preview": {
       "developmentClient": true,
@@ -23,18 +25,34 @@
       "android": {
         "gradleCommand": ":app:assembleRelease"
       }
+   
     },
     "preview3": {
       "developmentClient": true
+    
     },
     "preview4": {
       "distribution": "internal"
+      
     },
     "production": {
-      "channel": "production"
+    
+      "channel": "production",
+      "autoIncrement": true,
+      
+     
+      
+
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+
+      "ios": { "ascAppId": "6508169875", "appleId": "doughsally@icloud.com", "appleTeamId": "GXPC3HRVU2" }
+    },
+    "development": {
+      "ios": { "ascAppId": "6508169875", "appleId": "doughsally@icloud.com", "appleTeamId": "GXPC3HRVU2" }
+
+    }
   }
 }
