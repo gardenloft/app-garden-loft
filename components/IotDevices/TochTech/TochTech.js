@@ -7,11 +7,11 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import {
-  fetchResidentData,
-  fetchResidentDataDaily,
-  fetchResidentDailySleep,
-} from "./apiTochTech";
+// import {
+//   fetchResidentData,
+//   fetchResidentDataDaily,
+//   fetchResidentDailySleep,
+// } from "./apiTochTech";
 import { BarChart } from "react-native-chart-kit";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
