@@ -13,6 +13,7 @@ import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import Carousel from "react-native-reanimated-carousel";
 import { VLCPlayer } from "react-native-vlc-media-player";
 import { WebView } from "react-native-webview";
+import WaterLogs from "./WaterLogs"; 
 
 import {
   fetchUserHomeId,
@@ -31,6 +32,7 @@ const Lights = () => {
   const [isToggling, setIsToggling] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalCameraVisible, setModalCameraVisible] = useState(false);
+  const [modalWaterVisible, setModalWaterVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedDevice, setSelectedDevice] = useState(null);
   const carouselRef = useRef(null);
@@ -172,6 +174,7 @@ const Lights = () => {
           "water_heater",
           "remote",
           "camera",
+          // "sensor",
         ];
         const entities = await getFilteredEntities(homeId, domains);
         const filteredDevices = entities.map((entity) => ({
@@ -182,7 +185,14 @@ const Lights = () => {
           state: entity.state, // Fetch current state
           domain: entity.entity_id.split(".")[0], // Extract domain (e.g., 'switch')
         }));
-        setDevices(filteredDevices);
+   // 🔹 Ensure "Water Usage Logs" is a selectable card in the carousel
+   const waterLogItem = {
+    id: "sensor.phyn_pc1_daily_water_usage", // The correct Phyn entity ID for daily usage
+    name: "Water Usage Logs",
+    domain: "water_logs",
+  };
+
+    setDevices([...filteredDevices, waterLogItem]);
       } catch (error) {
         console.error("Failed to fetch entities:", error);
       } finally {
@@ -191,6 +201,16 @@ const Lights = () => {
     };
     fetchEntities();
   }, []);
+
+
+
+  const openWaterLogsModal = () => {
+    setModalWaterVisible(true);
+  };
+
+  const closeWaterLogsModal = () => {
+    setModalWaterVisible(false);
+  };
 
   // useEffect(() => {
   //   // Automatically adjust video settings when component mounts
@@ -368,9 +388,11 @@ const Lights = () => {
       // remote: "remote",
       remote: "television",
       binary_sensor: "camera",
+      water_logs: "water-outline",
     };
 
     const icon = icons[item.domain] || "camera-control";
+    // const icon = icons[item.domain] || "devices";
 
     const onPress = () => {
       if (item.domain === "remote" || item.domain === "media_player") {
@@ -386,6 +408,8 @@ const Lights = () => {
         openSensiboModal(item);
       } else if (item.domain === "lock") {
         handleDeviceAction(item, "toggle", item.state === "unlocked");
+      }  else if (item.domain === "water_logs") {
+        openWaterLogsModal();
       }
     };
 
@@ -964,6 +988,23 @@ const Lights = () => {
           )}
         </View>
       </Modal>
+
+       {/* Water Logs Modal */}
+       <Modal visible={modalWaterVisible} animationType="slide" transparent={true}>
+        <View style={styles.modalContainer}>
+          <Pressable style={styles.closeButton} onPress={closeWaterLogsModal}>
+            <FontAwesome name="close" size={24} color="black" />
+          </Pressable>
+          <Text style={styles.modalTitle}>Water Usage</Text>
+          <View>
+            <Text>
+            <WaterLogs /> {/* Ensuring WaterLogs is wrapped in View */}
+            </Text>
+            
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 };

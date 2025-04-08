@@ -42,6 +42,7 @@ const NavBar = () => {
   const inputs = useRef([]);
   const navigation = useNavigation();
   const correctPasskey = "112112";
+  const [homeId, setHomeId] = useState(null);
 
   const FACETIME_LINK =
     "https://facetime.apple.com/join#v=1&p=XEhJ9qklEe+Nf97v/61Iyg&k=8EJy-2zZvED8dUqzwNbZ_A-h7g0EEzEKTLWTh63K0KU";
@@ -54,6 +55,7 @@ const NavBar = () => {
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
           setUserInfo(userSnap.data());
+          setHomeId(userSnap.data().homeId);
         } else {
           console.log("User document not found");
         }
@@ -61,6 +63,8 @@ const NavBar = () => {
     };
     fetchUserData();
   }, []);
+
+
 
   const handleLogout = async () => {
     const auth = getAuth();
@@ -193,7 +197,7 @@ const NavBar = () => {
       </TouchableOpacity>
 
       {/* IoT Dashboard Modal (Moved to Dashboard.js) */}
-      <Dashboard visible={iotModalVisible} onClose={() => setIotModalVisible(false)} />
+      <Dashboard visible={iotModalVisible} onClose={() => setIotModalVisible(false)} homeId={homeId}/>
 
       <View style={[styles.logoContainer, phoneStyles.logoContainer]}>
         {/* <Image

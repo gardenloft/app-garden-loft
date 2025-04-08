@@ -4,10 +4,14 @@ import CryptoJS from "crypto-js";
 
 //API KEYS AND CODES GO HERE
 
-// const API_URL = "https://your-vericare-api-url.com"; // Replace with actual API URL
-// const API_KEY = "your_api_key"; // Replace with your API key
-// const API_SECRET = "your_api_secret"; // Replace with your API secret
+const API_URL = process.env.EXPO_PUBLIC_TOCHTECH_URL
+const API_KEY = process.env.EXPO_PUBLIC_TOCHTECH_API_KEY
+const API_SECRET = process.env.EXPO_PUBLIC_TOCHTECH_SECRET_API_KEY
+const ENTITY_ID = process.env.EXPO_PUBLIC_TOCHTECH_ENTITY_ID
+const RESIDENT_ID = process.env.EXPO_PUBLIC_TOCHTECH_RESIDENT_ID_ELIZABETH
 
+const DATE = new Date().toISOString().split('T')[0]; // Shows for present day
+console.log(DATE);// Example output: "2025-03-12"
 
 // Function to generate Secure HMAC Nonce Authentication (Recommended)
 const generateHMACNonce = () => {

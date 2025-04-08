@@ -26,6 +26,45 @@ export const fetchUserHomeId = async () => {
   return homeId;
 };
 
+// this is for water logs
+const HOME_ASSISTANT_URL = process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME1_URL;
+const HOME_ASSISTANT_TOKEN = process.env.EXPO_PUBLIC_HOME_ASSISTANT_HOME1_TOKEN;
+
+export const subscribeToEntityState = (entityId, callback) => {
+  const ws = new WebSocket(`${HOME_ASSISTANT_URL}/api/websocket`);
+
+  ws.onopen = () => {
+    console.log("Connected to Home Assistant WebSocket");
+    ws.send(
+      JSON.stringify({ type: "auth", access_token: HOME_ASSISTANT_TOKEN })
+    );
+    ws.send(
+      JSON.stringify({
+        id: 1,
+        type: "subscribe_events",
+        event_type: "state_changed",
+      })
+    );
+  };
+
+  ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (
+      data.event &&
+      data.event.data &&
+      data.event.data.entity_id === entityId
+    ) {
+      callback(data.event.data.new_state.state);
+    }
+  };
+
+  ws.onerror = (error) => {
+    console.error("WebSocket Error:", error);
+  };
+
+  return () => ws.close();
+};
+
 // Configuration for all Home Assistant instances
 const homeAssistantConfig = {
   home1: {
