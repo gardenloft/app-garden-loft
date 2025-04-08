@@ -117,6 +117,33 @@ export const getFilteredEntities = async (homeId, domains) => {
   }
 };
 
+// Fetch Water Sensor Data and pass to WaterSensor.js
+export const fetchWaterUsageData = async () => {
+
+  // Step 1: Fetch homeId first
+  const homeId = await fetchUserHomeId();
+  console.log(`🚰 Fetching water usage data for homeId: ${homeId}`);
+
+  const apiClient = createApiClient(homeId);
+  try {
+    const [dailyUsage, sessionUsage, sessionHistory ] = await Promise.all([
+      apiClient.get("/api/states/sensor.daily_water_usage_log"),
+      apiClient.get("/api/states/sensor.water_event_log"),
+      apiClient.get("/api/states/input_text.water_session_history"),
+    ]);
+
+    return {
+      dailyUsage: dailyUsage.data.state,
+      sessionUsage: sessionUsage.data.state,
+      sessionHistory: sessionHistory.data.state, // This is the full log text
+    };
+  } catch (error) {
+    console.error(`Failed to fetch water usage data for ${homeId}:`, error);
+    throw error;
+  }
+};
+
+
 // Fetch the live stream URL for a camera
 export const fetchStreamUrl = async (homeId, cameraEntityId) => {
   console.log(
