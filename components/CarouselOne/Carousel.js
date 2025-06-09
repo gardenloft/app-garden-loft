@@ -20,6 +20,7 @@ import ComingSoon from "../ComingSoon";
 import Kosmi from "../Kosmi";
 import Lights from "../IotDevices/Lights";
 import Services from "../Services";
+import Health from "../Health";
 
 const data = [
   {
@@ -64,8 +65,7 @@ const data = [
     component: <ComingSoon />,
     prompt: "See What's Coming Up?",
   },
-  { id: 9, title: "Games", icon: "gamepad", component: <Games /> },
-  { id: 10, title: "MY SERVICES", icon: "hand-heart", component: <Services /> },
+
   {
     id: 8,
         title: "HOME CONTROLS",
@@ -76,6 +76,9 @@ const data = [
         component: <Lights />,
         prompt: "Control Home Device?",
       },
+        { id: 9, title: "Games", icon: "gamepad", component: <Games /> },
+  { id: 10, title: "MY SERVICES", icon: "hand-heart", component: <Services /> },
+  { id: 10, title: "MY HEALTH", icon: "hand-heart-outline", component: <Health /> },
 ];
 
 const Home = () => {
