@@ -78,7 +78,7 @@ const data = [
       },
         { id: 9, title: "Games", icon: "gamepad", component: <Games /> },
   { id: 10, title: "MY SERVICES", icon: "hand-heart", component: <Services /> },
-  { id: 10, title: "MY HEALTH", icon: "hand-heart-outline", component: <Health /> },
+  { id: 11, title: "MY HEALTH", icon: "heart-plus", component: <Health /> },
 ];
 
 const Home = () => {
