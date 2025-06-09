@@ -19,6 +19,7 @@ import GLClub from "../ClubText/GLClub";
 import ComingSoon from "../ComingSoon";
 import Kosmi from "../Kosmi";
 import Lights from "../IotDevices/Lights";
+import Services from "../Services";
 
 const data = [
   {
@@ -64,6 +65,7 @@ const data = [
     prompt: "See What's Coming Up?",
   },
   { id: 9, title: "Games", icon: "gamepad", component: <Games /> },
+  { id: 10, title: "MY SERVICES", icon: "hand-heart", component: <Services /> },
   {
     id: 8,
         title: "HOME CONTROLS",
