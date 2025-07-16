@@ -37,13 +37,13 @@ const data = [
     component: <Entertainment />,
     prompt: "Watch Entertainment?",
   },
-  {
-    id: 4,
-    title: "WATCH PARTY",
-    icon: "calendar-star",
-    component: <Kosmi />,
-    prompt: "Watch Party?",
-  },
+  // {
+  //   id: 4,
+  //   title: "WATCH PARTY",
+  //   icon: "calendar-star",
+  //   component: <Kosmi />,
+  //   prompt: "Watch Party?",
+  // },
   {
     id: 5,
     title: "MY ACTIVITIES",
@@ -58,14 +58,13 @@ const data = [
     icon: "account-question",
     prompt: "Need Help With Your Garden Loft?",
   },
-  {
-    id: 7,
-    title: "MY CALENDAR",
-    icon: "calendar-month",
-    component: <ComingSoon />,
-    prompt: "See What's Coming Up?",
-  },
-
+  // {
+  //   id: 7,
+  //   title: "MY CALENDAR",
+  //   icon: "calendar-month",
+  //   component: <ComingSoon />,
+  //   prompt: "See What's Coming Up?",
+  // },
   {
     id: 8,
         title: "HOME CONTROLS",
@@ -77,8 +76,8 @@ const data = [
         prompt: "Control Home Device?",
       },
         { id: 9, title: "Games", icon: "gamepad", component: <Games /> },
-  { id: 10, title: "MY SERVICES", icon: "hand-heart", component: <Services /> },
-  { id: 11, title: "MY HEALTH", icon: "heart-plus", component: <Health /> },
+  // { id: 10, title: "MY SERVICES", icon: "hand-heart", component: <Services /> },
+  // { id: 11, title: "MY HEALTH", icon: "heart-plus", component: <Health /> },
 ];
 
 const Home = () => {
