@@ -28,12 +28,15 @@
       "buildNumber": "23",
       "infoPlist": {
         "UIBackgroundModes": [
+          "remote-notification",
           "remote-notification"
         ],
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
         "NSLocalNetworkUsageDescription": "This app requires access to your local network to display the camera stream.",
         "NSBonjourServices": [
+          "_http._tcp",
+          "_rtsp._tcp",
           "_http._tcp",
           "_rtsp._tcp"
         ],
@@ -49,6 +52,10 @@
               "UIInterfaceOrientationPortrait",
               "UIInterfaceOrientationPortraitUpsideDown",
               "UIInterfaceOrientationLandscapeLeft",
+              "UIInterfaceOrientationLandscapeRight",
+              "UIInterfaceOrientationPortrait",
+              "UIInterfaceOrientationPortraitUpsideDown",
+              "UIInterfaceOrientationLandscapeLeft",
               "UIInterfaceOrientationLandscapeRight"
             ],
             "ytimg.com": {
@@ -57,7 +64,8 @@
               "NSExceptionRequiresForwardSecrecy": false
             }
           }
-        }
+        },
+        "ITSAppUsesNonExemptEncryption": false
       },
       "bitcode": false
     },
