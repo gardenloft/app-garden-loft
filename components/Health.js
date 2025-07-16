@@ -41,14 +41,14 @@ const phoneStyles =
 
 // Add image for items with custom icons
 const servicesData = [
-  { id: "1", name: "Location", icon: "map-pin"  },
+  { id: "1", name: "Location", icon: "google-maps"  },
   { id: "2", name: "Cooking", icon: "chef-hat"},
   { id: "3", name: "Sleeping", icon: "bed"  },
   { id: "4", name: "Bathing", icon: "shower-head" },
   { id: "5", name: "Living", icon: "door-closed" },
-  { id: "5", name: "interaction", icon: "heart-plus" },
+  { id: "5", name: "interaction", icon: "heart-hand" },
 ];
-
+// human-greeting-proximity
 const Health = () => {
   const carouselRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
