@@ -46,7 +46,7 @@ const servicesData = [
   { id: "3", name: "Sleeping", icon: "bed"  },
   { id: "4", name: "Bathing", icon: "shower-head" },
   { id: "5", name: "Living", icon: "door-closed" },
-  { id: "5", name: "interaction", icon: "heart-hand" },
+  { id: "5", name: "interaction", icon: "heart-plus" },
 ];
 
 const Health = () => {
