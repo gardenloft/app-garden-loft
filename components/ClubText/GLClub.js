@@ -32,6 +32,7 @@ import { callUser } from "../../app/VideoSDK2"; // Import from VideoCall
 import { getDownloadURL, ref } from "firebase/storage"; // Firebase Storage methods
 import TextComponent from "../../app/Text.js";
 import ComingSoon from "../ComingSoon";
+import splashImage from "../../app/splash.png"
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -344,7 +345,7 @@ const GLClub = () => {
       if (currentUserSnap.exists()) {
         const currentUserData = currentUserSnap.data();
         const currentUserName = currentUserData.userName || user.email;
-        const currentUserImageUrl = currentUserData.imageUrl || null;
+        const currentUserImageUrl = currentUserData.imageUrl || splashImage;
 
         // Accept the friend request by updating both users' friendRequests
         await setDoc(
@@ -376,7 +377,7 @@ const GLClub = () => {
             city: currentUserData.city || "Calgary", // Default to Calgary if not available
             hobbies: currentUserData.hobbies || ["Reading", "Painting"], // Default hobbies
             clubs: currentUserData.clubs || ["Book", "Knitting"], // Default clubs
-            imageUrl: currentUserImageUrl, // Use the fetched imageUrl
+            imageUrl: currentUserImageUrl || splashImage, // Use the fetched imageUrl
           }
         );
 
@@ -553,7 +554,12 @@ const GLClub = () => {
     >
 
       <Image
-        source={{ uri: item.imageUrl }}
+        // source={{ uri: item.imageUrl }}
+        source={
+          item.imageUrl
+            ? { uri: item.imageUrl }
+            : splashImage
+        }
         style={[styles.image, phoneStyles.image]}
       />
         {item.unreadCount > 0 && (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -96,11 +96,22 @@ const TextComponent = (props) => {
   //     }
   //   }, [friendId, user, isBlocked]);
 
+  const generateChatId = (uid1, uid2) => {
+    return uid1 > uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
+  };
+
+  const chatId = useMemo(() => {
+    if (!user || !friendId) return null;
+    return generateChatId(user.uid, friendId);
+  }, [user, friendId]);
+
   useEffect(() => {
     const markMessagesAsRead = async () => {
       if (!friendId || !user) return;
   
-      const chatId = generateChatId(user.uid, friendId);
+      // const chatId = generateChatId(user.uid, friendId);
+      // const chatId = useMemo(() => generateChatId(user?.uid, friendId), [user?.uid, friendId]);
+
       const q = query(
         collection(FIRESTORE_DB, `chats/${chatId}/messages`),
         where("isRead", "==", false),
@@ -125,58 +136,109 @@ const TextComponent = (props) => {
   }, [friendId, user]);
 
   useEffect(() => {
-    // Check if the user is blocked
+    if (!chatId || isBlocked) return;
+  
+    const q = query(
+      collection(FIRESTORE_DB, `chats/${chatId}/messages`),
+      orderBy("timestamp", "asc")
+    );
+  
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
+      const loadedMessages = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        formattedDate: moment(doc.data().timestamp.toDate()).format("DD MMM YYYY"),
+        formattedTime: moment(doc.data().timestamp.toDate()).format("h:mm a"),
+      }));
+  
+      const newReceivedMessages = loadedMessages.filter(
+        (msg) => msg.receiverId === user.uid && !msg.isRead
+      );
+  
+      for (const message of newReceivedMessages) {
+        await logAppUsageEvent(user.uid, "text_message_received", {
+          sender_id: message.senderId,
+          message_text: message.text,
+        });
+  
+        await updateDoc(
+          doc(FIRESTORE_DB, `chats/${chatId}/messages`, message.id),
+          { isRead: true }
+        );
+      }
+  
+      setMessages(loadedMessages);
+      setLoading(false);
+      console.log("TextComponent received:", { friendId, friendName });
+    });
+  
+    return () => unsubscribe(); // ✅ clean up
+  }, [chatId, isBlocked]);
+
+  useEffect(() => {
+    if (!user?.uid) return;
+  
     const checkBlockedStatus = async () => {
       const userDoc = await getDoc(doc(FIRESTORE_DB, "users", user.uid));
       const userData = userDoc.data();
       const blockedUsers = userData?.blockedUsers || [];
       setIsBlocked(blockedUsers.includes(friendId));
     };
+  
     checkBlockedStatus();
+  }, [user?.uid, friendId]);
+  
 
-    // Fetch messages
-    if (!isBlocked) {
-      const chatId = generateChatId(user.uid, friendId);
-      const q = query(
-        collection(FIRESTORE_DB, `chats/${chatId}/messages`),
-        orderBy("timestamp", "asc")
-      );
+  // useEffect(() => {
+  //   // Check if the user is blocked
+  //   const checkBlockedStatus = async () => {
+  //     const userDoc = await getDoc(doc(FIRESTORE_DB, "users", user.uid));
+  //     const userData = userDoc.data();
+  //     const blockedUsers = userData?.blockedUsers || [];
+  //     setIsBlocked(blockedUsers.includes(friendId));
+  //   };
+  //   checkBlockedStatus();
 
-      const unsubscribe = onSnapshot(q, async (snapshot) => {
-        const loadedMessages = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          formattedDate: moment(doc.data().timestamp.toDate()).format("DD MMM YYYY"),
-          formattedTime: moment(doc.data().timestamp.toDate()).format("h:mm a"),
-        }));
+  //   // Fetch messages
+  //   if (!isBlocked) {
+  //     const chatId = generateChatId(user.uid, friendId);
+  //     const q = query(
+  //       collection(FIRESTORE_DB, `chats/${chatId}/messages`),
+  //       orderBy("timestamp", "asc")
+  //     );
+
+  //     const unsubscribe = onSnapshot(q, async (snapshot) => {
+  //       const loadedMessages = snapshot.docs.map((doc) => ({
+  //         id: doc.id,
+  //         ...doc.data(),
+  //         formattedDate: moment(doc.data().timestamp.toDate()).format("DD MMM YYYY"),
+  //         formattedTime: moment(doc.data().timestamp.toDate()).format("h:mm a"),
+  //       }));
        
-        // ✅ Find new messages received by the user
-      const newReceivedMessages = loadedMessages.filter(
-        (msg) => msg.receiverId === user.uid && !msg.isRead
-      );
+  //       // ✅ Find new messages received by the user
+  //     const newReceivedMessages = loadedMessages.filter(
+  //       (msg) => msg.receiverId === user.uid && !msg.isRead
+  //     );
 
-      // ✅ Log received messages to Supabase
-      for (const message of newReceivedMessages) {
-        await logAppUsageEvent(user.uid, "text_message_received", {
-          sender_id: message.senderId,
-          message_text: message.text,
-        });
+  //     // ✅ Log received messages to Supabase
+  //     for (const message of newReceivedMessages) {
+  //       await logAppUsageEvent(user.uid, "text_message_received", {
+  //         sender_id: message.senderId,
+  //         message_text: message.text,
+  //       });
 
-        // Mark messages as read in Firestore
-        await updateDoc(doc(FIRESTORE_DB, `chats/${chatId}/messages`, message.id), {
-          isRead: true,
-        });
-      }
-        setMessages(loadedMessages);
-        setLoading(false);
-        console.log("TextComponent received:", { friendId, friendName });
-      });
-    }
-  }, [friendId, isBlocked]);
+  //       // Mark messages as read in Firestore
+  //       await updateDoc(doc(FIRESTORE_DB, `chats/${chatId}/messages`, message.id), {
+  //         isRead: true,
+  //       });
+  //     }
+  //       setMessages(loadedMessages);
+  //       setLoading(false);
+  //       console.log("TextComponent received:", { friendId, friendName });
+  //     });
+  //   }
+  // }, [friendId, isBlocked]);
 
-  const generateChatId = (uid1, uid2) => {
-    return uid1 > uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
-  };
 
   const handleSendMessage = async () => {
     if (isBlocked) {

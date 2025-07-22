@@ -6,7 +6,8 @@ register();
 
 //Please go into .env file and copy and paste TOKEN into this line below:
 export const token =
-'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI0OTMyMWQxMy02YTY5LTQyMGYtOWJiZC1jZjY2YWE2MTJlY2IiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTcxNzc4MTI3NywiZXhwIjoxNzQ5MzE3Mjc3fQ.W7ou1MgBfqJitdYb4fy-atNWrhCsIRkmkl5LwPE2sBM';
+// 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI0OTMyMWQxMy02YTY5LTQyMGYtOWJiZC1jZjY2YWE2MTJlY2IiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTcxNzc4MTI3NywiZXhwIjoxNzQ5MzE3Mjc3fQ.W7ou1MgBfqJitdYb4fy-atNWrhCsIRkmkl5LwPE2sBM';
+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiJhYWEwZjNjOC1kNTY0LTQ3ZGItYjM1Yi03MGY3YjgzZjZjOTciLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTc1MjY4MzQ5MSwiZXhwIjoxOTEwNDcxNDkxfQ.kM8U5sgDdr7B5GMnGBUerd-PMV73vNkdiS3oRQfI2TA';
 // API call to create meeting
 export const createMeeting = async ({ token }) => {
   const res = await fetch("https://api.videosdk.live/v1/meetings", {
