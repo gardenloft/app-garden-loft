@@ -1045,11 +1045,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     padding: 10,
     gap: 4,
-    shadowColor: "#000",
+    shadowColor: "#tranparent",
     shadowOffset: { width: 0, height: 7 },
     shadowOpacity: 0.22,
     shadowRadius: 9.22,
-    elevation: 12,
+    elevation: 0,
     ...phoneStyles.cardContainer,
   },
   cardText: {

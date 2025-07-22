@@ -1612,11 +1612,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 30,
     marginHorizontal: 10,
-    shadowColor: "#000",
+    shadowColor: "transparent",
     shadowOffset: { width: 8, height: 7 },
     shadowOpacity: 0.22,
     shadowRadius: 9.22,
-    elevation: 12,
+    elevation: 0,
     ...phoneStyles.cardContainer,
   },
   cardText: {

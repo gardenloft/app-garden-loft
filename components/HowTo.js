@@ -288,11 +288,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: 10, // Add margin to create gap between cards
     marginLeft: 0,
-    shadowColor: "#000",
+    shadowColor: "tranparent",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.22,
     shadowRadius: 9.22,
-    elevation: 12,
+    elevation: 0,
     padding: 20,
     overflow: "hidden",
     ...phoneStyles.cardContainer,
