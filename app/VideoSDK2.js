@@ -33,6 +33,9 @@ import { logAppUsageEvent } from "../components/Supabase/EventLogger";  // Impor
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
 
+// const { e2eeEnabled } = useMeeting();
+// console.log("is e2eeEnabled", e2eeEnabled);
+
 let callStartTime = null; // Global variable to store start time
 
 let auth = getAuth();
@@ -44,6 +47,12 @@ const callUser = async (calleeUid, user) => {
   }
 
   const newMeetingId = await createMeeting({ token });
+
+  if (!newMeetingId) {
+    console.error("Failed to create meeting ID");
+    return;
+  }
+
   callStartTime = new Date(); // Store call start time
 
 
@@ -58,6 +67,12 @@ const callUser = async (calleeUid, user) => {
   const calleeData = calleeDoc.data();
   const calleePushToken = calleeData.pushToken;
   const callee = calleeDoc.data().userName;
+
+  if (!calleePushToken || !calleePushToken.startsWith("ExponentPushToken")) {
+    console.warn("⚠️ Invalid or missing Expo push token for callee");
+    Alert.alert("Callee does not have a valid push token.");
+    return;
+  }
 
 
    // ✅ Log Call Start Event
@@ -94,14 +109,40 @@ const callUser = async (calleeUid, user) => {
     categoryId: "incoming_call",
   };
 
-  await fetch("https://exp.host/--/api/v2/push/send", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(message),
-  });
+  try {
+    const response = await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept-encoding": "gzip, deflate",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+
+    const result = await response.json();
+    console.log("✅ Push sent response:", result);
+
+    if (result.data?.status === "ok") {
+      console.log("✅ Notification successfully sent to Expo Push Service");
+    } else {
+      console.error("❌ Notification failed:", result);
+      Alert.alert("Failed to send push notification");
+    }
+  } catch (error) {
+    console.error("❌ Push fetch error:", error);
+    Alert.alert("Error sending push notification");
+  }
+  // await fetch("https://exp.host/--/api/v2/push/send", {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     'Accept-encoding': 'gzip, deflate',
+  //     Accept: "application/json",
+  //   },
+  //   body: JSON.stringify(message),
+  // });
+  
 };
 
 export { callUser };
