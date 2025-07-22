@@ -27,10 +27,6 @@ import { getResidentId, createNewResident } from "../Supabase/SupabaseService";
 import { logUserActivity } from "../Supabase/EventLogger";
 
 
-
-
-
-
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
 
@@ -54,10 +50,13 @@ const Login = () => {
         setLoading(true);
         try {
           const user = JSON.parse(rememberedUser);
-          await signInWithEmailAndPassword(auth, user.email, user.password);
+          await signInWithEmailAndPassword(auth, user.email.trim(), user.password);
+         
           navigation.navigate("home");
         } catch (error) {
           console.log("Auto sign in failed:", error);
+          console.log("Attempting sign-in with:", email, password);
+
         } finally {
           setLoading(false);
         }

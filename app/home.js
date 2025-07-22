@@ -4,7 +4,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import NavBar from "../components/NavBar";
 import Carousel from "../components/CarouselOne/Carousel";
 import React, { useEffect, useState, useRef } from "react";
-import { View, Platform, Alert } from "react-native";
+import { View, Platform, Alert, Image } from "react-native";
 import * as Notifications from "expo-notifications";
 import * as Linking from "expo-linking";
 import Constants from "expo-constants";
@@ -16,7 +16,7 @@ import * as Device from "expo-device";
 import CallAlertModal from "../components/VideoCalling/CallAlertModal";
 import { useLocalSearchParams } from "expo-router";
 import MessageModalHandler from "../components/ClubText/MessageModalHandler";
-
+import splashImage from "./splash.png";
 export default function Home() {
   const auth = getAuth();
   const [user, setUser] = useState(null);
@@ -34,6 +34,11 @@ export default function Home() {
   const [messageModalVisible, setMessageModalVisible] = useState(false);
   const [messageData, setMessageData] = useState({});
   const [openChatFriendId, setOpenChatFriendId] = useState(null); // Track currently open chat
+  const openChatFriendIdRef = useRef(openChatFriendId);
+
+  useEffect(() => {
+    openChatFriendIdRef.current = openChatFriendId;
+  }, [openChatFriendId]);
 
   useEffect(() => {
     notificationListener.current =
@@ -42,7 +47,9 @@ export default function Home() {
           notification.request.content.data;
         // Check if the chat with the sender is currently open
         if (type === "text") {
-          if (openChatFriendId === friendId) {
+          const currentOpenId = openChatFriendIdRef.current;
+          // if (openChatFriendId === friendId) {
+            if (currentOpenId === friendId) {
             // Chat is already open: Update messages only
             console.log(`New message from ${friendName} while chat is open.`);
           } else {
@@ -123,6 +130,7 @@ export default function Home() {
     return () => unsubscribeAuth();
   }, []);
 
+
   useEffect(() => {
     if (user) {
       registerForPushNotificationsAsync().then((token) => {
@@ -147,6 +155,8 @@ export default function Home() {
           options: { opensAppToForeground: false },
         },
       ]);
+
+
 
       // Notification listener for incoming calls
       notificationListener.current =
@@ -189,23 +199,59 @@ export default function Home() {
     }
   }, [user]);
 
+  // useEffect(() => {
+  //   const notificationListener = Notifications.addNotificationReceivedListener(
+  //     async (notification) => {
+  //       try {
+  //         const { callerUid } = notification.request.content.data;
+  //         const callerDoc = await getDoc(doc(FIRESTORE_DB, "users", callerUid));
+  
+  //         const callerImageUrl = callerDoc.exists()
+  //           ? callerDoc.data().imageUrl
+  //           : splashImage;
+  
+  //         setCallerImageUrl(callerImageUrl); // Use fallback
+  //       } catch (err) {
+  //         console.error("❌ Error loading caller image:", err);
+  //         setCallerImageUrl(splashImage); // Fallback in case of any error
+  //       }
+  //     }
+  //   );
+  
+  //   return () => {
+  //     Notifications.removeNotificationSubscription(notificationListener);
+  //   };
+  // }, []);
+  
   useEffect(() => {
     const notificationListener = Notifications.addNotificationReceivedListener(
       async (notification) => {
-        const { callerUid } = notification.request.content.data;
-
-        // Fetch caller's imageUrl from Firestore
-        const callerDoc = await getDoc(doc(FIRESTORE_DB, "users", callerUid));
-        const callerImageUrl = callerDoc.exists()
-          ? callerDoc.data().imageUrl
-          : null;
-        setCallerImageUrl(callerImageUrl); // Set caller image URL
+        try {
+          const { callerUid } = notification.request.content.data;
+  
+          if (!callerUid || typeof callerUid !== "string") {
+            // console.warn("⚠️ Invalid callerUid in notification:", callerUid);
+            setCallerImageUrl(splashImage);
+            return;
+          }
+  
+          const callerDoc = await getDoc(doc(FIRESTORE_DB, "users", callerUid));
+  
+          const callerImageUrl = callerDoc.exists()
+            ? callerDoc.data().imageUrl
+            : splashImage;
+  
+          setCallerImageUrl(callerImageUrl);
+        } catch (err) {
+          console.error("❌ Error loading caller image:", err);
+          setCallerImageUrl(splashImage);
+        }
       }
     );
-
-    return () =>
-      Notifications.removeNotificationSubscription(notificationListener);
+  
+    return () => Notifications.removeNotificationSubscription(notificationListener);
   }, []);
+  
 
   const handleAcceptCall = async (meetingId, callerUid, callee) => {
     if (isCallAccepted) {

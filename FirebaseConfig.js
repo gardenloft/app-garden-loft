@@ -37,7 +37,8 @@
 // // export const MESSAGING = getMessaging(app);
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { initializeAuth, getReactNativePersistence, getAuth } from "firebase/auth";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage"; // For Firebase Storage
 
@@ -53,11 +54,24 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
+
 const app = initializeApp(firebaseConfig);
+
+// let auth;
+
+// try {
+//   auth = getAuth(); // Avoid re-initializing
+// } catch {
+//   auth = initializeAuth(app, {
+//     persistence: getReactNativePersistence(AsyncStorage),
+//   });
+// }
+
 const FIREBASE_STORAGE = getStorage(app); // Use the correct 'app' reference here
 export const FIREBASE_APP = app;
 // Needed for Authentication
 export const FIREBASE_AUTH = getAuth(app);
+
 // Needed for Firestore database
 export const FIRESTORE_DB = getFirestore(app);
 
