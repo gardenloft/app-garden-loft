@@ -1,4 +1,731 @@
-// code without the all and today and upcoming filter ...//
+// // code without the all and today and upcoming filter ...//
+// import React, { useState, useEffect, useRef } from "react";
+// import {
+//   View,
+//   Text,
+//   Pressable,
+//   StyleSheet,
+//   Dimensions,
+//   Alert,
+//   ActivityIndicator,
+//   Button,
+//   Platform,
+// } from "react-native";
+// import axios from "axios";
+// import Carousel from "react-native-reanimated-carousel";
+// import moment from "moment-timezone";
+// import { FontAwesome } from "@expo/vector-icons";
+// import { getAuth } from "firebase/auth";
+// import * as Notifications from "expo-notifications";
+// import { FIRESTORE_DB } from "../FirebaseConfig";
+// import {
+//   getDoc,
+//   collection,
+//   query,
+//   where,
+//   getDocs,
+//   updateDoc,
+//   addDoc,
+//   doc,
+// } from "firebase/firestore";
+// import { WebView } from "react-native-webview";
+// import { Image } from "react-native";
+
+// const { width: viewportWidth, height: viewportHeight } =
+//   Dimensions.get("window");
+
+// const ZoomMeetingWebView = ({ zoomLink, onMeetingLeave }) => {
+//   const handleNavigationStateChange = (navState) => {
+//     const { url } = navState;
+
+//     if (url.startsWith("zoomus://")) {
+//       Alert.alert(
+//         "Error",
+//         "Cannot open the Zoom app. Please stay within the browser."
+//       );
+//       return false;
+//     }
+
+//     if (url.includes("leave")) {
+//       onMeetingLeave();
+//     }
+//   };
+
+//   return (
+//     <WebView
+//       source={{ uri: zoomLink }}
+//       style={styles.webViewStyle}
+//       javaScriptEnabled={true}
+//       domStorageEnabled={true}
+//       startInLoadingState={true}
+//       allowsInlineMediaPlayback={true}
+//       onNavigationStateChange={handleNavigationStateChange}
+//       onError={(syntheticEvent) => {
+//         const { nativeEvent } = syntheticEvent;
+//         console.warn("WebView error: ", nativeEvent);
+//         Alert.alert(
+//           "Error",
+//           "Failed to load the Zoom meeting. Please try again."
+//         );
+//       }}
+//     />
+//   );
+// };
+
+// const Activities = () => {
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const [events, setEvents] = useState([]);
+//   const [selectedEvent, setSelectedEvent] = useState(null);
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [showWebView, setShowWebView] = useState(false);
+//   const [activeIndex, setActiveIndex] = useState(0);
+//   const [filter, setFilter] = useState("all");
+
+//   const auth = getAuth();
+//   const user = auth.currentUser;
+//   const carouselRef = useRef(null);
+//   const scrollViewRef = useRef(null);
+
+//   useEffect(() => {
+//     if (user) {
+//       fetchUserNameAndEvents(user.uid);
+//     } else {
+//       setError("User not signed in");
+//       setLoading(false);
+//     }
+
+//     const foregroundSubscription =
+//       Notifications.addNotificationReceivedListener((notification) => {
+//         Alert.alert("Notification Received", notification.request.content.body);
+//       });
+
+//     const responseSubscription =
+//       Notifications.addNotificationResponseReceivedListener((response) => {
+//         Alert.alert("Garden Loft", response.notification.request.content.body);
+//       });
+
+//     return () => {
+//       foregroundSubscription.remove();
+//       responseSubscription.remove();
+//     };
+//   }, [user]);
+
+//   async function fetchUserNameAndEvents(uid) {
+//     try {
+//       const userRef = doc(FIRESTORE_DB, "users", uid);
+//       const userSnap = await getDoc(userRef);
+//       if (userSnap.exists()) {
+//         const userData = userSnap.data();
+//         const userName = userData.userName;
+//         if (Platform.OS !== "web") {
+//           registerForPushNotificationsAsync();
+//         }
+//         fetchEventsAndSaveToFirestore(userName);
+//       } else {
+//         throw new Error("No user data found");
+//       }
+//     } catch (error) {
+//       console.error("Error fetching user data:", error);
+//       setError("Failed to retrieve user data. Please try again later.");
+//       setLoading(false);
+//     }
+//   }
+
+//   async function fetchEventsAndSaveToFirestore(userName) {
+//     try {
+//       const response = await axios.get(
+//         "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
+//       );
+
+//       const currentTime = new Date();
+
+//       const eventData = response.data.data.signup
+//         .filter((item) => item.firstname === userName)
+//         .map((item) => {
+//           // Parse dates carefully, considering AM/PM
+//           let startDate, endDate;
+//           try {
+//             // Assuming the API returns time in 12-hour format with AM/PM indicator
+//             startDate = moment
+//               .tz(
+//                 item.startdatestring.replace(/-/g, "T"),
+//                 "YYYY/MM/DD HH:mm",
+//                 ""
+//               )
+//               .toDate();
+//             endDate = item.enddatestring
+//               ? moment
+//                   .tz(
+//                     item.enddatestring.replace(/-/g, "T"),
+//                     "YYYY/MM/DD HH:mm:ss",
+//                     ""
+//                   )
+//                   .toDate()
+//               : undefined;
+
+//             // Log parsed dates for debugging
+//             console.log(`Parsed startDate: ${startDate}, endDate: ${endDate}`);
+//           } catch (error) {
+//             console.error("Error parsing date for item:", item, error);
+//             // Set to current date if parsing fails, to avoid breaking the app
+//             startDate = new Date();
+//             endDate = new Date();
+//           }
+
+//           return {
+//             item: item.item,
+//             startDate,
+//             endDate,
+//             zoomLink:
+//               item.location === "Zoom Meeting"
+//                 ? `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
+//                 : null,
+//           };
+//         })
+//         .filter(
+//           (event) =>
+//             (event.endDate && currentTime < event.endDate) ||
+//             (!event.endDate && currentTime < event.startDate)
+//         );
+
+//       if (eventData.length === 0) {
+//         throw new Error("No upcoming events found.");
+//       }
+
+//       eventData.sort((a, b) => a.startDate - b.startDate);
+
+//       // Save or update each event in Firestore
+//       for (const event of eventData) {
+//         const q = query(
+//           collection(FIRESTORE_DB, "events"),
+//           where("item", "==", event.item)
+//         );
+//         const querySnapshot = await getDocs(q);
+
+//         if (querySnapshot.empty) {
+//           // Event does not exist, add it
+//           await addDoc(collection(FIRESTORE_DB, "events"), {
+//             ...event,
+//             isNew: true,
+//             imageUrl: "", // Initialize with empty string
+//           });
+//         } else {
+//           // Event exists, update it
+//           querySnapshot.forEach(async (docSnapshot) => {
+//             const existingEvent = docSnapshot.data();
+//             const eventDoc = doc(FIRESTORE_DB, "events", docSnapshot.id);
+//             await updateDoc(eventDoc, {
+//               ...event,
+//               isNew: false,
+//               imageUrl: existingEvent.imageUrl || "", // Preserve existing imageUrl if any
+//             });
+//           });
+//         }
+//       }
+
+//       // Fetch all events from Firestore to include manually added imageUrls
+//       const eventsSnapshot = await getDocs(collection(FIRESTORE_DB, "events"));
+//       const updatedEvents = eventsSnapshot.docs.map((doc) => ({
+//         id: doc.id,
+//         ...doc.data(),
+//         // Ensure dates are properly converted back to Date objects
+//         startDate: doc.data().startDate.toDate(),
+//         endDate: doc.data().endDate ? doc.data().endDate.toDate() : undefined,
+//       }));
+
+//       // Schedule event notifications
+//       updatedEvents.forEach((event) => {
+//         if (Platform.OS !== "web") {
+//           scheduleNotification(event);
+//         }
+//       });
+
+//       setEvents(updatedEvents);
+//       setLoading(false);
+//     } catch (error) {
+//       console.error("Error fetching events: ", error.message);
+//       setError(
+//         "Failed to retrieve signed-up activities. Please try again later."
+//       );
+//       setLoading(false);
+//     }
+//   }
+
+//   const filterEvents = () => {
+//     const currentDate = moment().startOf("day");
+//     const endOfToday = moment().endOf("day");
+
+//     if (filter === "today") {
+//       return events.filter((event) =>
+//         moment(event.startDate).isBetween(currentDate, endOfToday)
+//       );
+//     } else if (filter === "upcoming") {
+//       return events.filter((event) =>
+//         moment(event.startDate).isAfter(endOfToday)
+//       );
+//     }
+//     return events;
+//   };
+
+//   const handleFilterPress = (selectedFilter) => {
+//     setFilter(selectedFilter);
+//   };
+
+//   async function registerForPushNotificationsAsync() {
+//     const settings = await Notifications.getPermissionsAsync();
+//     if (
+//       settings.granted ||
+//       settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+//     ) {
+//       console.log("Notification permissions granted.");
+//     } else {
+//       const response = await Notifications.requestPermissionsAsync({
+//         ios: {
+//           allowAlert: true,
+//           allowSound: true,
+//           allowBadge: true,
+//           allowDisplayInCarPlay: true,
+//           allowCriticalAlerts: true,
+//         },
+//       });
+//       if (!response.granted) {
+//         alert("Failed to get push token for push notification!");
+//         return;
+//       }
+//     }
+
+//     if (Platform.OS === "android") {
+//       await Notifications.setNotificationChannelAsync("default", {
+//         name: "default",
+//         importance: Notifications.AndroidImportance.MAX,
+//         vibrationPattern: [0, 250, 250, 250],
+//         sound: "default",
+//       });
+//     }
+//   }
+
+//   const navigateToZoomLink = (event) => {
+//     setSelectedEvent(event);
+//     setIsModalOpen(true);
+//   };
+
+//   const closeWebView = () => {
+//     setShowWebView(false);
+//   };
+
+//   const closeModal = () => {
+//     setIsModalOpen(false);
+//     setSelectedEvent(null);
+//   };
+
+//   const handleJoinMeeting = (event) => {
+//     setIsModalOpen(false);
+//     setShowWebView(true);
+//   };
+
+//   const renderModalContent = (event) => {
+//     const currentTime = new Date();
+//     const tenMinutesBeforeStartTime = new Date(event.startDate);
+//     tenMinutesBeforeStartTime.setMinutes(
+//       tenMinutesBeforeStartTime.getMinutes() - 10
+//     );
+
+//     if (event.endDate && currentTime > event.endDate) {
+//       return <Text>Event ended.</Text>;
+//     } else if (currentTime < tenMinutesBeforeStartTime) {
+//       return <Text>Event has not started yet.</Text>;
+//     } else if (
+//       currentTime >= tenMinutesBeforeStartTime &&
+//       currentTime < event.endDate
+//     ) {
+//       return (
+//         <Button
+//           style={[styles.modalJoinNow]}
+//           title="Join Now"
+//           onPress={() => handleJoinMeeting(event)}
+//         />
+//       );
+//     } else {
+//       return <Button title="Event in progress" disabled />;
+//     }
+//   };
+
+//   const renderItem = ({ item, index }) => (
+//     <Pressable
+//       key={index}
+//       style={[
+//         styles.cardContainer,
+//         {
+//           backgroundColor:
+//             index === activeIndex ? "transparent" : "transparent",
+//           transform:
+//             index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
+//         },
+//         {
+//           height:
+//             viewportWidth > viewportHeight
+//               ? Math.round(Dimensions.get("window").height * 0.3)
+//               : Math.round(Dimensions.get("window").height * 0.25),
+//         },
+//       ]}
+//       onPress={() => navigateToZoomLink(item)}
+//     >
+//       <Image
+//         source={
+//           item.imageUrl
+//             ? { uri: item.imageUrl }
+//             : require("../assets/images/garden-loft-logo-outline.png")
+//         } // Use the image URL or fallback
+//         style={styles.cardImage} // Style the image
+//         resizeMode="contain" // Optional: Adjust image resizing behavior
+//       />
+//       <Text style={styles.cardText}>{item.item}</Text>
+//       <Text style={styles.cardTextTime}>
+//         {moment(item.startDate).format("dddd MMMM Do, h:mm a")}
+//       </Text>
+//     </Pressable>
+//   );
+
+//   const handleSnapToItem = (index) => {
+//     setActiveIndex(index);
+//   };
+
+//   const scheduleNotification = async (event) => {
+//     await Notifications.scheduleNotificationAsync({
+//       content: {
+//         title: "Upcoming Activity!",
+//         body: `Your activity ${event.item} is starting in 10 minutes.`,
+//         sound: true,
+//         data: { event },
+//       },
+//       trigger: {
+//         date: new Date(event.startDate.getTime() - 10 * 60 * 1000),
+//       },
+//     });
+
+//     await Notifications.scheduleNotificationAsync({
+//       content: {
+//         title: "Upcoming Activity!",
+//         body: `Your activity ${event.item} is starting now.`,
+//         sound: true,
+//         data: { event },
+//       },
+//       trigger: {
+//         date: new Date(event.startDate.getTime() - 60 * 1000),
+//       },
+//     });
+//   };
+
+//   const handleArrowPress = (direction) => {
+//     let newIndex = activeIndex;
+//     if (direction === "left") {
+//       newIndex = (activeIndex - 1 + events.length) % events.length;
+//     } else if (direction === "right") {
+//       newIndex = (activeIndex + 1) % events.length;
+//     }
+//     carouselRef.current?.scrollTo({ index: newIndex, animated: true });
+//     setActiveIndex(newIndex);
+//   };
+
+//   return (
+//     <View
+//       style={[
+//         styles.container,
+//         { height: viewportWidth > viewportHeight ? 320 : 450 },
+//       ]}
+//     >
+//       {loading ? (
+//         <ActivityIndicator size="large" color="orange" style={styles.loading} />
+//       ) : error ? (
+//         <Text style={styles.loading}>Error: {error}</Text>
+//       ) : showWebView && selectedEvent ? (
+//         <View style={styles.webViewModal}>
+//           <View style={styles.webViewContainer}>
+//             <ZoomMeetingWebView
+//               zoomLink={selectedEvent.zoomLink}
+//               onMeetingLeave={closeWebView}
+//             />
+//             <Pressable style={styles.closeButton1} onPress={closeWebView}>
+//               {/* <Text style={styles.closeButtonText}>Close</Text> */}
+//               <FontAwesome name="close" size={24} color="black" />
+//             </Pressable>
+//           </View>
+//         </View>
+//       ) : (
+//         <View
+//           style={[
+//             styles.container,
+//             { height: viewportWidth > viewportHeight ? 320 : 450 },
+//           ]}
+//         >
+//           {/* Filter Buttons */}
+//           <View style={styles.filterButtonsContainer}>
+//             <Pressable
+//               style={[
+//                 styles.filterButton,
+//                 filter === "all" && styles.activeFilterButton,
+//               ]}
+//               onPress={() => handleFilterPress("all")}
+//             >
+//               <Text style={styles.filterButtonText}>All</Text>
+//             </Pressable>
+//             <Pressable
+//               style={[
+//                 styles.filterButton,
+//                 filter === "today" && styles.activeFilterButton,
+//               ]}
+//               onPress={() => handleFilterPress("today")}
+//             >
+//               <Text style={styles.filterButtonText}>Today</Text>
+//             </Pressable>
+//             <Pressable
+//               style={[
+//                 styles.filterButton,
+//                 filter === "upcoming" && styles.activeFilterButton,
+//               ]}
+//               onPress={() => handleFilterPress("upcoming")}
+//             >
+//               <Text style={styles.filterButtonText}>Upcoming</Text>
+//             </Pressable>
+//           </View>
+//           <Carousel
+//             ref={carouselRef}
+//             // ref={scrollViewRef}
+//             // data={events}
+//             data={filterEvents()}
+//             // layout={"default"}
+//             renderItem={renderItem}
+//             width={Math.round(viewportWidth * 0.3)}
+//             height={Math.round(viewportHeight * 0.3)}
+//             style={{
+//               width: Math.round(viewportWidth * 0.9),
+//               height: Math.round(viewportHeight * 0.5),
+//             }}
+//             itemWidth={Math.round(viewportWidth * 0.3)}
+//             loop={true}
+//             useScrollView={true}
+//             activeSlideAlignment="center"
+//             onSnapToItem={(index) => handleSnapToItem(index)}
+//             scrollAnimationDuration={800}
+//           />
+//           <Pressable
+//             style={[
+//               styles.arrowLeft,
+//               {
+//                 left: viewportWidth > viewportHeight ? -17 : -22,
+//                 top: viewportWidth > viewportHeight ? "40%" : "30%",
+//               },
+//             ]}
+//             onPress={() => {
+//               handleArrowPress("left");
+//             }}
+//           >
+//             <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
+//           </Pressable>
+//           <Pressable
+//             style={[
+//               styles.arrowRight,
+//               {
+//                 right: viewportWidth > viewportHeight ? -25 : -22,
+//                 top: viewportWidth > viewportHeight ? "40%" : "30%",
+//               },
+//             ]}
+//             onPress={() => {
+//               handleArrowPress("right");
+//             }}
+//           >
+//             <FontAwesome
+//               name="angle-right"
+//               size={100}
+//               color="rgb(45, 62, 95)"
+//             />
+//           </Pressable>
+//           {isModalOpen && selectedEvent && (
+//             <View style={styles.modalContainer}>
+//               <View style={styles.modal}>
+//                 <Text>{selectedEvent.item}</Text>
+//                 {selectedEvent.endDate && (
+//                   <Text>
+//                     End Date:{" "}
+//                     {moment(selectedEvent.endDate).format(
+//                       "dddd MMMM Do, h:mm a"
+//                     )}
+//                   </Text>
+//                 )}
+//                 {renderModalContent(selectedEvent)}
+//                 <Pressable onPress={closeModal} style={styles.closeButton}>
+//                   <Text>Close</Text>
+//                 </Pressable>
+//               </View>
+//             </View>
+//           )}
+//         </View>
+//       )}
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     position: "relative",
+//     alignItems: "center",
+//   },
+//   cardContainer: {
+//     width: viewportWidth * 0.3,
+//     backgroundColor: "#f09030",
+//     borderRadius: 20,
+//     padding: 20,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     marginHorizontal: 10,
+//     marginLeft: 0,
+//     // flexDirection: "column",
+//     gap: 10,
+//     shadowColor: "#000",
+//     shadowOffset: { width: 0, height: 7 },
+//     shadowOpacity: 0.22,
+//     shadowRadius: 9.22,
+//     elevation: 12,
+//   },
+//   cardImage: {
+//     width: viewportWidth * 0.25,
+//     height: viewportWidth * 0.2,
+//     margin: 10,
+//     resizeMode: "cover",
+//     borderRadius: 10,
+//   },
+//   cardText: {
+//     fontSize: 25,
+//     color: "trans",
+//     fontWeight: "700",
+//     textAlign: "center",
+//   },
+//   cardTextTime: {
+//     fontSize: 20,
+//     color: "#393939",
+//     fontWeight: "600",
+//     textAlign: "center",
+//   },
+//   filterButtonsContainer: {
+//     flexDirection: "row",
+//     justifyContent: "center",
+//     marginBottom: 30,
+//     marginTop: viewportWidth > viewportHeight ? -70 : -40,
+//   },
+//   filterButton: {
+//     paddingHorizontal: 20,
+//     paddingVertical: 10,
+//     marginHorizontal: 10,
+//     borderRadius: 20,
+//     backgroundColor: "grey",
+//   },
+//   activeFilterButton: {
+//     backgroundColor: "orange",
+//   },
+//   filterButtonText: {
+//     fontSize: 16,
+//     color: "white",
+//     fontWeight: "bold",
+//   },
+//   arrowLeft: {
+//     position: "absolute",
+//     left: -22,
+//     top: "30%",
+//     transform: [{ translateY: -50 }],
+//   },
+//   arrowRight: {
+//     position: "absolute",
+//     right: -22,
+//     top: "30%",
+//     transform: [{ translateY: -50 }],
+//   },
+//   loading: {
+//     flex: 1,
+//     alignItems: "center",
+//     fontSize: 25,
+//     marginTop: 150,
+//     textAlign: "center",
+
+
+//   },
+//   modalContainer: {
+//     position: "absolute",
+//     bottom: "70%",
+//     backgroundColor: "rgba(0, 0, 0, 0.5)",
+//     padding: 20,
+//     borderRadius: 10,
+//   },
+//   modal: {
+//     backgroundColor: "beige",
+//     padding: 60,
+//     borderRadius: 10,
+//   },
+//   modalJoinNow: {
+//     backgroundColor: "blue",
+//     fontSize: 20,
+//   },
+//   closeButton: {
+//     marginTop: 10,
+//     backgroundColor: "gray",
+//     paddingVertical: 10,
+//     paddingHorizontal: 200,
+//     borderRadius: 5,
+//   },
+//   closeButton1: {
+//     position: "absolute",
+//     top: 30,
+//     right: 30,
+//     backgroundColor: "lightblue",
+//     padding: 13,
+//     borderRadius: 5,
+//   },
+//   closeButtonText: {
+//     fontWeight: "bold",
+//     color: "#fff",
+//   },
+//   webViewStyle: {
+//     flex: 1,
+//     width: viewportWidth * 0.9,
+//     height: viewportHeight * 0.7,
+//   },
+//   webViewModal: {
+//     position: "absolute",
+//     bottom: "10%",
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     backgroundColor: "transparent",
+//   },
+//   webViewContainer: {
+//     margin: 10,
+//     height: viewportHeight * 0.9,
+//     width: viewportWidth * 0.95,
+//     marginTop: 50,
+//     backgroundColor: "white",
+//     borderRadius: 20,
+//     padding: 20,
+//     paddingTop: 100,
+//     alignItems: "center",
+//     justifyContent: "center",
+//     shadowColor: "#000",
+//     shadowOffset: {
+//       width: 0,
+//       height: 2,
+//     },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 3.84,
+//     elevation: 5,
+//     alignSelf: "center",
+//   },
+// });
+
+// export default Activities;
+
+
+
+
+
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -10,6 +737,8 @@ import {
   ActivityIndicator,
   Button,
   Platform,
+  Image,
+  Modal,
 } from "react-native";
 import axios from "axios";
 import Carousel from "react-native-reanimated-carousel";
@@ -29,44 +758,102 @@ import {
   doc,
 } from "firebase/firestore";
 import { WebView } from "react-native-webview";
-import { Image } from "react-native";
+import { useRouter } from "expo-router";
+// import { createMeeting, token } from "../components/VideoCalling/VideoCall";
+import { createMeeting, token } from "../components/VideoCalling/api";
 
-const { width: viewportWidth, height: viewportHeight } =
-  Dimensions.get("window");
+
+
+const { width: viewportWidth, height: viewportHeight } = Dimensions.get("window");
+const router = useRouter();
+
+// ---------- FALLBACK SAMPLE CARDS ----------
+const makeDate = (offsetMinutes) => {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() + offsetMinutes);
+  return d;
+};
+
+const FALLBACK_EVENTS = [
+   {
+    id: "sample-now",
+    item: " Test Event (Video Call)",
+    startDate: makeDate(5),   // starts in 5 minutes -> inside join window (start - 10)
+    endDate: makeDate(65),    // ends in 65 minutes
+    imageUrl: "",
+    zoomLink: null,
+    meetingId: null,
+    isNew: true,
+    __fallback: true,
+  },
+  {
+    id: "sample-1",
+    item: "Chair Yoga",
+    startDate: makeDate(60),
+    endDate: makeDate(120),
+    imageUrl: "",
+    zoomLink: null,
+    meetingId: null,
+    isNew: true,
+    __fallback: true,
+  },
+  {
+    id: "sample-2",
+    item: "Bingo Night",
+    startDate: makeDate(180),
+    endDate: makeDate(240),
+    imageUrl: "",
+    zoomLink: null,
+    meetingId: null,
+    isNew: true,
+    __fallback: true,
+  },
+  {
+    id: "sample-3",
+    item: "Art & Crafts",
+    startDate: makeDate(300),
+    endDate: makeDate(360),
+    imageUrl: "",
+    zoomLink: null,
+    meetingId: null,
+    isNew: true,
+    __fallback: true,
+  },
+  {
+    id: "sample-4",
+    item: "Coffee with Matthew",
+    startDate: makeDate(300),
+    endDate: makeDate(360),
+    imageUrl: "",
+    zoomLink: null,
+    meetingId: null,
+    isNew: true,
+    __fallback: true,
+  },
+];
 
 const ZoomMeetingWebView = ({ zoomLink, onMeetingLeave }) => {
   const handleNavigationStateChange = (navState) => {
     const { url } = navState;
-
     if (url.startsWith("zoomus://")) {
-      Alert.alert(
-        "Error",
-        "Cannot open the Zoom app. Please stay within the browser."
-      );
+      Alert.alert("Error", "Cannot open the Zoom app. Please stay within the browser.");
       return false;
     }
-
-    if (url.includes("leave")) {
-      onMeetingLeave();
-    }
+    if (url.includes("leave")) onMeetingLeave();
   };
 
   return (
     <WebView
       source={{ uri: zoomLink }}
       style={styles.webViewStyle}
-      javaScriptEnabled={true}
-      domStorageEnabled={true}
-      startInLoadingState={true}
-      allowsInlineMediaPlayback={true}
+      javaScriptEnabled
+      domStorageEnabled
+      startInLoadingState
+      allowsInlineMediaPlayback
       onNavigationStateChange={handleNavigationStateChange}
-      onError={(syntheticEvent) => {
-        const { nativeEvent } = syntheticEvent;
-        console.warn("WebView error: ", nativeEvent);
-        Alert.alert(
-          "Error",
-          "Failed to load the Zoom meeting. Please try again."
-        );
+      onError={(e) => {
+        console.warn("WebView error: ", e?.nativeEvent);
+        Alert.alert("Error", "Failed to load the Zoom meeting. Please try again.");
       }}
     />
   );
@@ -80,36 +867,37 @@ const Activities = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showWebView, setShowWebView] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [filter, setFilter] = useState("all");
 
   const auth = getAuth();
   const user = auth.currentUser;
   const carouselRef = useRef(null);
-  const scrollViewRef = useRef(null);
 
   useEffect(() => {
     if (user) {
       fetchUserNameAndEvents(user.uid);
     } else {
       setError("User not signed in");
+      setEvents(FALLBACK_EVENTS);
       setLoading(false);
     }
 
-    const foregroundSubscription =
-      Notifications.addNotificationReceivedListener((notification) => {
-        Alert.alert("Notification Received", notification.request.content.body);
-      });
-
-    const responseSubscription =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        Alert.alert("Garden Loft", response.notification.request.content.body);
-      });
+    const fg = Notifications.addNotificationReceivedListener((n) => {
+      Alert.alert("Notification Received", n.request.content.body);
+    });
+    const resp = Notifications.addNotificationResponseReceivedListener((r) => {
+      Alert.alert("Garden Loft", r.notification.request.content.body);
+    });
 
     return () => {
-      foregroundSubscription.remove();
-      responseSubscription.remove();
+      fg.remove();
+      resp.remove();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+
+
+
+
 
   async function fetchUserNameAndEvents(uid) {
     try {
@@ -127,7 +915,8 @@ const Activities = () => {
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
-      setError("Failed to retrieve user data. Please try again later.");
+      setError("Failed to retrieve user data. Showing sample activities.");
+      setEvents(FALLBACK_EVENTS);
       setLoading(false);
     }
   }
@@ -138,39 +927,39 @@ const Activities = () => {
         "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
       );
 
-      const currentTime = new Date();
+      const now = new Date();
 
-      const eventData = response.data.data.signup
+      const eventData = (response.data?.data?.signup || [])
         .filter((item) => item.firstname === userName)
         .map((item) => {
-          // Parse dates carefully, considering AM/PM
           let startDate, endDate;
           try {
-            // Assuming the API returns time in 12-hour format with AM/PM indicator
-            startDate = moment
-              .tz(
-                item.startdatestring.replace(/-/g, "T"),
-                "YYYY/MM/DD HH:mm",
-                ""
-              )
-              .toDate();
+            startDate = moment(
+              item.startdatestring,
+              ["YYYY/MM/DD HH:mm", "YYYY-MM-DD HH:mm", moment.ISO_8601],
+              true
+            ).toDate();
+
             endDate = item.enddatestring
-              ? moment
-                  .tz(
-                    item.enddatestring.replace(/-/g, "T"),
+              ? moment(
+                  item.enddatestring,
+                  [
                     "YYYY/MM/DD HH:mm:ss",
-                    ""
-                  )
-                  .toDate()
+                    "YYYY-MM-DD HH:mm:ss",
+                    "YYYY/MM/DD HH:mm",
+                    moment.ISO_8601,
+                  ],
+                  true
+                ).toDate()
               : undefined;
 
-            // Log parsed dates for debugging
-            console.log(`Parsed startDate: ${startDate}, endDate: ${endDate}`);
-          } catch (error) {
-            console.error("Error parsing date for item:", item, error);
-            // Set to current date if parsing fails, to avoid breaking the app
+            if (!endDate) {
+              endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+            }
+          } catch (e) {
+            console.error("Date parse error for item:", item, e);
             startDate = new Date();
-            endDate = new Date();
+            endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
           }
 
           return {
@@ -181,63 +970,69 @@ const Activities = () => {
               item.location === "Zoom Meeting"
                 ? `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
                 : null,
+            meetingId: null,
           };
         })
-        .filter(
-          (event) =>
-            (event.endDate && currentTime < event.endDate) ||
-            (!event.endDate && currentTime < event.startDate)
-        );
+        .filter((ev) => ev.endDate && now < ev.endDate);
 
-      if (eventData.length === 0) {
-        throw new Error("No upcoming events found.");
+      if (!eventData.length) {
+        setEvents(FALLBACK_EVENTS);
+        setLoading(false);
+        return;
       }
 
       eventData.sort((a, b) => a.startDate - b.startDate);
 
-      // Save or update each event in Firestore
+      // Upsert events (keep imageUrl and meetingId if present)
       for (const event of eventData) {
-        const q = query(
-          collection(FIRESTORE_DB, "events"),
-          where("item", "==", event.item)
-        );
-        const querySnapshot = await getDocs(q);
+        const q = query(collection(FIRESTORE_DB, "events"), where("item", "==", event.item));
+        const qs = await getDocs(q);
 
-        if (querySnapshot.empty) {
-          // Event does not exist, add it
+        if (qs.empty) {
           await addDoc(collection(FIRESTORE_DB, "events"), {
             ...event,
             isNew: true,
-            imageUrl: "", // Initialize with empty string
+            imageUrl: "",
           });
         } else {
-          // Event exists, update it
-          querySnapshot.forEach(async (docSnapshot) => {
-            const existingEvent = docSnapshot.data();
+          for (const docSnapshot of qs.docs) {
+            const existing = docSnapshot.data();
             const eventDoc = doc(FIRESTORE_DB, "events", docSnapshot.id);
             await updateDoc(eventDoc, {
               ...event,
               isNew: false,
-              imageUrl: existingEvent.imageUrl || "", // Preserve existing imageUrl if any
+              imageUrl: existing.imageUrl || "",
+              meetingId: existing.meetingId || null, // preserve existing room
             });
-          });
+          }
         }
       }
 
-      // Fetch all events from Firestore to include manually added imageUrls
+      // Read back (preserve Firestore Timestamp formats)
       const eventsSnapshot = await getDocs(collection(FIRESTORE_DB, "events"));
-      const updatedEvents = eventsSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        // Ensure dates are properly converted back to Date objects
-        startDate: doc.data().startDate.toDate(),
-        endDate: doc.data().endDate ? doc.data().endDate.toDate() : undefined,
-      }));
+      let updatedEvents = eventsSnapshot.docs.map((d) => {
+        const data = d.data();
+        return {
+          id: d.id,
+          ...data,
+          startDate: data.startDate?.toDate ? data.startDate.toDate() : new Date(data.startDate),
+          endDate: data.endDate?.toDate
+            ? data.endDate.toDate()
+            : data.endDate
+            ? new Date(data.endDate)
+            : new Date(
+                (data.startDate?.toDate
+                  ? data.startDate.toDate().getTime()
+                  : new Date(data.startDate).getTime()) + 60 * 60 * 1000
+              ),
+        };
+      });
 
-      // Schedule event notifications
-      updatedEvents.forEach((event) => {
-        if (Platform.OS !== "web") {
-          scheduleNotification(event);
+      if (!updatedEvents.length) updatedEvents = FALLBACK_EVENTS;
+
+      updatedEvents.forEach((ev) => {
+        if (!ev.__fallback && Platform.OS !== "web") {
+          scheduleNotification(ev);
         }
       });
 
@@ -245,32 +1040,11 @@ const Activities = () => {
       setLoading(false);
     } catch (error) {
       console.error("Error fetching events: ", error.message);
-      setError(
-        "Failed to retrieve signed-up activities. Please try again later."
-      );
+      setError("Failed to retrieve activities. Showing sample activities.");
+      setEvents(FALLBACK_EVENTS);
       setLoading(false);
     }
   }
-
-  const filterEvents = () => {
-    const currentDate = moment().startOf("day");
-    const endOfToday = moment().endOf("day");
-
-    if (filter === "today") {
-      return events.filter((event) =>
-        moment(event.startDate).isBetween(currentDate, endOfToday)
-      );
-    } else if (filter === "upcoming") {
-      return events.filter((event) =>
-        moment(event.startDate).isAfter(endOfToday)
-      );
-    }
-    return events;
-  };
-
-  const handleFilterPress = (selectedFilter) => {
-    setFilter(selectedFilter);
-  };
 
   async function registerForPushNotificationsAsync() {
     const settings = await Notifications.getPermissionsAsync();
@@ -278,7 +1052,7 @@ const Activities = () => {
       settings.granted ||
       settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
     ) {
-      console.log("Notification permissions granted.");
+      // ok
     } else {
       const response = await Notifications.requestPermissionsAsync({
         ios: {
@@ -290,7 +1064,7 @@ const Activities = () => {
         },
       });
       if (!response.granted) {
-        alert("Failed to get push token for push notification!");
+        alert("Failed to get push notification permissions.");
         return;
       }
     }
@@ -305,80 +1079,147 @@ const Activities = () => {
     }
   }
 
-  const navigateToZoomLink = (event) => {
+  // Open card -> show modal with Join button
+  const onCardPress = (event) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
   };
 
-  const closeWebView = () => {
-    setShowWebView(false);
-  };
+  // Ensure a VideoSDK room exists, save to Firestore if this event has a doc
+  // const ensureMeetingId = async (event) => {
+  //   // let meetingId = event.meetingId;
+  //   if (!meetingId) {
+  //     meetingId = await createMeeting({ token });
 
+  //     // If event originated from Firestore, persist room back to doc
+  //     if (event.id && !event.__fallback) {
+  //       try {
+  //         const eventDocRef = doc(FIRESTORE_DB, "events", event.id);
+  //         await updateDoc(eventDocRef, { meetingId });
+  //       } catch (e) {
+  //         console.warn("Failed to save meetingId:", e?.message);
+  //       }
+  //     }
+
+  //     // update local state
+  //     setEvents((prev) =>
+  //       prev.map((ev) => (ev.id === event.id ? { ...ev, meetingId } : ev))
+  //     );
+  //   }
+  //   return meetingId;
+  // };
+
+const ensureMeetingId = async (event) => {
+  // already has one? reuse
+  if (event.meetingId) return event.meetingId;
+
+  // create new VideoSDK room
+  const roomId = await createMeeting({ token });
+
+  // if this event came from Firestore, persist it so everyone shares it
+  if (event.id && !event.__fallback) {
+    try {
+      await updateDoc(doc(FIRESTORE_DB, "events", event.id), { meetingId: roomId });
+    } catch (e) {
+      console.warn("Failed saving meetingId:", e?.message);
+    }
+  }
+
+  // update local state so UI also knows
+  setEvents((prev) => prev.map((ev) => (ev.id === event.id ? { ...ev, meetingId: roomId } : ev)));
+  return roomId;
+};
+
+
+
+  // Join button -> either Zoom WebView or VideoSDK room
+  // const onJoinPress = async () => {
+  //   if (!selectedEvent) return;
+
+  //   // If event explicitly has Zoom, keep your Zoom flow
+  //   if (selectedEvent.zoomLink) {
+  //     setIsModalOpen(false);
+  //     setShowWebView(true);
+  //     return;
+  //   }
+
+  //   try {
+  //     const meetingId = await ensureMeetingId(selectedEvent);
+  //     setIsModalOpen(false);
+
+  //     // Navigate to your VideoSDK screen; others can join the SAME meetingId
+  //     router.push({
+  //       pathname: "/VideoSDK2",
+  //       params: { meetingId, autoJoin: "true" },
+  //     });
+  //   } catch (err) {
+  //     console.error("Failed to start meeting:", err);
+  //     Alert.alert("Error", "Could not start video call. Please try again.");
+  //   }
+  // };
+  const onJoinPress = async () => {
+  if (!selectedEvent) return;
+  try {
+    const meetingId = await ensureMeetingId(selectedEvent);
+    setIsModalOpen(false);
+    router.push({
+      pathname: "/VideoSDK2",
+      params: { meetingId, autoJoin: "true" }, // your VideoSDK2 already reads these
+    });
+  } catch (e) {
+    Alert.alert("Error", e?.message || "Could not start video call.");
+  }
+};
+
+
+  const closeWebView = () => setShowWebView(false);
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedEvent(null);
   };
 
-  const handleJoinMeeting = (event) => {
-    setIsModalOpen(false);
-    setShowWebView(true);
-  };
+  const renderModalBody = (event) => {
+  // Always allow joining for fallback/test cards
+  if (event.__fallback) {
+    return <Button title="Join Now" onPress={onJoinPress} />;
+  }
 
-  const renderModalContent = (event) => {
-    const currentTime = new Date();
-    const tenMinutesBeforeStartTime = new Date(event.startDate);
-    tenMinutesBeforeStartTime.setMinutes(
-      tenMinutesBeforeStartTime.getMinutes() - 10
-    );
+  const now = new Date();
+  const startMinus10 = new Date(event.startDate);
+  startMinus10.setMinutes(startMinus10.getMinutes() - 10);
+  const end = event.endDate || new Date(event.startDate.getTime() + 60 * 60000);
 
-    if (event.endDate && currentTime > event.endDate) {
-      return <Text>Event ended.</Text>;
-    } else if (currentTime < tenMinutesBeforeStartTime) {
-      return <Text>Event has not started yet.</Text>;
-    } else if (
-      currentTime >= tenMinutesBeforeStartTime &&
-      currentTime < event.endDate
-    ) {
-      return (
-        <Button
-          style={[styles.modalJoinNow]}
-          title="Join Now"
-          onPress={() => handleJoinMeeting(event)}
-        />
-      );
-    } else {
-      return <Button title="Event in progress" disabled />;
-    }
-  };
+  if (now > end) return <Text>Event ended.</Text>;
+  if (now < startMinus10) return <Text>Event has not started yet.</Text>;
+  if (now >= startMinus10 && now < end) return <Button title="Join Now" onPress={onJoinPress} />;
+  return <Button title="Event in progress" disabled />;
+};
+
 
   const renderItem = ({ item, index }) => (
     <Pressable
-      key={index}
+      key={item.id ?? index}
       style={[
         styles.cardContainer,
         {
-          backgroundColor:
-            index === activeIndex ? "transparent" : "transparent",
-          transform:
-            index === activeIndex ? [{ scale: 0.85 }] : [{ scale: 0.85 }],
-        },
-        {
+          backgroundColor: "#f09030",
+          transform: [{ scale: 0.85 }],
           height:
             viewportWidth > viewportHeight
               ? Math.round(Dimensions.get("window").height * 0.3)
               : Math.round(Dimensions.get("window").height * 0.25),
         },
       ]}
-      onPress={() => navigateToZoomLink(item)}
+      onPress={() => onCardPress(item)}
     >
       <Image
         source={
           item.imageUrl
             ? { uri: item.imageUrl }
             : require("../assets/images/garden-loft-logo-outline.png")
-        } // Use the image URL or fallback
-        style={styles.cardImage} // Style the image
-        resizeMode="contain" // Optional: Adjust image resizing behavior
+        }
+        style={styles.cardImage}
+        resizeMode="contain"
       />
       <Text style={styles.cardText}>{item.item}</Text>
       <Text style={styles.cardTextTime}>
@@ -387,114 +1228,70 @@ const Activities = () => {
     </Pressable>
   );
 
-  const handleSnapToItem = (index) => {
-    setActiveIndex(index);
-  };
+  const handleSnapToItem = (index) => setActiveIndex(index);
 
   const scheduleNotification = async (event) => {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Upcoming Activity!",
-        body: `Your activity ${event.item} is starting in 10 minutes.`,
-        sound: true,
-        data: { event },
-      },
-      trigger: {
-        date: new Date(event.startDate.getTime() - 10 * 60 * 1000),
-      },
-    });
-
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Upcoming Activity!",
-        body: `Your activity ${event.item} is starting now.`,
-        sound: true,
-        data: { event },
-      },
-      trigger: {
-        date: new Date(event.startDate.getTime() - 60 * 1000),
-      },
-    });
+    const tenBefore = new Date(event.startDate.getTime() - 10 * 60 * 1000);
+    const oneBefore = new Date(event.startDate.getTime() - 60 * 1000);
+    const now = new Date();
+    if (tenBefore > now) {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Upcoming Activity!",
+          body: `Your activity ${event.item} starts in 10 minutes.`,
+          sound: true,
+          data: { event },
+        },
+        trigger: { date: tenBefore },
+      });
+    }
+    if (oneBefore > now) {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Starting Now!",
+          body: `Your activity ${event.item} is starting now.`,
+          sound: true,
+          data: { event },
+        },
+        trigger: { date: oneBefore },
+      });
+    }
   };
 
   const handleArrowPress = (direction) => {
+    const list = events.length ? events : FALLBACK_EVENTS;
     let newIndex = activeIndex;
     if (direction === "left") {
-      newIndex = (activeIndex - 1 + events.length) % events.length;
-    } else if (direction === "right") {
-      newIndex = (activeIndex + 1) % events.length;
+      newIndex = (activeIndex - 1 + list.length) % list.length;
+    } else {
+      newIndex = (activeIndex + 1) % list.length;
     }
     carouselRef.current?.scrollTo({ index: newIndex, animated: true });
     setActiveIndex(newIndex);
   };
 
+  const dataToShow = events.length ? events : FALLBACK_EVENTS;
+
   return (
-    <View
-      style={[
-        styles.container,
-        { height: viewportWidth > viewportHeight ? 320 : 450 },
-      ]}
-    >
+    <View style={[styles.container, { height: viewportWidth > viewportHeight ? 320 : 450 }]}>
       {loading ? (
         <ActivityIndicator size="large" color="orange" style={styles.loading} />
-      ) : error ? (
-        <Text style={styles.loading}>Error: {error}</Text>
+      ) : error && !events.length ? (
+        <Text style={styles.loading}>{error}</Text>
       ) : showWebView && selectedEvent ? (
         <View style={styles.webViewModal}>
           <View style={styles.webViewContainer}>
-            <ZoomMeetingWebView
-              zoomLink={selectedEvent.zoomLink}
-              onMeetingLeave={closeWebView}
-            />
+            <ZoomMeetingWebView zoomLink={selectedEvent.zoomLink} onMeetingLeave={closeWebView} />
             <Pressable style={styles.closeButton1} onPress={closeWebView}>
-              {/* <Text style={styles.closeButtonText}>Close</Text> */}
               <FontAwesome name="close" size={24} color="black" />
             </Pressable>
           </View>
         </View>
       ) : (
-        <View
-          style={[
-            styles.container,
-            { height: viewportWidth > viewportHeight ? 320 : 450 },
-          ]}
-        >
-          {/* Filter Buttons */}
-          <View style={styles.filterButtonsContainer}>
-            <Pressable
-              style={[
-                styles.filterButton,
-                filter === "all" && styles.activeFilterButton,
-              ]}
-              onPress={() => handleFilterPress("all")}
-            >
-              <Text style={styles.filterButtonText}>All</Text>
-            </Pressable>
-            <Pressable
-              style={[
-                styles.filterButton,
-                filter === "today" && styles.activeFilterButton,
-              ]}
-              onPress={() => handleFilterPress("today")}
-            >
-              <Text style={styles.filterButtonText}>Today</Text>
-            </Pressable>
-            <Pressable
-              style={[
-                styles.filterButton,
-                filter === "upcoming" && styles.activeFilterButton,
-              ]}
-              onPress={() => handleFilterPress("upcoming")}
-            >
-              <Text style={styles.filterButtonText}>Upcoming</Text>
-            </Pressable>
-          </View>
+        <View style={[styles.container, { height: viewportWidth > viewportHeight ? 320 : 450 }]}>
           <Carousel
             ref={carouselRef}
-            // ref={scrollViewRef}
-            // data={events}
-            data={filterEvents()}
-            // layout={"default"}
+            data={dataToShow}
             renderItem={renderItem}
             width={Math.round(viewportWidth * 0.3)}
             height={Math.round(viewportHeight * 0.3)}
@@ -503,12 +1300,12 @@ const Activities = () => {
               height: Math.round(viewportHeight * 0.5),
             }}
             itemWidth={Math.round(viewportWidth * 0.3)}
-            loop={true}
-            useScrollView={true}
-            activeSlideAlignment="center"
-            onSnapToItem={(index) => handleSnapToItem(index)}
+            loop
+            useScrollView
+            onSnapToItem={handleSnapToItem}
             scrollAnimationDuration={800}
           />
+
           <Pressable
             style={[
               styles.arrowLeft,
@@ -517,12 +1314,11 @@ const Activities = () => {
                 top: viewportWidth > viewportHeight ? "40%" : "30%",
               },
             ]}
-            onPress={() => {
-              handleArrowPress("left");
-            }}
+            onPress={() => handleArrowPress("left")}
           >
             <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
           </Pressable>
+
           <Pressable
             style={[
               styles.arrowRight,
@@ -531,35 +1327,30 @@ const Activities = () => {
                 top: viewportWidth > viewportHeight ? "40%" : "30%",
               },
             ]}
-            onPress={() => {
-              handleArrowPress("right");
-            }}
+            onPress={() => handleArrowPress("right")}
           >
-            <FontAwesome
-              name="angle-right"
-              size={100}
-              color="rgb(45, 62, 95)"
-            />
+            <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
           </Pressable>
-          {isModalOpen && selectedEvent && (
-            <View style={styles.modalContainer}>
+
+          {/* Join Modal */}
+          <Modal transparent visible={isModalOpen} animationType="fade" onRequestClose={closeModal}>
+            <View style={styles.modalOverlay}>
               <View style={styles.modal}>
-                <Text>{selectedEvent.item}</Text>
-                {selectedEvent.endDate && (
-                  <Text>
-                    End Date:{" "}
-                    {moment(selectedEvent.endDate).format(
-                      "dddd MMMM Do, h:mm a"
-                    )}
+                <Text style={{ fontWeight: "700", marginBottom: 8, fontSize: 18 }}>
+                  {selectedEvent?.item}
+                </Text>
+                {selectedEvent?.endDate && (
+                  <Text style={{ marginBottom: 8 }}>
+                    Ends: {moment(selectedEvent.endDate).format("dddd MMMM Do, h:mm a")}
                   </Text>
                 )}
-                {renderModalContent(selectedEvent)}
+                {selectedEvent && renderModalBody(selectedEvent)}
                 <Pressable onPress={closeModal} style={styles.closeButton}>
-                  <Text>Close</Text>
+                  <Text style={{ color: "white", fontWeight: "600" }}>Close</Text>
                 </Pressable>
               </View>
             </View>
-          )}
+          </Modal>
         </View>
       )}
     </View>
@@ -567,12 +1358,10 @@ const Activities = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    position: "relative",
-    alignItems: "center",
-  },
+  container: { position: "relative", alignItems: "center" },
   cardContainer: {
     width: viewportWidth * 0.3,
+    height: viewportWidth * 0.4,
     backgroundColor: "#f09030",
     borderRadius: 20,
     padding: 20,
@@ -580,13 +1369,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: 10,
     marginLeft: 0,
-    // flexDirection: "column",
     gap: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 7 },
-    shadowOpacity: 0.22,
-    shadowRadius: 9.22,
-    elevation: 12,
+    shadowOpacity: 0.18,
+    shadowRadius: 4.5,
+    elevation: 5,
   },
   cardImage: {
     width: viewportWidth * 0.25,
@@ -596,8 +1384,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   cardText: {
-    fontSize: 25,
-    color: "trans",
+    fontSize: 23,
+    color: "#2d3e5f",
     fontWeight: "700",
     textAlign: "center",
   },
@@ -607,71 +1395,33 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
   },
-  filterButtonsContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 30,
-    marginTop: viewportWidth > viewportHeight ? -70 : -40,
-  },
-  filterButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    marginHorizontal: 10,
-    borderRadius: 20,
-    backgroundColor: "grey",
-  },
-  activeFilterButton: {
-    backgroundColor: "orange",
-  },
-  filterButtonText: {
-    fontSize: 16,
-    color: "white",
-    fontWeight: "bold",
-  },
-  arrowLeft: {
-    position: "absolute",
-    left: -22,
-    top: "30%",
-    transform: [{ translateY: -50 }],
-  },
-  arrowRight: {
-    position: "absolute",
-    right: -22,
-    top: "30%",
-    transform: [{ translateY: -50 }],
-  },
-  loading: {
+  arrowLeft: { position: "absolute", left: -22, top: "30%", transform: [{ translateY: -50 }] },
+  arrowRight: { position: "absolute", right: -22, top: "30%", transform: [{ translateY: -50 }] },
+  loading: { flex: 1, alignItems: "center", fontSize: 25, marginTop: 150, textAlign: "center" },
+
+  // Modal styles
+  modalOverlay: {
     flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
     alignItems: "center",
-    fontSize: 25,
-    marginTop: 150,
-    textAlign: "center",
-
-
-  },
-  modalContainer: {
-    position: "absolute",
-    bottom: "70%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 20,
-    borderRadius: 10,
   },
   modal: {
     backgroundColor: "beige",
-    padding: 60,
-    borderRadius: 10,
-  },
-  modalJoinNow: {
-    backgroundColor: "blue",
-    fontSize: 20,
+    padding: 24,
+    borderRadius: 12,
+    width: Math.min(viewportWidth * 0.9, 520),
   },
   closeButton: {
-    marginTop: 10,
+    marginTop: 12,
     backgroundColor: "gray",
-    paddingVertical: 10,
-    paddingHorizontal: 200,
-    borderRadius: 5,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
   },
+
+  // WebView container
   closeButton1: {
     position: "absolute",
     top: 30,
@@ -679,10 +1429,6 @@ const styles = StyleSheet.create({
     backgroundColor: "lightblue",
     padding: 13,
     borderRadius: 5,
-  },
-  closeButtonText: {
-    fontWeight: "bold",
-    color: "#fff",
   },
   webViewStyle: {
     flex: 1,
@@ -709,10 +1455,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
@@ -721,3 +1464,733 @@ const styles = StyleSheet.create({
 });
 
 export default Activities;
+
+
+
+// Activities.js — no filters, with fallback sample cards
+// import React, { useState, useEffect, useRef } from "react";
+// import {
+//   View,
+//   Text,
+//   Pressable,
+//   StyleSheet,
+//   Dimensions,
+//   Alert,
+//   ActivityIndicator,
+//   Button,
+//   Platform,
+//   Image,
+// } from "react-native";
+// import axios from "axios";
+// import Carousel from "react-native-reanimated-carousel";
+// import moment from "moment-timezone";
+// import { FontAwesome } from "@expo/vector-icons";
+// import { getAuth } from "firebase/auth";
+// import * as Notifications from "expo-notifications";
+// import { FIRESTORE_DB } from "../FirebaseConfig";
+// import {
+//   getDoc,
+//   collection,
+//   query,
+//   where,
+//   getDocs,
+//   updateDoc,
+//   addDoc,
+//   doc,
+// } from "firebase/firestore";
+// import { WebView } from "react-native-webview";
+// import { useRouter } from "expo-router";
+// import { createMeeting, token } from "../components/VideoCalling/VideoCall"; // same place you import in VideoSDK2
+
+
+// const { width: viewportWidth, height: viewportHeight } =
+//   Dimensions.get("window");
+
+//   const router = useRouter();
+
+
+// // ---------- FALLBACK SAMPLE CARDS ----------
+// const makeDate = (offsetMinutes) => {
+//   const d = new Date();
+//   d.setMinutes(d.getMinutes() + offsetMinutes);
+//   return d;
+// };
+
+// const FALLBACK_EVENTS = [
+//   {
+//     id: "sample-1",
+//     item: "Chair Yoga",
+//     startDate: makeDate(60),
+//     endDate: makeDate(120),
+//     imageUrl: "",
+//     zoomLink: null,
+//     meetingId: null,  
+//     isNew: true,
+//     __fallback: true,
+//   },
+//   {
+//     id: "sample-2",
+//     item: "Bingo Night",
+//     startDate: makeDate(180),
+//     endDate: makeDate(240),
+//     imageUrl: "",
+//     zoomLink: null,
+//     meetingId: null,  
+//     isNew: true,
+//     __fallback: true,
+//   },
+//   {
+//     id: "sample-3",
+//     item: "Art & Crafts",
+//     startDate: makeDate(300),
+//     endDate: makeDate(360),
+//     imageUrl: "",
+//     zoomLink: null,
+//     meetingId: null,  
+//     isNew: true,
+//     __fallback: true,
+//   },
+//    {
+//     id: "sample-3",
+//     item: "Coffee with Matthew",
+//     startDate: makeDate(300),
+//     endDate: makeDate(360),
+//     imageUrl: "",
+//     zoomLink: null,
+//     meetingId: null,  
+//     isNew: true,
+//     __fallback: true,
+//   },
+// ];
+
+// const ZoomMeetingWebView = ({ zoomLink, onMeetingLeave }) => {
+//   const handleNavigationStateChange = (navState) => {
+//     const { url } = navState;
+
+//     if (url.startsWith("zoomus://")) {
+//       Alert.alert(
+//         "Error",
+//         "Cannot open the Zoom app. Please stay within the browser."
+//       );
+//       return false;
+//     }
+
+//     if (url.includes("leave")) {
+//       onMeetingLeave();
+//     }
+//   };
+
+
+
+//   return (
+//     <WebView
+//       source={{ uri: zoomLink }}
+//       style={styles.webViewStyle}
+//       javaScriptEnabled
+//       domStorageEnabled
+//       startInLoadingState
+//       allowsInlineMediaPlayback
+//       onNavigationStateChange={handleNavigationStateChange}
+//       onError={(syntheticEvent) => {
+//         const { nativeEvent } = syntheticEvent;
+//         console.warn("WebView error: ", nativeEvent);
+//         Alert.alert(
+//           "Error",
+//           "Failed to load the Zoom meeting. Please try again."
+//         );
+//       }}
+//     />
+//   );
+// };
+
+// const handleJoinMeeting = async (event) => {
+//   try {
+//     // 1) Create or reuse a meetingId
+//     let meetingId = event.meetingId;
+//     if (!meetingId) {
+//       meetingId = await createMeeting({ token });
+//       // cache it locally in state so future taps reuse the same meeting
+//       setEvents((prev) =>
+//         prev.map((ev) =>
+//           ev.id === (event.id || ev.id) ? { ...ev, meetingId } : ev
+//         )
+//       );
+//     }
+
+//     // 2) Close the modal
+//     setIsModalOpen(false);
+
+//     // 3) Navigate to your VideoSDK2 screen and autoJoin
+//     router.push({
+//       pathname: "/VideoSDK2",
+//       params: { meetingId, autoJoin: "true" }, // pass as string for URL params
+//     });
+//   } catch (err) {
+//     console.error("Failed to start meeting:", err);
+//     Alert.alert("Error", "Could not start video call. Please try again.");
+//   }
+// };
+
+
+// const Activities = () => {
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const [events, setEvents] = useState([]);
+//   const [selectedEvent, setSelectedEvent] = useState(null);
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [showWebView, setShowWebView] = useState(false);
+//   const [activeIndex, setActiveIndex] = useState(0);
+
+//   const auth = getAuth();
+//   const user = auth.currentUser;
+//   const carouselRef = useRef(null);
+
+//   useEffect(() => {
+//     if (user) {
+//       fetchUserNameAndEvents(user.uid);
+//     } else {
+//       setError("User not signed in");
+//       // fall back to samples so UI isn’t empty
+//       setEvents(FALLBACK_EVENTS);
+//       setLoading(false);
+//     }
+
+//     const foregroundSubscription =
+//       Notifications.addNotificationReceivedListener((notification) => {
+//         Alert.alert("Notification Received", notification.request.content.body);
+//       });
+
+//     const responseSubscription =
+//       Notifications.addNotificationResponseReceivedListener((response) => {
+//         Alert.alert("Garden Loft", response.notification.request.content.body);
+//       });
+
+//     return () => {
+//       foregroundSubscription.remove();
+//       responseSubscription.remove();
+//     };
+//   }, [user]);
+
+//   async function fetchUserNameAndEvents(uid) {
+//     try {
+//       const userRef = doc(FIRESTORE_DB, "users", uid);
+//       const userSnap = await getDoc(userRef);
+//       if (userSnap.exists()) {
+//         const userData = userSnap.data();
+//         const userName = userData.userName;
+//         if (Platform.OS !== "web") {
+//           registerForPushNotificationsAsync();
+//         }
+//         fetchEventsAndSaveToFirestore(userName);
+//       } else {
+//         throw new Error("No user data found");
+//       }
+//     } catch (error) {
+//       console.error("Error fetching user data:", error);
+//       setError("Failed to retrieve user data. Showing sample activities.");
+//       setEvents(FALLBACK_EVENTS);
+//       setLoading(false);
+//     }
+//   }
+
+//   async function fetchEventsAndSaveToFirestore(userName) {
+//     try {
+//       const response = await axios.get(
+//         "https://api.signupgenius.com/v2/k/signups/report/filled/47293846/?user_key=UmNrVWhyYWwrVGhtQmdXeVpweTBZZz09"
+//       );
+
+//       const now = new Date();
+
+//       const eventData = (response.data?.data?.signup || [])
+//         .filter((item) => item.firstname === userName)
+//         .map((item) => {
+//           let startDate, endDate;
+//           try {
+//             // Try common formats (adjust if your API differs)
+//             startDate = moment(
+//               item.startdatestring,
+//               ["YYYY/MM/DD HH:mm", "YYYY-MM-DD HH:mm", moment.ISO_8601],
+//               true
+//             ).toDate();
+
+//             endDate = item.enddatestring
+//               ? moment(
+//                   item.enddatestring,
+//                   [
+//                     "YYYY/MM/DD HH:mm:ss",
+//                     "YYYY-MM-DD HH:mm:ss",
+//                     "YYYY/MM/DD HH:mm",
+//                     moment.ISO_8601,
+//                   ],
+//                   true
+//                 ).toDate()
+//               : undefined;
+
+//             // If no endDate, assume 60 minutes duration
+//             if (!endDate) {
+//               endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+//             }
+//           } catch (e) {
+//             console.error("Date parse error for item:", item, e);
+//             startDate = new Date();
+//             endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+//           }
+
+//           return {
+//             item: item.item,
+//             startDate,
+//             endDate,
+//             zoomLink:
+//               item.location === "Zoom Meeting"
+//                 ? `https://us06web.zoom.us/wc/join/87666824017?pwd=RUZLSFVabjhtWjJVSm1CcDZsZXcrUT09`
+//                 : null,
+//           };
+//         })
+//         // keep only current/future
+//         .filter((ev) => ev.endDate && now < ev.endDate);
+
+//       // If nothing from API, show samples
+//       if (!eventData.length) {
+//         setEvents(FALLBACK_EVENTS);
+//         setLoading(false);
+//         return;
+//       }
+
+//       eventData.sort((a, b) => a.startDate - b.startDate);
+
+//       // Save or update each event in Firestore
+//       for (const event of eventData) {
+//         const q = query(
+//           collection(FIRESTORE_DB, "events"),
+//           where("item", "==", event.item)
+//         );
+//         const querySnapshot = await getDocs(q);
+
+//         if (querySnapshot.empty) {
+//           await addDoc(collection(FIRESTORE_DB, "events"), {
+//             ...event,
+//             isNew: true,
+//             imageUrl: "",
+//           });
+//         } else {
+//           querySnapshot.forEach(async (docSnapshot) => {
+//             const existingEvent = docSnapshot.data();
+//             const eventDoc = doc(FIRESTORE_DB, "events", docSnapshot.id);
+//             await updateDoc(eventDoc, {
+//               ...event,
+//               isNew: false,
+//               imageUrl: existingEvent.imageUrl || "",
+//             });
+//           });
+//         }
+//       }
+
+//       // Read back (keeps any manually added imageUrl)
+//       const eventsSnapshot = await getDocs(collection(FIRESTORE_DB, "events"));
+//       let updatedEvents = eventsSnapshot.docs.map((d) => {
+//         const data = d.data();
+//         return {
+//           id: d.id,
+//           ...data,
+//           startDate: data.startDate?.toDate
+//             ? data.startDate.toDate()
+//             : new Date(data.startDate),
+//           endDate: data.endDate?.toDate
+//             ? data.endDate.toDate()
+//             : data.endDate
+//             ? new Date(data.endDate)
+//             : new Date(
+//                 (data.startDate?.toDate
+//                   ? data.startDate.toDate().getTime()
+//                   : new Date(data.startDate).getTime()) +
+//                   60 * 60 * 1000
+//               ),
+//         };
+//       });
+
+//       // If still empty after Firestore, fallback
+//       if (!updatedEvents.length) updatedEvents = FALLBACK_EVENTS;
+
+//       // Schedule notifications only for real events (not fallback)
+//       updatedEvents.forEach((ev) => {
+//         if (!ev.__fallback && Platform.OS !== "web") {
+//           scheduleNotification(ev);
+//         }
+//       });
+
+//       setEvents(updatedEvents);
+//       setLoading(false);
+//     } catch (error) {
+//       console.error("Error fetching events: ", error.message);
+//       setError("Failed to retrieve activities. Showing sample activities.");
+//       setEvents(FALLBACK_EVENTS);
+//       setLoading(false);
+//     }
+//   }
+
+//   async function registerForPushNotificationsAsync() {
+//     const settings = await Notifications.getPermissionsAsync();
+//     if (
+//       settings.granted ||
+//       settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+//     ) {
+//       // ok
+//     } else {
+//       const response = await Notifications.requestPermissionsAsync({
+//         ios: {
+//           allowAlert: true,
+//           allowSound: true,
+//           allowBadge: true,
+//           allowDisplayInCarPlay: true,
+//           allowCriticalAlerts: true,
+//         },
+//       });
+//       if (!response.granted) {
+//         alert("Failed to get push notification permissions.");
+//         return;
+//       }
+//     }
+
+//     if (Platform.OS === "android") {
+//       await Notifications.setNotificationChannelAsync("default", {
+//         name: "default",
+//         importance: Notifications.AndroidImportance.MAX,
+//         vibrationPattern: [0, 250, 250, 250],
+//         sound: "default",
+//       });
+//     }
+//   }
+
+//   const navigateToZoomLink = (event) => {
+//     setSelectedEvent(event);
+//     setIsModalOpen(true);
+//   };
+
+//   const closeWebView = () => setShowWebView(false);
+//   const closeModal = () => {
+//     setIsModalOpen(false);
+//     setSelectedEvent(null);
+//   };
+//   const handleJoinMeeting = () => {
+//     setIsModalOpen(false);
+//     setShowWebView(true);
+//   };
+
+//   const renderModalContent = (event) => {
+//     const currentTime = new Date();
+//     const tenMinutesBeforeStartTime = new Date(event.startDate);
+//     tenMinutesBeforeStartTime.setMinutes(
+//       tenMinutesBeforeStartTime.getMinutes() - 10
+//     );
+
+//     const end =
+//       event.endDate || new Date(event.startDate.getTime() + 60 * 60000);
+
+//     if (currentTime > end) {
+//       return <Text>Event ended.</Text>;
+//     } else if (currentTime < tenMinutesBeforeStartTime) {
+//       return <Text>Event has not started yet.</Text>;
+//     } else if (currentTime >= tenMinutesBeforeStartTime && currentTime < end) {
+//       return <Button title="Join Now" onPress={handleJoinMeeting} />;
+//     } else {
+//       return <Button title="Event in progress" disabled />;
+//     }
+//   };
+
+//   const renderItem = ({ item, index }) => (
+//     <Pressable
+//       key={item.id ?? index}
+//       style={[
+//         styles.cardContainer,
+//         {
+//           backgroundColor: "#f09030",
+//           transform: [{ scale: 0.85 }],
+//           height:
+//             viewportWidth > viewportHeight
+//               ? Math.round(Dimensions.get("window").height * 0.3)
+//               : Math.round(Dimensions.get("window").height * 0.25),
+//         },
+//       ]}
+//       onPress={() => navigateToZoomLink(item)}
+//     >
+//       <Image
+//         source={
+//           item.imageUrl
+//             ? { uri: item.imageUrl }
+//             : require("../assets/images/garden-loft-logo-outline.png")
+//         }
+//         style={styles.cardImage}
+//         resizeMode="contain"
+//       />
+//       <Text style={styles.cardText}>{item.item}</Text>
+//       <Text style={styles.cardTextTime}>
+//         {moment(item.startDate).format("dddd MMMM Do, h:mm a")}
+//       </Text>
+//     </Pressable>
+//   );
+
+//   const handleSnapToItem = (index) => setActiveIndex(index);
+
+//   const scheduleNotification = async (event) => {
+//     // only schedule future notifications
+//     const tenBefore = new Date(event.startDate.getTime() - 10 * 60 * 1000);
+//     const oneBefore = new Date(event.startDate.getTime() - 60 * 1000);
+//     const now = new Date();
+//     if (tenBefore > now) {
+//       await Notifications.scheduleNotificationAsync({
+//         content: {
+//           title: "Upcoming Activity!",
+//           body: `Your activity ${event.item} starts in 10 minutes.`,
+//           sound: true,
+//           data: { event },
+//         },
+//         trigger: { date: tenBefore },
+//       });
+//     }
+//     if (oneBefore > now) {
+//       await Notifications.scheduleNotificationAsync({
+//         content: {
+//           title: "Starting Now!",
+//           body: `Your activity ${event.item} is starting now.`,
+//           sound: true,
+//           data: { event },
+//         },
+//         trigger: { date: oneBefore },
+//       });
+//     }
+//   };
+
+//   const handleArrowPress = (direction) => {
+//     const list = events.length ? events : FALLBACK_EVENTS;
+//     let newIndex = activeIndex;
+//     if (direction === "left") {
+//       newIndex = (activeIndex - 1 + list.length) % list.length;
+//     } else {
+//       newIndex = (activeIndex + 1) % list.length;
+//     }
+//     carouselRef.current?.scrollTo({ index: newIndex, animated: true });
+//     setActiveIndex(newIndex);
+//   };
+
+//   const dataToShow = events.length ? events : FALLBACK_EVENTS;
+
+//   return (
+    
+//     <View
+//       style={[
+//         styles.container,
+//         { height: viewportWidth > viewportHeight ? 320 : 450 },
+//       ]}
+//     >
+//       {loading ? (
+//         <ActivityIndicator size="large" color="orange" style={styles.loading} />
+//       ) : error && !events.length ? (
+//         <Text style={styles.loading}>{error}</Text>
+//       ) : showWebView && selectedEvent ? (
+//         <View style={styles.webViewModal}>
+//           <View style={styles.webViewContainer}>
+//             <ZoomMeetingWebView
+//               zoomLink={selectedEvent.zoomLink}
+//               onMeetingLeave={closeWebView}
+//             />
+//             <Pressable style={styles.closeButton1} onPress={closeWebView}>
+//               <FontAwesome name="close" size={24} color="black" />
+//             </Pressable>
+//           </View>
+//         </View>
+//       ) : (
+//         <View
+//           style={[
+//             styles.container,
+//             { height: viewportWidth > viewportHeight ? 320 : 450 },
+//           ]}
+//         >
+//           <Carousel
+//             ref={carouselRef}
+//             data={dataToShow}
+//             renderItem={renderItem}
+//             width={Math.round(viewportWidth * 0.3)}
+//             height={Math.round(viewportHeight * 0.3)}
+//             style={{
+//               width: Math.round(viewportWidth * 0.9),
+//               height: Math.round(viewportHeight * 0.5),
+//             }}
+//             itemWidth={Math.round(viewportWidth * 0.3)}
+//             loop
+//             useScrollView
+//             onSnapToItem={handleSnapToItem}
+//             scrollAnimationDuration={800}
+//           />
+//           <Pressable
+//             style={[
+//               styles.arrowLeft,
+//               {
+//                 left: viewportWidth > viewportHeight ? -17 : -22,
+//                 top: viewportWidth > viewportHeight ? "40%" : "30%",
+//               },
+//             ]}
+//             onPress={() => handleArrowPress("left")}
+//           >
+//             <FontAwesome name="angle-left" size={100} color="rgb(45, 62, 95)" />
+//           </Pressable>
+//           <Pressable
+//             style={[
+//               styles.arrowRight,
+//               {
+//                 right: viewportWidth > viewportHeight ? -25 : -22,
+//                 top: viewportWidth > viewportHeight ? "40%" : "30%",
+//               },
+//             ]}
+//             onPress={() => handleArrowPress("right")}
+//           >
+//             <FontAwesome name="angle-right" size={100} color="rgb(45, 62, 95)" />
+//           </Pressable>
+
+//           {isModalOpen && selectedEvent && (
+//             <View style={styles.modalContainer}>
+//               <View style={styles.modal}>
+//                 <Text style={{ fontWeight: "700", marginBottom: 8 }}>
+//                   {selectedEvent.item}
+//                 </Text>
+//                 {selectedEvent.endDate && (
+//                   <Text style={{ marginBottom: 8 }}>
+//                     Ends:{" "}
+//                     {moment(selectedEvent.endDate).format(
+//                       "dddd MMMM Do, h:mm a"
+//                     )}
+//                   </Text>
+//                 )}
+//                 {renderModalContent(selectedEvent)}
+//                 <Pressable onPress={closeModal} style={styles.closeButton}>
+//                   <Text>Close</Text>
+//                 </Pressable>
+               
+//   <Button
+//     title="Join Now"
+//     onPress={() => handleJoinMeeting(event)}  // ← pass event
+//   />
+
+
+//               </View>
+//             </View>
+//           )}
+//         </View>
+//       )}
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: { position: "relative", alignItems: "center" },
+//   cardContainer: {
+//     width: viewportWidth * 0.3,
+//     height: viewportWidth * 0.4,
+//     backgroundColor: "#f09030",
+//     borderRadius: 20,
+//     padding: 20,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     marginHorizontal: 10,
+//     marginLeft: 0,
+//     gap: 10,
+//     shadowColor: "#000",
+//     shadowOffset: { width: 0, height: 7 },
+//     shadowOpacity: 0.18,
+//     shadowRadius: 4.5,
+//     elevation: 5,
+//   },
+//   cardImage: {
+//     width: viewportWidth * 0.25,
+//     height: viewportWidth * 0.2,
+//     margin: 10,
+//     resizeMode: "cover",
+//     borderRadius: 10,
+//   },
+//   cardText: {
+//     fontSize: 23,
+//     color: "#2d3e5f",
+//     fontWeight: "700",
+//     textAlign: "center",
+//   },
+//   cardTextTime: {
+//     fontSize: 20,
+//     color: "#393939",
+//     fontWeight: "600",
+//     textAlign: "center",
+//   },
+//   arrowLeft: {
+//     position: "absolute",
+//     left: -22,
+//     top: "30%",
+//     transform: [{ translateY: -50 }],
+//   },
+//   arrowRight: {
+//     position: "absolute",
+//     right: -22,
+//     top: "30%",
+//     transform: [{ translateY: -50 }],
+//   },
+//   loading: {
+//     flex: 1,
+//     alignItems: "center",
+//     fontSize: 25,
+//     marginTop: 150,
+//     textAlign: "center",
+//   },
+//   modalContainer: {
+//     position: "absolute",
+//     bottom: "70%",
+//     backgroundColor: "rgba(0, 0, 0, 0.5)",
+//     padding: 20,
+//     borderRadius: 10,
+//   },
+//   modal: { backgroundColor: "beige", padding: 60, borderRadius: 10 },
+//   closeButton: {
+//     marginTop: 10,
+//     backgroundColor: "gray",
+//     paddingVertical: 10,
+//     paddingHorizontal: 200,
+//     borderRadius: 5,
+//   },
+//   closeButton1: {
+//     position: "absolute",
+//     top: 30,
+//     right: 30,
+//     backgroundColor: "lightblue",
+//     padding: 13,
+//     borderRadius: 5,
+//   },
+//   webViewStyle: {
+//     flex: 1,
+//     width: viewportWidth * 0.9,
+//     height: viewportHeight * 0.7,
+//   },
+//   webViewModal: {
+//     position: "absolute",
+//     bottom: "10%",
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     backgroundColor: "transparent",
+//   },
+//   webViewContainer: {
+//     margin: 10,
+//     height: viewportHeight * 0.9,
+//     width: viewportWidth * 0.95,
+//     marginTop: 50,
+//     backgroundColor: "white",
+//     borderRadius: 20,
+//     padding: 20,
+//     paddingTop: 100,
+//     alignItems: "center",
+//     justifyContent: "center",
+//     shadowColor: "#000",
+//     shadowOffset: { width: 0, height: 2 },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 3.84,
+//     elevation: 5,
+//     alignSelf: "center",
+//   },
+// });
+
+// export default Activities;
