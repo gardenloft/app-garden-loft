@@ -16,6 +16,8 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "expo-router";
 import * as Notifications from "expo-notifications";
 import { callUser } from "../../app/VideoSDK2";
+import logo from "../../assets/garden-loft-logo2.png"; // <-- two dots
+
 
 const { width: viewportWidth, height: viewportHeight } =
   Dimensions.get("window");
@@ -133,7 +135,7 @@ const VideoCall = () => {
       ]}
       onPress={() => startVideoCall(item.id)}
     >
-      <Image
+      {/* <Image
         source={
           item.imageUrl &&
           typeof item.imageUrl === "string" &&
@@ -142,7 +144,16 @@ const VideoCall = () => {
             : require("../assets/garden-loft-logo2.png")
         }
         style={styles.image}
-      />
+      /> */}
+      <Image
+  source={
+    item.imageUrl && typeof item.imageUrl === "string" && item.imageUrl.trim() !== ""
+      ? { uri: item.imageUrl }
+      : logo
+  }
+  style={styles.image}
+/>
+
       <Text style={styles.cardText}>{item.name}</Text>
     </TouchableOpacity>
   );
@@ -172,10 +183,15 @@ const VideoCall = () => {
       {/* Decline message modal */}
       <Modal animationType="slide" transparent={true} visible={isDeclined}>
         <View style={styles.modalContainer}>
-          <Image
-            source={require("../assets/garden-loft-logo2.png")}
-            style={styles.logo}
-          />
+         <Image
+  source={
+    item.imageUrl && typeof item.imageUrl === "string" && item.imageUrl.trim() !== ""
+      ? { uri: item.imageUrl }
+      : logo
+  }
+  style={styles.image}
+/>
+
           <Text style={styles.modalText}>They are not available right now</Text>
           <TouchableOpacity
             style={[styles.button, styles.dismissButton]}
