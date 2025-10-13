@@ -2,7 +2,7 @@
 
 The Garden Loft App is a full-featured smart living platform designed to enhance resident independence and streamline support staff coordination in modern micro-living environments.
 
-Built with **Expo**, **React Native**, **Firebase**, **Supabase**, **Home Assistant**, and **VideoSDK**, the app empowers users with communication, automation, safety, and wellness tools—accessible from both mobile and web.
+Built with **Expo**, **React Native**, **Firebase**, **Supabase**, **Home Assistant**, and **VideoSDK**, the app empowers users with communication, automation, safety, and wellness tools accessible from both mobile and web.
 
 ---
 
